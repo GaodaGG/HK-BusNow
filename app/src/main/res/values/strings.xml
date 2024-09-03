@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">Bus Station</string>
+    <string name="home_title">Home</string>
+    <string name="search_title">Search</string>
+    <string name="about_title">About</string>
+    <string name="author_name" translatable="false">GaodaGG</string>
+    <string name="author_account" translatable="false">\@GaodaGG</string>
+    <string name="about_developers">Developers</string>
+    <string name="dialog_loading">Loading</string>
+</resources>

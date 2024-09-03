@@ -1,0 +1,16 @@
+
+l
+java:S1104"OMake Out a static final constant or non-public and provide accessors if needed.(ûÏÑ8åÓàá–2
+k
+java:S1104"NMake In a static final constant or non-public and provide accessors if needed.(Ğö«Ê8¹±áá–2
+F
+java:S1444")Make this "public static Out" field final(ûÏÑ8æÓàá–2
+E
+java:S1444"(Make this "public static In" field final(Ğö«Ê8¹±áá–2
+6
+java:S1700"Rename field "route"(ŸÆÇşÿÿÿÿ8æÓàá–2
+k
+java:S3008"NRename this field "Out" to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(ûÏÑ8ìÓàá–2
+j
+java:S3008"MRename this field "In" to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(Ğö«Ê8¿±áá–2
+]	java:S107"AConstructor has 9 parameters, which is greater than 7 authorized.(êè˜æ8ê±Ò’›2

@@ -1,0 +1,104 @@
+package com.gg.busStation.ui.fragment;
+
+import static com.gg.busStation.function.DataManager.findNearestStopIndex;
+
+import android.Manifest;
+import android.app.Dialog;
+import android.content.pm.PackageManager;
+import android.os.Bundle;
+import android.view.ViewTreeObserver;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.LinearLayoutManager;
+
+import com.baidu.mapapi.model.LatLng;
+import com.gg.busStation.data.bus.ETA;
+import com.gg.busStation.data.layout.StopItemData;
+import com.gg.busStation.function.DataBaseManager;
+import com.gg.busStation.function.DataManager;
+import com.gg.busStation.data.bus.Route;
+import com.gg.busStation.data.bus.Stop;
+import com.gg.busStation.data.layout.ListItemData;
+import com.gg.busStation.databinding.DialogBusBinding;
+import com.gg.busStation.function.location.LocationHelper;
+import com.gg.busStation.ui.adapter.StopListAdapter;
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
+import com.google.android.material.divider.MaterialDividerItemDecoration;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+public class StopBottomSheetDialog extends BottomSheetDialogFragment {
+    public static final String TAG = "BusBottomSheetDialog";
+    private DialogBusBinding binding;
+    private ListItemData mData;
+    private List<Stop> mStops;
+
+    public StopBottomSheetDialog(ListItemData listItemData) {
+        mData = listItemData;
+    }
+
+    @NonNull
+    @Override
+    public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
+        Dialog dialog = super.onCreateDialog(savedInstanceState);
+        binding = DialogBusBinding.inflate(getLayoutInflater());
+        binding.setData(mData);
+        dialog.setContentView(binding.getRoot());
+        initView();
+        return dialog;
+    }
+
+    public void initView() {
+        new Thread(() -> {
+            List<StopItemData> data = new ArrayList<>();
+            Route route = DataBaseManager.findRoute(mData.getStopNumber(), mData.getBound(), mData.getService_type());
+
+            try {
+                mStops = DataManager.routeToStops(route);
+
+                for (int i = 0; i < mStops.size(); i++) {
+                    Stop stop = mStops.get(i);
+                    StopItemData stopItemData = new StopItemData(String.valueOf(i + 1), stop.getName("zh_CN"), "", route.getBound(), route.getService_type(), route.getRoute(), stop.getStop());
+                    data.add(stopItemData);
+                }
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+
+            int nearestStopIndex = 0;
+            LatLng location = LocationHelper.getLocation();
+            if (requireActivity().checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                nearestStopIndex = findNearestStopIndex(mStops, location);
+            }
+
+            StopListAdapter stopListAdapter = new StopListAdapter(data, requireActivity());
+            LinearLayoutManager manager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
+            MaterialDividerItemDecoration divider = new MaterialDividerItemDecoration(requireContext(), LinearLayoutManager.VERTICAL);
+
+            manager.setInitialPrefetchItemCount(10);
+            divider.setLastItemDecorated(false);
+
+            int finalNearestStopIndex = nearestStopIndex;
+            requireActivity().runOnUiThread(() -> {
+                binding.dialogList.setLayoutManager(manager);
+                binding.dialogList.addItemDecoration(divider);
+                binding.dialogList.setItemAnimator(null);
+                binding.dialogList.setAdapter(stopListAdapter);
+
+                //跳转到最近的巴士站
+                binding.dialogList.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                    @Override
+                    public void onGlobalLayout() {
+                        binding.dialogList.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                        ((LinearLayoutManager)binding.dialogList.getLayoutManager()).scrollToPositionWithOffset(finalNearestStopIndex, 0);
+                    }
+                });
+            });
+        }).start();
+    }
+
+
+}

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/home_fragment"
+        android:enabled="true"
+        android:icon="@drawable/menu_home"
+        android:title="@string/home_title"/>
+    <item
+        android:id="@+id/search_fragment"
+        android:icon="@drawable/menu_search_normal"
+        android:title="@string/search_title"/>
+    <item
+        android:id="@+id/about_fragment"
+        android:icon="@drawable/menu_person"
+        android:title="@string/about_title"/>
+</menu>
