@@ -40,7 +40,7 @@ public class SearchFragment extends Fragment {
         binding.testTransCard.addView(itemBusExpendBinding.getRoot());
 
         for (int i = 0; i < 3; i++) {
-            ((LinearLayout) itemBusExpendBinding.getRoot().findViewById(R.id.dialog_time_list)).addView(new ETAListLayout(requireActivity(), i + 10, "延迟班次"));
+            ((LinearLayout) itemBusExpendBinding.getRoot().findViewById(R.id.dialog_time_list)).addView(new ETAListLayout(requireActivity(), i + 10, "延迟班次", "九巴"));
         }
         return binding.getRoot();
     }

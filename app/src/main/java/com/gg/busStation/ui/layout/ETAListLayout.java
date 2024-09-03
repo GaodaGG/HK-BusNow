@@ -1,5 +1,6 @@
 package com.gg.busStation.ui.layout;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -7,24 +8,20 @@ import android.widget.TextView;
 
 import com.gg.busStation.R;
 
+@SuppressLint("ViewConstructor")
 public class ETAListLayout extends LinearLayout {
-    private final int time;
-    private final String rmk;
 
-    private TextView mTimeView;
-    private TextView mRmkView;
-
-    public ETAListLayout(Context context, int time, String rmk) {
+    public ETAListLayout(Context context, int time, String rmk, String co) {
         super(context);
-        this.time = time;
-        this.rmk = rmk;
 
         View inflate = inflate(context, R.layout.dialog_eta_item, this);
-        mTimeView = inflate.findViewById(R.id.dialog_eta_time);
-        mRmkView = inflate.findViewById(R.id.dialog_eta_rmk);
+        TextView mTimeView = inflate.findViewById(R.id.dialog_eta_time);
+        TextView mRmkView = inflate.findViewById(R.id.dialog_eta_rmk);
+        TextView mCoView = inflate.findViewById(R.id.dialog_eta_co);
 
-        mTimeView.setText(String.valueOf(this.time));
-        mRmkView.setText(this.rmk);
+        mTimeView.setText(String.valueOf(time));
+        mRmkView.setText(rmk);
+        mCoView.setText(co);
 
         setLayoutParams(new LinearLayout.LayoutParams(
                 LayoutParams.WRAP_CONTENT,

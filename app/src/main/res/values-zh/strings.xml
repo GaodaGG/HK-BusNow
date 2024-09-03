@@ -5,5 +5,6 @@
     <string name="search_title">搜索</string>
     <string name="about_title">关于</string>
     <string name="dialog_loading">正在加载</string>
+    <string name="author_name">码农</string>
     <string name="about_developers">开发者</string>
 </resources>

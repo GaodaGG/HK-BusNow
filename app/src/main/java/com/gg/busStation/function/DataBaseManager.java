@@ -1,10 +1,12 @@
 package com.gg.busStation.function;
 
+import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
@@ -20,8 +22,10 @@ import java.util.Map;
 
 public class DataBaseManager {
     private static SQLiteDatabase db;
+    private static Context context;
 
     public static void initDB(Context context) {
+        DataBaseManager.context = context;
         int version;
         try {
             version = (int) context.getPackageManager().getPackageInfo(context.getPackageName(), 0).getLongVersionCode();
@@ -33,6 +37,8 @@ public class DataBaseManager {
     }
 
     public static void initData(List<Route> routes, List<Stop> stops) {
+//        ((Activity)context).runOnUiThread(() -> Toast.makeText(context, "正在更新数据", Toast.LENGTH_SHORT).show());
+
         //清除老数据
         db.delete(SQLConstants.routeDBName, null, null);
         db.delete(SQLConstants.stopDBName, null, null);
@@ -61,15 +67,16 @@ public class DataBaseManager {
     private static void insertRoutes(List<Route> routes) {
         ContentValues contentValues = new ContentValues();
         for (Route route : routes) {
+            contentValues.put("co", route.getCo());
             contentValues.put("route", route.getRoute());
             contentValues.put("bound", route.getBound());
             contentValues.put("service_type", route.getService_type());
             contentValues.put("orig_en", route.getOrig("en"));
             contentValues.put("orig_tc", route.getOrig("zh_HK"));
             contentValues.put("orig_sc", route.getOrig("zh_CN"));
-            contentValues.put("dest_en", route.getOrig("en"));
-            contentValues.put("dest_tc", route.getOrig("zh_HK"));
-            contentValues.put("dest_sc", route.getOrig("zh_CN"));
+            contentValues.put("dest_en", route.getDest("en"));
+            contentValues.put("dest_tc", route.getDest("zh_HK"));
+            contentValues.put("dest_sc", route.getDest("zh_CN"));
 
             db.insert(SQLConstants.routeDBName, null, contentValues);
             contentValues.clear();
@@ -142,6 +149,7 @@ public class DataBaseManager {
 
         for (int i = 0; i < cursor.getCount(); i++) {
             Route route = new Route(
+                    cursor.getString(cursor.getColumnIndexOrThrow("co")),
                     cursor.getString(cursor.getColumnIndexOrThrow("route")),
                     cursor.getString(cursor.getColumnIndexOrThrow("bound")),
                     cursor.getString(cursor.getColumnIndexOrThrow("service_type")),
@@ -204,6 +212,7 @@ public class DataBaseManager {
         }
 
         Route route = new Route(
+                cursor.getString(cursor.getColumnIndexOrThrow("co")),
                 cursor.getString(cursor.getColumnIndexOrThrow("route")),
                 cursor.getString(cursor.getColumnIndexOrThrow("bound")),
                 cursor.getString(cursor.getColumnIndexOrThrow("service_type")),

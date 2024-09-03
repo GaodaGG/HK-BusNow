@@ -4,6 +4,10 @@ public class Route {
     public static String Out = "outbound";
     public static String In = "inbound";
 
+    public static String coKMB = "KMB";
+    public static String coCTB = "CTB";
+
+    private String co;
     private String route;
     private String bound;
 
@@ -16,9 +20,10 @@ public class Route {
     private String dest_tc;
     private String dest_sc;
 
-    public Route(String route, String bound, String service_type,
+    public Route(String co, String route, String bound, String service_type,
                  String orig_en, String orig_tc, String orig_sc,
                  String dest_en, String dest_tc, String dest_sc) {
+        this.co = co;
         this.route = route;
         this.bound = bound;
         this.service_type = service_type;
@@ -63,7 +68,7 @@ public class Route {
     }
 
     public String getBound() {
-        if("O".equals(bound)) {
+        if("O".equals(bound) || Out.equals(bound)) {
             return Out;
         }
 
@@ -104,5 +109,13 @@ public class Route {
 
     public void setDest_sc(String dest_sc) {
         this.dest_sc = dest_sc;
+    }
+
+    public String getCo() {
+        return co;
+    }
+
+    public void setCo(String co) {
+        this.co = co;
     }
 }

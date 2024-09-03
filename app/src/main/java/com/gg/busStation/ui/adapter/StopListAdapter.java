@@ -3,6 +3,7 @@ package com.gg.busStation.ui.adapter;
 import android.animation.TimeInterpolator;
 import android.animation.ValueAnimator;
 import android.app.Activity;
+import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -89,26 +90,34 @@ public class StopListAdapter extends RecyclerView.Adapter<StopListAdapter.ViewHo
 
         holder.getBinding().executePendingBindings();
 
-        view.setOnClickListener(v -> itemClickListener(holder, v, isOpen, layoutParams));
+        view.setOnClickListener(v -> itemClickListener(holder, v, isOpen, layoutParams, Integer.parseInt((String) holder.binding.listItemNumber.getText())));
     }
 
-    private void itemClickListener(ViewHolder holder, View view, boolean isOpen, RecyclerView.LayoutParams layoutParams) {
-        StopItemData data = holder.binding.getData();
-        Route route = DataBaseManager.findRoute(data.getRouteId(), data.getBound(), data.getService_type());
-        Stop stop = DataBaseManager.findStop(data.getStopId());
+    private void itemClickListener(ViewHolder holder, View view, boolean isOpen, RecyclerView.LayoutParams layoutParams, int seq) {
+        if (!isOpen) {
+            StopItemData data = holder.binding.getData();
+            Route route = DataBaseManager.findRoute(data.getRouteId(), data.getBound(), data.getService_type());
+            Stop stop = DataBaseManager.findStop(data.getStopId());
 
-        LinearLayout timeList = view.findViewById(R.id.dialog_time_list);
-        timeList.removeAllViews();
-        new Thread(() -> {
+            LinearLayout timeList = view.findViewById(R.id.dialog_time_list);
+            timeList.removeAllViews();
+            new Thread(() -> {
             try {
                 boolean hasBus = false;
-                for (ETA eta : DataManager.routeAndStopToETAs(route, stop)) {
+                for (ETA eta : DataManager.routeAndStopToETAs(route, stop, seq)) {
                     Date date = eta.getEta();
-                    if (date == null) {
-                        continue;
-                    }
                     hasBus = true;
-                    ETAListLayout etaListLayout = new ETAListLayout(mActivity, (int) DataManager.getMinutesRemaining(date), eta.getRmk("zh_CN"));
+                    long time = DataManager.getMinutesRemaining(date);
+                    View etaListLayout;
+                    if (time <= 0) {
+                        etaListLayout = new ETAListLayout(mActivity, (int) time, eta.getRmk("zh_CN"), Route.coKMB.equals(eta.getCo()) ? "九巴" : "城巴");
+                    } else {
+                        etaListLayout = new TextView(mActivity);
+                        String text = "即将到站" + eta.getRmk("zh_CN") + (Route.coKMB.equals(eta.getCo()) ? "九巴" : "城巴");
+                        ((TextView)etaListLayout).setText(text);
+                        ((TextView)etaListLayout).setTextSize(20);
+                        ((TextView)etaListLayout).setTypeface(null, Typeface.BOLD);
+                    }
                     mActivity.runOnUiThread(() -> timeList.addView(etaListLayout));
                 }
 
@@ -120,8 +129,9 @@ public class StopListAdapter extends RecyclerView.Adapter<StopListAdapter.ViewHo
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
-        }).start();
+            }).start();
 
+        }
 
         switchItemHeight(isOpen, holder.getAdapterPosition(), holder.getOpenHeight(), holder.getCloseHeight(), layoutParams);
         holder.setOpen(!isOpen);

@@ -6,10 +6,11 @@
 
     <TextView
         android:id="@+id/dialog_eta_time"
-        android:layout_width="23dp"
+        android:layout_width="27dp"
         android:layout_height="wrap_content"
         android:text="12"
-        android:textSize="14sp"/>
+        android:textStyle="bold"
+        android:textSize="20sp"/>
 
     <TextView
         android:layout_width="wrap_content"
@@ -23,5 +24,13 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="3dp"
         android:text="预定班次"
+        android:textSize="14sp"/>
+
+    <TextView
+        android:id="@+id/dialog_eta_co"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="3dp"
+        android:text="九巴"
         android:textSize="14sp"/>
 </LinearLayout>

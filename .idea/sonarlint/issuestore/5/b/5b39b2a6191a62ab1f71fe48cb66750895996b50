@@ -1,6 +1,12 @@
 
-g	java:S112"FDefine and throw a dedicated exception instead of using a generic one.(Ò‚Òéüÿÿÿÿ8Úò•›2
+g	java:S112!"FDefine and throw a dedicated exception instead of using a generic one.(Ò‚Òéüÿÿÿÿ8òØ¡Ä›2
 W
-java:S1118":Add a private constructor to hide the implicit public one.(Ó°ŠŞ8¤Úò•›2
+java:S1118":Add a private constructor to hide the implicit public one.(Ó°ŠŞ8•Ù¡Ä›2
 A
-java:S1168u"$Return an empty map instead of null.(¥¹ï8²Úò•›2
+java:S1168|"$Return an empty map instead of null.(¥¹ï8¦Ù¡Ä›2
+N
+java:S1128"1Remove this unused import 'android.app.Activity'.(‡ÊÍÆ8³î«Ä›2
+S
+java:S1128	"1Remove this unused import 'android.widget.Toast'.(©›ïÍúÿÿÿÿ8´î«Ä›2
+M
+java:S1068"+Remove this unused "context" private field.(ÄÖ¤–ıÿÿÿÿ8´î«Ä›2

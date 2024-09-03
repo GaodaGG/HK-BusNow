@@ -86,6 +86,7 @@ public class StopBottomSheetDialog extends BottomSheetDialogFragment {
                 binding.dialogList.setLayoutManager(manager);
                 binding.dialogList.addItemDecoration(divider);
                 binding.dialogList.setItemAnimator(null);
+                binding.dialogList.setItemViewCacheSize(30);
                 binding.dialogList.setAdapter(stopListAdapter);
 
                 //跳转到最近的巴士站
