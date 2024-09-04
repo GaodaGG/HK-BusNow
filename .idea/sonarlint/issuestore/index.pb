@@ -230,3 +230,5 @@ Q.idea/sonarlint/securityhotspotstore/6/2/62b0468124278c83a11b69286dad5affc50a6f
 Q.idea/sonarlint/securityhotspotstore/4/8/48ee3c77a9da12f137d339ec7fd33387e7418a77,4\f\4f9561bfbe435cdeaf1ce57faff7fbc3d946c855
 w
 G.idea/sonarlint/issuestore/e/a/ea2bf8e71d0b4ac35cba66ec454dacbe0ceccd5c,e\c\ecdd3bfa7b1f3517ddf7c5215f0fe6c89d273bb0
+o
+?app/src/main/java/com/gg/busStation/ui/layout/StopItemView.java,3\7\37a17b1698f0dfe289da3a9021c69de57061a155

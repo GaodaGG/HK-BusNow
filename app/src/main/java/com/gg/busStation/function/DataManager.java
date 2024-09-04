@@ -1,7 +1,5 @@
 package com.gg.busStation.function;
 
-import android.widget.Toast;
-
 import com.baidu.mapapi.model.LatLng;
 import com.gg.busStation.data.bus.ETA;
 import com.gg.busStation.data.bus.Route;
@@ -15,8 +13,6 @@ import com.google.gson.JsonObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -73,7 +69,7 @@ public class DataManager {
         KMB.routeAndStopToETAs(route, stop, etas);
         CTB.routeAndStopToETAs(route, seq, etas);
 
-        Collections.sort(etas, (eta1, eta2) -> {
+        etas.sort((eta1, eta2) -> {
             if (eta1.getEta() == null || eta2.getEta() == null) {
                 return 0; // 处理空值（如果有）
             }
@@ -124,8 +120,13 @@ public class DataManager {
         long targetTimeMillis = targetDate.getTime();
         long timeDifferenceMillis = targetTimeMillis - currentTimeMillis;
 
-        // 将毫秒差转换为分钟
         long minutesRemaining = TimeUnit.MILLISECONDS.toMinutes(timeDifferenceMillis);
+        long remainderMillis = timeDifferenceMillis % TimeUnit.MINUTES.toMillis(1);
+
+        // 如果还有剩余的毫秒数，表示还没到下一分钟，手动加一分钟
+        if (remainderMillis > 0) {
+            minutesRemaining++;
+        }
 
         return minutesRemaining;
     }
@@ -191,6 +192,11 @@ public class DataManager {
             String stopUrl = CTB.routeToStopUrl + route.getRoute() + "/" + (Route.In.equals(route.getBound()) ? Route.Out : Route.In);
             String stopData = HttpClientHelper.getData(stopUrl);
             JsonArray jsonElements = JsonToBean.extractJsonArray(stopData);
+
+            if (jsonElements.isEmpty()) {
+                return;
+            }
+
             String stop = jsonElements.get(seq - 1).getAsJsonObject().get("stop").getAsString();
 
             String url = CTB.routeAndStopToETAUrl + stop + "/" + route.getRoute();
@@ -198,7 +204,7 @@ public class DataManager {
 
             for (JsonElement jsonElement : JsonToBean.extractJsonArray(data)) {
                 JsonObject jsonObject = jsonElement.getAsJsonObject();
-                if (!"".equals(jsonObject.get("eta").getAsString())){
+                if (!"".equals(jsonObject.get("eta").getAsString())) {
                     ETA eta = JsonToBean.jsonToETA(jsonObject);
                     etas.add(eta);
                 }

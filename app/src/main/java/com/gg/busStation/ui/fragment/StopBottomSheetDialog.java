@@ -6,13 +6,17 @@ import android.Manifest;
 import android.app.Dialog;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.view.View;
 import android.view.ViewTreeObserver;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.baidu.mapapi.model.LatLng;
+import com.gg.busStation.R;
 import com.gg.busStation.data.bus.ETA;
 import com.gg.busStation.data.layout.StopItemData;
 import com.gg.busStation.function.DataBaseManager;
@@ -74,7 +78,7 @@ public class StopBottomSheetDialog extends BottomSheetDialogFragment {
                 nearestStopIndex = findNearestStopIndex(mStops, location);
             }
 
-            StopListAdapter stopListAdapter = new StopListAdapter(data, requireActivity());
+            StopListAdapter stopListAdapter = new StopListAdapter(data);
             LinearLayoutManager manager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
             MaterialDividerItemDecoration divider = new MaterialDividerItemDecoration(requireContext(), LinearLayoutManager.VERTICAL);
 
@@ -83,18 +87,19 @@ public class StopBottomSheetDialog extends BottomSheetDialogFragment {
 
             int finalNearestStopIndex = nearestStopIndex;
             requireActivity().runOnUiThread(() -> {
-                binding.dialogList.setLayoutManager(manager);
-                binding.dialogList.addItemDecoration(divider);
-                binding.dialogList.setItemAnimator(null);
-                binding.dialogList.setItemViewCacheSize(30);
-                binding.dialogList.setAdapter(stopListAdapter);
+                RecyclerView dialogList = binding.dialogList;
+                dialogList.setLayoutManager(manager);
+                dialogList.addItemDecoration(divider);
+                dialogList.setItemAnimator(null);
+//                binding.dialogList.setItemViewCacheSize(30);
+                dialogList.setAdapter(stopListAdapter);
 
                 //跳转到最近的巴士站
-                binding.dialogList.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                dialogList.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
                     @Override
                     public void onGlobalLayout() {
-                        binding.dialogList.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                        ((LinearLayoutManager)binding.dialogList.getLayoutManager()).scrollToPositionWithOffset(finalNearestStopIndex, 0);
+                        dialogList.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                        ((LinearLayoutManager) dialogList.getLayoutManager()).scrollToPositionWithOffset(finalNearestStopIndex, 0);
                     }
                 });
             });

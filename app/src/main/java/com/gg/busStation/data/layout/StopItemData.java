@@ -1,5 +1,6 @@
 package com.gg.busStation.data.layout;
 
+import androidx.databinding.ObservableBoolean;
 import androidx.databinding.ObservableField;
 
 public class StopItemData{
@@ -11,6 +12,8 @@ public class StopItemData{
     private String stopId;
     private String bound;
     private String service_type;
+
+    public ObservableBoolean isOpen = new ObservableBoolean(false);
 
     public StopItemData(String stopNumber, String headline, String context, String bound, String service_type, String routeId, String stopId){
         this.stopNumber = new ObservableField<>(stopNumber);
