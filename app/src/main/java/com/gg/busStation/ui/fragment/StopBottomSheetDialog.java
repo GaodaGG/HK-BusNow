@@ -27,6 +27,7 @@ import com.gg.busStation.data.layout.ListItemData;
 import com.gg.busStation.databinding.DialogBusBinding;
 import com.gg.busStation.function.location.LocationHelper;
 import com.gg.busStation.ui.adapter.StopListAdapter;
+import com.gg.busStation.ui.layout.StopItemView;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.google.android.material.divider.MaterialDividerItemDecoration;
 
@@ -91,16 +92,14 @@ public class StopBottomSheetDialog extends BottomSheetDialogFragment {
                 dialogList.setLayoutManager(manager);
                 dialogList.addItemDecoration(divider);
                 dialogList.setItemAnimator(null);
-//                binding.dialogList.setItemViewCacheSize(30);
                 dialogList.setAdapter(stopListAdapter);
 
                 //跳转到最近的巴士站
-                dialogList.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-                    @Override
-                    public void onGlobalLayout() {
-                        dialogList.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                        ((LinearLayoutManager) dialogList.getLayoutManager()).scrollToPositionWithOffset(finalNearestStopIndex, 0);
-                    }
+//                ((LinearLayoutManager) dialogList.getLayoutManager()).scrollToPositionWithOffset(finalNearestStopIndex, 0);
+                dialogList.scrollToPosition(finalNearestStopIndex);
+                dialogList.post(() -> {
+                    StopItemView view = (StopItemView) dialogList.findViewHolderForAdapterPosition(finalNearestStopIndex).itemView;
+                    view.post(() -> view.performClick());
                 });
             });
         }).start();

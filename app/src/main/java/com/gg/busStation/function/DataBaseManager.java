@@ -6,6 +6,8 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.Handler;
+import android.os.Looper;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -37,7 +39,8 @@ public class DataBaseManager {
     }
 
     public static void initData(List<Route> routes, List<Stop> stops) {
-//        ((Activity)context).runOnUiThread(() -> Toast.makeText(context, "正在更新数据", Toast.LENGTH_SHORT).show());
+        Handler handler = new Handler(Looper.getMainLooper());
+        handler.post(() -> Toast.makeText(context, "正在更新数据", Toast.LENGTH_SHORT).show());
 
         //清除老数据
         db.delete(SQLConstants.routeDBName, null, null);

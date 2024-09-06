@@ -7,6 +7,7 @@ import android.graphics.Typeface;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -118,26 +119,26 @@ public class StopItemView extends LinearLayout {
         binding.executePendingBindings();
         this.isOpen = data.isOpen.get();  // 绑定初始状态
 
-        // 计算初始展开和收起的高度
-        this.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-            @Override
-            public void onGlobalLayout() {
-                if (closeHeight == 0) {
-                    closeHeight = binding.listItemLayout.getHeight();
-                }
-                if (openHeight == 0) {
-                    openHeight = StopItemView.this.getHeight();
-                }
-                ViewGroup.LayoutParams layoutParams = StopItemView.this.getLayoutParams();
-                layoutParams.height = closeHeight;
+        if (data.getHeadline().equals("宏天广场")) Log.d("Dialog", data.getHeadline());
 
-                StopItemView.this.setLayoutParams(layoutParams);
-                StopItemView.this.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+        // 计算初始展开和收起的高度
+        this.post(() -> {
+            if (closeHeight == 0) {
+                closeHeight = binding.listItemLayout.getHeight();
             }
+
+            if (openHeight == 0) {
+                openHeight = StopItemView.this.getHeight();
+            }
+
+            ViewGroup.LayoutParams layoutParams = StopItemView.this.getLayoutParams();
+            layoutParams.height = isOpen ? openHeight : closeHeight;
+
+            StopItemView.this.setLayoutParams(layoutParams);
         });
     }
 
-    private void toggle() {
+    public void toggle() {
         isOpen = !isOpen;
         binding.getData().isOpen.set(isOpen);
         adjustViewHeight(isOpen, getLayoutParams());
