@@ -34,14 +34,6 @@ public class SearchFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         binding = FragmentSearchBinding.inflate(inflater, container, false);
 
-        StopItemView itemView = new StopItemView(requireActivity());
-        itemView.bindData(new StopItemData("1", "摩士公园", "车费:$6.4", Route.Out, "1","1", "8S3JWN1034UTB"));
-
-        binding.testTransCard.addView(itemView);
-
-        for (int i = 0; i < 3; i++) {
-            ((LinearLayout) itemView.findViewById(R.id.dialog_time_list)).addView(new ETAListLayout(requireActivity(), i + 10, "延迟班次", "九巴"));
-        }
         return binding.getRoot();
     }
 

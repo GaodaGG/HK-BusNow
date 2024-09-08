@@ -12,10 +12,12 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
+import com.baidu.mapapi.model.LatLng;
 import com.gg.busStation.data.bus.Route;
 import com.gg.busStation.data.bus.Stop;
 import com.gg.busStation.data.database.DBOpenHelper;
 import com.gg.busStation.data.database.SQLConstants;
+import com.gg.busStation.function.location.LocationHelper;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -140,10 +142,16 @@ public class DataBaseManager {
         return settingsMap;
     }
 
-    public static List<Route> getRoutes(int rows){
+    public static List<Route> getRoutes(int rows) {
         List<Route> routes = new ArrayList<>();
+        Cursor cursor;
+        if (rows == 0) {
+            //获取所有数据
+            cursor = db.rawQuery("SELECT * FROM " + SQLConstants.routeDBName, null);
+        } else {
+            cursor = db.query(SQLConstants.routeDBName, null, null, null, null, null, null, String.valueOf(rows));
+        }
 
-        Cursor cursor = db.query(SQLConstants.routeDBName, null, null, null, null, null, null, String.valueOf(rows));
         if (cursor.getCount() < 1) {
             cursor.close();
             return routes;
@@ -173,10 +181,19 @@ public class DataBaseManager {
         return routes;
     }
 
-    public static List<Stop> getStops(int rows) {
+    public static List<Stop> getStops(int rows, int maxDistance) {
         List<Stop> stops = new ArrayList<>();
 
-        Cursor cursor = db.query(SQLConstants.stopDBName, null, null, null, null, null, null, String.valueOf(rows));
+        Cursor cursor;
+        LatLng location = null;
+        if (rows == 0) {
+            //获取所有数据
+            cursor = db.rawQuery("SELECT * FROM " + SQLConstants.stopDBName, null);
+            location = LocationHelper.getLocation();
+        } else {
+            cursor = db.query(SQLConstants.stopDBName, null, null, null, null, null, null, String.valueOf(rows));
+        }
+
         if (cursor.getCount() < 1) {
             cursor.close();
             return stops;
@@ -184,13 +201,26 @@ public class DataBaseManager {
         cursor.moveToFirst();
 
         for (int i = 0; i < cursor.getCount(); i++) {
+            String lat = cursor.getString(cursor.getColumnIndexOrThrow("lat"));
+            String lon = cursor.getString(cursor.getColumnIndexOrThrow("long"));
+
+            if (rows == 0) {
+                LatLng stopLocation = new LatLng(Double.parseDouble(lat), Double.parseDouble(lon));
+                double distance = LocationHelper.distance(location, stopLocation);
+
+                if (distance > maxDistance) {
+                    cursor.moveToNext();
+                    continue;
+                }
+            }
+
             Stop stop = new Stop(
                     cursor.getString(cursor.getColumnIndexOrThrow("stop")),
                     cursor.getString(cursor.getColumnIndexOrThrow("name_en")),
                     cursor.getString(cursor.getColumnIndexOrThrow("name_tc")),
                     cursor.getString(cursor.getColumnIndexOrThrow("name_sc")),
-                    cursor.getString(cursor.getColumnIndexOrThrow("lat")),
-                    cursor.getString(cursor.getColumnIndexOrThrow("long"))
+                    lat,
+                    lon
             );
 
             stops.add(stop);
@@ -201,7 +231,6 @@ public class DataBaseManager {
 
         return stops;
     }
-
 
 
     @Nullable

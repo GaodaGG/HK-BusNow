@@ -7,4 +7,5 @@
     <string name="dialog_loading">正在加载</string>
     <string name="author_name">码农</string>
     <string name="about_developers">开发者</string>
+    <string name="search_hint">搜索路线</string>
 </resources>

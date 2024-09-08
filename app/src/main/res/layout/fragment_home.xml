@@ -11,13 +11,19 @@
         android:layout_height="match_parent"
         android:id="@+id/bus_scroll_view">
 
-        <androidx.recyclerview.widget.RecyclerView
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:id="@+id/bus_list_view"
-            android:paddingBottom="90dp"
-            android:clipToPadding="false"
-            tools:listitem="@layout/layout_view_info" />
+            android:orientation="vertical">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/bus_list_view"
+                android:paddingBottom="90dp"
+                android:clipToPadding="false"
+                tools:listitem="@layout/item_bus" />
+        </LinearLayout>
 
     </androidx.core.widget.NestedScrollView>
 

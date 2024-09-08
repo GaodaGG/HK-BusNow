@@ -23,6 +23,7 @@ import com.gg.busStation.ui.adapter.MainAdapter;
 import com.gg.busStation.databinding.FragmentHomeBinding;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.divider.MaterialDividerItemDecoration;
+import com.google.android.material.search.SearchView;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -53,8 +54,7 @@ public class HomeFragment extends Fragment {
                     .show();
 
             new Thread(() -> {
-                //TODO 获取最近站点
-                // 数量限制在500米内
+                //TODO 将点击过的站点放在列表最前面
                 List<ListItemData> data = new ArrayList<>();
                 data.add(new ListItemData("107", "土瓜湾站", "九龙湾 -> 华贵", Route.In, "1"));
 

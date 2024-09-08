@@ -85,13 +85,6 @@ public class DataManager {
             return KMB.routeToStops(route, itemStops);
         }
 
-//        String url = CTB.routeToStopUrl + route.getRoute() + "/" + route.getBound();
-//        String data = HttpClientHelper.getData(url);
-//        for (JsonElement jsonElement : JsonToBean.extractJsonArray(data)) {
-//
-//        }
-
-
         return itemStops;
     }
 

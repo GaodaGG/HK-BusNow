@@ -33,7 +33,7 @@
                 android:layout_gravity="center"
                 android:transitionName="item_number"
                 android:text="@{data.stopNumber, default = 1}"
-                android:textColor="@color/material_dynamic_neutral0"
+                android:textColor="?attr/colorOnSurface"
                 android:textSize="22sp" />
 
         </com.google.android.material.card.MaterialCardView>
@@ -56,7 +56,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@{data.headline, default = Headline}"
-                android:textColor="@color/material_dynamic_neutral0"
+                android:textColor="?attr/colorOnSurface"
                 android:textSize="16sp" />
 
             <TextView

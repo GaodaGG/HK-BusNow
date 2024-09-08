@@ -31,7 +31,9 @@ import com.gg.busStation.function.DataManager;
 import com.google.android.material.motion.MotionUtils;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class StopItemView extends LinearLayout {
     private ItemBusExpendBinding binding;
@@ -70,6 +72,34 @@ public class StopItemView extends LinearLayout {
         });
     }
 
+    public void bindData(StopItemData data) {
+        binding.setData(data);
+        binding.executePendingBindings();
+        this.isOpen = data.isOpen.get();  // 绑定初始状态
+
+//        if (!etaViews.isEmpty()) {
+//            LinearLayout timeList = binding.dialogTimeList;
+//            timeList.removeAllViews();
+//            for (View etaView : etaViews) {
+//                timeList.addView(etaView);
+//            }
+//        }
+
+        // 计算初始展开和收起的高度
+        this.post(() -> {
+            if (closeHeight == 0) {
+                closeHeight = binding.listItemLayout.getHeight();
+            }
+
+            if (openHeight == 0) {
+                openHeight = StopItemView.this.getHeight();
+            }
+
+            ViewGroup.LayoutParams layoutParams = StopItemView.this.getLayoutParams();
+            switchItemHeight(isOpen, false, layoutParams);
+        });
+    }
+
     private void getETA(Context context, View view) {
         if (isOpen) return;
 
@@ -81,10 +111,12 @@ public class StopItemView extends LinearLayout {
 
         LinearLayout timeList = view.findViewById(R.id.dialog_time_list);
         timeList.removeAllViews();
+
         new Thread(() -> {
             try {
                 boolean hasBus = false;
 
+                List<View> etaViews = new ArrayList<>();
                 for (ETA eta : DataManager.routeAndStopToETAs(route, stop, Integer.parseInt((String) binding.listItemNumber.getText()))) {
                     Date date = eta.getEta();
                     hasBus = true;
@@ -99,7 +131,10 @@ public class StopItemView extends LinearLayout {
                         ((TextView) etaView).setTextSize(20);
                         ((TextView) etaView).setTypeface(null, Typeface.BOLD);
                     }
-                    mainHandler.post(() -> timeList.addView(etaView));
+                    mainHandler.post(() -> {
+                        etaViews.add(etaView);
+                        timeList.addView(etaView);
+                    });
                 }
 
                 if (!hasBus) {
@@ -114,30 +149,6 @@ public class StopItemView extends LinearLayout {
 
     }
 
-    public void bindData(StopItemData data) {
-        binding.setData(data);
-        binding.executePendingBindings();
-        this.isOpen = data.isOpen.get();  // 绑定初始状态
-
-        if (data.getHeadline().equals("宏天广场")) Log.d("Dialog", data.getHeadline());
-
-        // 计算初始展开和收起的高度
-        this.post(() -> {
-            if (closeHeight == 0) {
-                closeHeight = binding.listItemLayout.getHeight();
-            }
-
-            if (openHeight == 0) {
-                openHeight = StopItemView.this.getHeight();
-            }
-
-            ViewGroup.LayoutParams layoutParams = StopItemView.this.getLayoutParams();
-            layoutParams.height = isOpen ? openHeight : closeHeight;
-
-            StopItemView.this.setLayoutParams(layoutParams);
-        });
-    }
-
     public void toggle() {
         isOpen = !isOpen;
         binding.getData().isOpen.set(isOpen);
@@ -146,15 +157,21 @@ public class StopItemView extends LinearLayout {
 
     private void adjustViewHeight(boolean isOpen, ViewGroup.LayoutParams layoutParams) {
         if (layoutParams instanceof RecyclerView.LayoutParams recyclerViewLayoutParams) {
-            switchItemHeight(isOpen, recyclerViewLayoutParams);
+            switchItemHeight(isOpen, true, recyclerViewLayoutParams);
         } else {
-            switchItemHeight(isOpen, layoutParams);
+            switchItemHeight(isOpen, true, layoutParams);
         }
     }
 
-    private void switchItemHeight(boolean isOpen, ViewGroup.LayoutParams layoutParams) {
+    private void switchItemHeight(boolean isOpen, boolean hasAnimator, ViewGroup.LayoutParams layoutParams) {
         int startHeight = isOpen ? closeHeight : openHeight;
         int endHeight = isOpen ? openHeight : closeHeight;
+
+        if (!hasAnimator) {
+            layoutParams.height = endHeight;
+            this.setLayoutParams(layoutParams);
+            return;
+        }
 
         ValueAnimator valueAnimator = ValueAnimator.ofInt(startHeight, endHeight);
         valueAnimator.setDuration(isOpen ? 250 : 450);

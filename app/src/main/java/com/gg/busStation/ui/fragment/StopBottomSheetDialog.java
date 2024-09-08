@@ -95,8 +95,7 @@ public class StopBottomSheetDialog extends BottomSheetDialogFragment {
                 dialogList.setAdapter(stopListAdapter);
 
                 //跳转到最近的巴士站
-//                ((LinearLayoutManager) dialogList.getLayoutManager()).scrollToPositionWithOffset(finalNearestStopIndex, 0);
-                dialogList.scrollToPosition(finalNearestStopIndex);
+                ((LinearLayoutManager) dialogList.getLayoutManager()).scrollToPositionWithOffset(finalNearestStopIndex, 0);
                 dialogList.post(() -> {
                     StopItemView view = (StopItemView) dialogList.findViewHolderForAdapterPosition(finalNearestStopIndex).itemView;
                     view.post(() -> view.performClick());

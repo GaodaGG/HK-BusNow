@@ -7,4 +7,5 @@
     <string name="author_account" translatable="false">\@GaodaGG</string>
     <string name="about_developers">Developers</string>
     <string name="dialog_loading">Loading</string>
+    <string name="search_hint">Search for a route</string>
 </resources>
