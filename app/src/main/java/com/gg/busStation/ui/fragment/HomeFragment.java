@@ -53,13 +53,11 @@ public class HomeFragment extends Fragment {
                     .show();
 
             new Thread(() -> {
-                //TODO 将点击过的站点放在列表最前面
                 List<ListItemData> data = new ArrayList<>();
-//                data.add(new ListItemData("107", "土瓜湾站", "九龙湾 -> 华贵", Route.In, "1"));
 
                 try {
                     DataManager.initData();
-                    List<Route> routes = DataBaseManager.getRoutes(50);
+                    List<Route> routes = DataBaseManager.getRoutesHistory();
 
                     for (Route route : routes) {
                         ListItemData listItemData = new ListItemData(route.getRoute(), route.getBound(), route.getOrig("zh_CN") + " -> " + route.getDest("zh_CN"), route.getBound(), route.getService_type());

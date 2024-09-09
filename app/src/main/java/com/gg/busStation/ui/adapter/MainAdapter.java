@@ -2,9 +2,11 @@ package com.gg.busStation.ui.adapter;
 
 import android.app.Activity;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.DiffUtil;
@@ -14,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.gg.busStation.data.layout.ListItemData;
 import com.gg.busStation.R;
 import com.gg.busStation.databinding.ItemBusBinding;
+import com.gg.busStation.function.DataBaseManager;
 import com.gg.busStation.ui.fragment.StopBottomSheetDialog;
 
 import java.util.List;
@@ -46,9 +49,6 @@ public class MainAdapter extends ListAdapter<ListItemData, MainAdapter.ViewHolde
         LayoutInflater inflater = LayoutInflater.from(mActivity);
         ItemBusBinding binding = DataBindingUtil.inflate(inflater, R.layout.item_bus, parent, false);
 
-        binding.listItemLayout.setOnClickListener(view -> {
-            //TODO 点击后存入首页的历史记录
-        });
         return new ViewHolder(binding);
     }
 
@@ -57,7 +57,20 @@ public class MainAdapter extends ListAdapter<ListItemData, MainAdapter.ViewHolde
         ListItemData listItemData = getItem(position);
         holder.getBinding().setData(listItemData);
 
-        holder.itemView.setOnClickListener(view -> new StopBottomSheetDialog(listItemData).show(((AppCompatActivity)mActivity).getSupportFragmentManager(), StopBottomSheetDialog.TAG));
+        holder.itemView.setOnClickListener(view -> {
+            new StopBottomSheetDialog(listItemData).show(((AppCompatActivity) mActivity).getSupportFragmentManager(), StopBottomSheetDialog.TAG);
+            DataBaseManager.addRoutesHistory(listItemData.getStopNumber(), listItemData.getBound(), listItemData.getService_type());
+        });
+    }
+
+    @Override
+    public void submitList(@Nullable List<ListItemData> list) {
+        super.submitList(list);
+        if (list == null || list.isEmpty()) {
+            mActivity.findViewById(R.id.main_error_layout).setVisibility(View.VISIBLE);
+        } else {
+            mActivity.findViewById(R.id.main_error_layout).setVisibility(View.GONE);
+        }
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder{

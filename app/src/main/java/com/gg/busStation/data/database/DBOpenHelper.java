@@ -36,12 +36,16 @@ public class DBOpenHelper extends SQLiteOpenHelper {
             db.insert(SQLConstants.settingsDBName, null, contentValues);
         }
 
+        if (!isTableExist(db, SQLConstants.routeDBName)) {
+            db.execSQL(SQLConstants.createRouteDBCommand);
+        }
+
         if (!isTableExist(db, SQLConstants.stopDBName)) {
             db.execSQL(SQLConstants.createStopDBCommand);
         }
 
-        if (!isTableExist(db, SQLConstants.routeDBName)) {
-            db.execSQL(SQLConstants.createRouteDBCommand);
+        if (!isTableExist(db, SQLConstants.routesHistoryDBName)) {
+            db.execSQL(SQLConstants.createRoutesHistoryDBCommand);
         }
     }
 

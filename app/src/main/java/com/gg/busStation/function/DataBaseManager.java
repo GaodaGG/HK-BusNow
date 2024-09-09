@@ -20,8 +20,6 @@ import com.gg.busStation.data.database.SQLConstants;
 import com.gg.busStation.function.location.LocationHelper;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -156,41 +154,6 @@ public class DataBaseManager {
         routes.sort((r1, r2) -> naturalOrderCompare(r1.getRoute(), r2.getRoute()));
 
         return routes;
-    }
-
-    private static int naturalOrderCompare(String routeA, String routeB) {
-        int i = 0, j = 0;
-        while (i < routeA.length() && j < routeB.length()) {
-            char charA = routeA.charAt(i);
-            char charB = routeB.charAt(j);
-
-            // 比较数字部分
-            if (Character.isDigit(charA) && Character.isDigit(charB)) {
-                int startA = i, startB = j;
-
-                // 提取数字部分
-                while (i < routeA.length() && Character.isDigit(routeA.charAt(i))) i++;
-                while (j < routeB.length() && Character.isDigit(routeB.charAt(j))) j++;
-
-                // 转换为数字进行比较
-                Integer numA = Integer.parseInt(routeA.substring(startA, i));
-                Integer numB = Integer.parseInt(routeB.substring(startB, j));
-
-                if (!numA.equals(numB)) {
-                    return numA.compareTo(numB);
-                }
-            } else {
-                // 比较字母部分
-                if (charA != charB) {
-                    return Character.compare(charA, charB);
-                }
-                i++;
-                j++;
-            }
-        }
-
-        // 比较剩余部分
-        return routeA.length() - routeB.length();
     }
 
     @NonNull
@@ -340,5 +303,77 @@ public class DataBaseManager {
 
         cursor.close();
         return stop;
+    }
+
+    public static void addRoutesHistory(String routeId, String bound, String service_type) {
+        long timestamp = System.currentTimeMillis();
+
+        ContentValues contentValues = new ContentValues();
+        contentValues.put("route", routeId);
+        contentValues.put("bound", bound);
+        contentValues.put("service_type", service_type);
+        contentValues.put("timestamp", timestamp);
+
+        db.insertWithOnConflict(SQLConstants.routesHistoryDBName, null, contentValues, SQLiteDatabase.CONFLICT_REPLACE);
+    }
+
+    public static List<Route> getRoutesHistory() {
+        Cursor cursor = db.query(SQLConstants.routesHistoryDBName, null, null, null, null, null, "timestamp DESC");
+        List<Route> routes = new ArrayList<>();
+        if (cursor.getCount() < 1) {
+            cursor.close();
+            return routes;
+        }
+        cursor.moveToFirst();
+
+        for (int i = 0; i < cursor.getCount(); i++) {
+            Route route = findRoute(
+                    cursor.getString(cursor.getColumnIndexOrThrow("route")),
+                    cursor.getString(cursor.getColumnIndexOrThrow("bound")),
+                    cursor.getString(cursor.getColumnIndexOrThrow("service_type"))
+            );
+
+            routes.add(route);
+            cursor.moveToNext();
+        }
+
+        cursor.close();
+
+        return routes;
+    }
+
+    private static int naturalOrderCompare(String routeA, String routeB) {
+        int i = 0, j = 0;
+        while (i < routeA.length() && j < routeB.length()) {
+            char charA = routeA.charAt(i);
+            char charB = routeB.charAt(j);
+
+            // 比较数字部分
+            if (Character.isDigit(charA) && Character.isDigit(charB)) {
+                int startA = i, startB = j;
+
+                // 提取数字部分
+                while (i < routeA.length() && Character.isDigit(routeA.charAt(i))) i++;
+                while (j < routeB.length() && Character.isDigit(routeB.charAt(j))) j++;
+
+                // 转换为数字进行比较
+                Integer numA = Integer.parseInt(routeA.substring(startA, i));
+                Integer numB = Integer.parseInt(routeB.substring(startB, j));
+
+                if (!numA.equals(numB)) {
+                    return numA.compareTo(numB);
+                }
+            } else {
+                // 比较字母部分
+                if (charA != charB) {
+                    return Character.compare(charA, charB);
+                }
+                i++;
+                j++;
+            }
+        }
+
+        // 比较剩余部分
+        return routeA.length() - routeB.length();
     }
 }

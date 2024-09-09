@@ -27,7 +27,8 @@
         <activity
             android:name=".ui.activity.MainActivity"
             android:exported="true"
-            android:theme="@style/Theme.BusStation">
+            android:theme="@style/Theme.BusStation"
+            android:windowSoftInputMode="adjustPan|stateHidden">
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

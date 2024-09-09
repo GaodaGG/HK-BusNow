@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -93,7 +94,7 @@ public class MainActivity extends AppCompatActivity {
             NavigationUI.onNavDestinationSelected(item, navController);
             binding.toolBar.setNavigationIcon(null);
 
-            MenuItem menuItem = binding.toolBar.getMenu().findItem(R.id.search_fragment);
+            MenuItem menuItem = binding.toolBar.getMenu().findItem(R.id.search_toolbar_item);
             if (item.getItemId() != R.id.home_fragment) {
                 menuItem.setVisible(false);
                 menuItem.collapseActionView();
@@ -124,7 +125,7 @@ public class MainActivity extends AppCompatActivity {
     private void setRouteList(String newText) {
         List<Route> routes;
         if (newText.isEmpty()) {
-            routes = DataBaseManager.getRoutes(50);
+            routes = DataBaseManager.getRoutesHistory();
         } else {
             routes = DataBaseManager.getRoutes(newText);
         }
