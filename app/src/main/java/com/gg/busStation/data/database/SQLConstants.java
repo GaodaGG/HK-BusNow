@@ -29,7 +29,6 @@ public class SQLConstants {
             ");";
 
 //    public static final String createFareDBCommand = "CREATE TABLE IF NOT EXISTS " + fareDBName + " (" +
-
     public static final String createSettingsDBCommand = "CREATE TABLE IF NOT EXISTS " + settingsDBName + " (" +
             "key TEXT NOT NULL," +
             "value TEXT NOT NULL" +

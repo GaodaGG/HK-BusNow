@@ -23,7 +23,6 @@ import com.gg.busStation.ui.adapter.MainAdapter;
 import com.gg.busStation.databinding.FragmentHomeBinding;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.divider.MaterialDividerItemDecoration;
-import com.google.android.material.search.SearchView;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -56,14 +55,13 @@ public class HomeFragment extends Fragment {
             new Thread(() -> {
                 //TODO 将点击过的站点放在列表最前面
                 List<ListItemData> data = new ArrayList<>();
-                data.add(new ListItemData("107", "土瓜湾站", "九龙湾 -> 华贵", Route.In, "1"));
+//                data.add(new ListItemData("107", "土瓜湾站", "九龙湾 -> 华贵", Route.In, "1"));
 
                 try {
                     DataManager.initData();
                     List<Route> routes = DataBaseManager.getRoutes(50);
 
-                    for (int i = 0; i < routes.size(); i++) {
-                        Route route = routes.get(i);
+                    for (Route route : routes) {
                         ListItemData listItemData = new ListItemData(route.getRoute(), route.getBound(), route.getOrig("zh_CN") + " -> " + route.getDest("zh_CN"), route.getBound(), route.getService_type());
                         data.add(listItemData);
                     }
@@ -83,7 +81,8 @@ public class HomeFragment extends Fragment {
     }
 
     private void initView(List<ListItemData> data) {
-        MainAdapter mainAdapter = new MainAdapter(data, requireActivity());
+        MainAdapter mainAdapter = new MainAdapter(requireActivity());
+        mainAdapter.submitList(data);
         LinearLayoutManager manager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
         MaterialDividerItemDecoration divider = new MaterialDividerItemDecoration(requireContext(), LinearLayoutManager.VERTICAL);
 

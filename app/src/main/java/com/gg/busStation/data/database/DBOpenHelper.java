@@ -27,7 +27,7 @@ public class DBOpenHelper extends SQLiteOpenHelper {
 
             contentValues.clear();
             contentValues.put("key", "updateTime");
-            contentValues.put("value", String.valueOf(60*60*24*7));
+            contentValues.put("value", String.valueOf(1000*60*60*24*7));
             db.insert(SQLConstants.settingsDBName, null, contentValues);
 
             contentValues.clear();

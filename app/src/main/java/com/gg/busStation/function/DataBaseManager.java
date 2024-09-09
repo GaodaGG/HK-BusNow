@@ -1,6 +1,5 @@
 package com.gg.busStation.function;
 
-import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.pm.PackageManager;
@@ -10,6 +9,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.baidu.mapapi.model.LatLng;
@@ -20,6 +20,8 @@ import com.gg.busStation.data.database.SQLConstants;
 import com.gg.busStation.function.location.LocationHelper;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -142,8 +144,57 @@ public class DataBaseManager {
         return settingsMap;
     }
 
+    @NonNull
+    public static List<Route> getRoutes(String routeId) {
+        String selection = "route LIKE ?";
+        String[] selectionArgs = {routeId + "%"};
+        Cursor cursor = db.query(SQLConstants.routeDBName, null, selection, selectionArgs, null, null, null);
+
+
+        List<Route> routes = getRoutes(cursor);
+        // 使用自然顺序对 routes 列表进行排序
+        routes.sort((r1, r2) -> naturalOrderCompare(r1.getRoute(), r2.getRoute()));
+
+        return routes;
+    }
+
+    private static int naturalOrderCompare(String routeA, String routeB) {
+        int i = 0, j = 0;
+        while (i < routeA.length() && j < routeB.length()) {
+            char charA = routeA.charAt(i);
+            char charB = routeB.charAt(j);
+
+            // 比较数字部分
+            if (Character.isDigit(charA) && Character.isDigit(charB)) {
+                int startA = i, startB = j;
+
+                // 提取数字部分
+                while (i < routeA.length() && Character.isDigit(routeA.charAt(i))) i++;
+                while (j < routeB.length() && Character.isDigit(routeB.charAt(j))) j++;
+
+                // 转换为数字进行比较
+                Integer numA = Integer.parseInt(routeA.substring(startA, i));
+                Integer numB = Integer.parseInt(routeB.substring(startB, j));
+
+                if (!numA.equals(numB)) {
+                    return numA.compareTo(numB);
+                }
+            } else {
+                // 比较字母部分
+                if (charA != charB) {
+                    return Character.compare(charA, charB);
+                }
+                i++;
+                j++;
+            }
+        }
+
+        // 比较剩余部分
+        return routeA.length() - routeB.length();
+    }
+
+    @NonNull
     public static List<Route> getRoutes(int rows) {
-        List<Route> routes = new ArrayList<>();
         Cursor cursor;
         if (rows == 0) {
             //获取所有数据
@@ -152,6 +203,16 @@ public class DataBaseManager {
             cursor = db.query(SQLConstants.routeDBName, null, null, null, null, null, null, String.valueOf(rows));
         }
 
+        List<Route> routes = getRoutes(cursor);
+
+        // 使用自然顺序对 routes 列表进行排序
+        routes.sort((r1, r2) -> naturalOrderCompare(r1.getRoute(), r2.getRoute()));
+
+        return routes;
+    }
+
+    private static List<Route> getRoutes(Cursor cursor) {
+        List<Route> routes = new ArrayList<>();
         if (cursor.getCount() < 1) {
             cursor.close();
             return routes;
@@ -182,7 +243,6 @@ public class DataBaseManager {
     }
 
     public static List<Stop> getStops(int rows, int maxDistance) {
-        List<Stop> stops = new ArrayList<>();
 
         Cursor cursor;
         LatLng location = null;
@@ -194,6 +254,7 @@ public class DataBaseManager {
             cursor = db.query(SQLConstants.stopDBName, null, null, null, null, null, null, String.valueOf(rows));
         }
 
+        List<Stop> stops = new ArrayList<>();
         if (cursor.getCount() < 1) {
             cursor.close();
             return stops;

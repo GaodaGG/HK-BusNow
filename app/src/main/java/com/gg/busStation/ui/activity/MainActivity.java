@@ -4,28 +4,34 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.activity.OnBackPressedCallback;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
-import androidx.core.view.MenuItemCompat;
 import androidx.core.view.WindowCompat;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.transition.TransitionManager;
 
 import com.gg.busStation.R;
+import com.gg.busStation.data.bus.Route;
+import com.gg.busStation.data.layout.ListItemData;
 import com.gg.busStation.databinding.ActivityMainBinding;
 import com.gg.busStation.function.DataBaseManager;
 import com.gg.busStation.function.location.LocationHelper;
+import com.gg.busStation.ui.adapter.MainAdapter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     private ActivityMainBinding binding;
-    private AppBarConfiguration appBarConfiguration;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
         try {
             LocationHelper.init(this);
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            Toast.makeText(this, "无法获取位置信息", Toast.LENGTH_SHORT).show();
         }
 
         DataBaseManager.initDB(this);
@@ -44,8 +50,14 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.top_bar_menu, menu);
-        SearchView searchView = (SearchView) menu.findItem(R.id.search_fragment).getActionView();
+        MenuItem item = menu.findItem(R.id.search_toolbar_item);
+        SearchView searchView = (SearchView) item.getActionView();
+        if (searchView == null) {
+            return false;
+        }
+
         searchView.setQueryHint(getResources().getString(R.string.search_hint));
+
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -55,10 +67,12 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                Toast.makeText(MainActivity.this, newText, Toast.LENGTH_SHORT).show();
+                setRouteList(newText);
+
                 return false;
             }
         });
+
         return true;
     }
 
@@ -71,7 +85,7 @@ public class MainActivity extends AppCompatActivity {
 
         WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
-        appBarConfiguration = new AppBarConfiguration.Builder(navController.getGraph()).build();
+        AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(navController.getGraph()).build();
 
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
 
@@ -93,7 +107,7 @@ public class MainActivity extends AppCompatActivity {
         getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
-                if (binding.bottomNavigation.getSelectedItemId() != R.id.home_fragment){
+                if (binding.bottomNavigation.getSelectedItemId() != R.id.home_fragment) {
                     binding.bottomNavigation.setSelectedItemId(R.id.home_fragment);
                     return;
                 }
@@ -105,5 +119,26 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+    }
+
+    private void setRouteList(String newText) {
+        List<Route> routes;
+        if (newText.isEmpty()) {
+            routes = DataBaseManager.getRoutes(50);
+        } else {
+            routes = DataBaseManager.getRoutes(newText);
+        }
+
+        RecyclerView recyclerView = findViewById(R.id.bus_list_view);
+        MainAdapter adapter = (MainAdapter) recyclerView.getAdapter();
+        List<ListItemData> data = new ArrayList<>();
+        for (Route route : routes) {
+            ListItemData listItemData = new ListItemData(route.getRoute(), route.getBound(), route.getOrig("zh_CN") + " -> " + route.getDest("zh_CN"), route.getBound(), route.getService_type());
+            data.add(listItemData);
+        }
+
+        if (adapter != null) {
+            adapter.submitList(data);
+        }
     }
 }

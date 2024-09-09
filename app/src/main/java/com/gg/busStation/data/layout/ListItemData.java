@@ -2,6 +2,8 @@ package com.gg.busStation.data.layout;
 
 import androidx.databinding.ObservableField;
 
+import java.util.Objects;
+
 public class ListItemData {
     public ObservableField<String> stopNumber;
     public ObservableField<String> headline;
@@ -56,5 +58,18 @@ public class ListItemData {
 
     public void setBound(String bound) {
         this.bound = bound;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ListItemData that = (ListItemData) o;
+        return Objects.equals(stopNumber, that.stopNumber) && Objects.equals(headline, that.headline) && Objects.equals(context, that.context) && Objects.equals(bound, that.bound) && Objects.equals(service_type, that.service_type);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(stopNumber, headline, context, bound, service_type);
     }
 }
