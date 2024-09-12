@@ -8,16 +8,18 @@ public class ListItemData {
     public ObservableField<String> stopNumber;
     public ObservableField<String> headline;
     public ObservableField<String> context;
+    public ObservableField<String> tips;
 
     private String bound;
     private String service_type;
 
-    public ListItemData(String stopNumber, String headline, String context, String bound, String service_type){
+    public ListItemData(String stopNumber, String headline, String context, String bound, String service_type, String tips) {
         this.stopNumber = new ObservableField<>(stopNumber);
         this.headline = new ObservableField<>(headline);
         this.context = new ObservableField<>(context);
         this.bound = bound;
         this.service_type = service_type;
+        this.tips = new ObservableField<>(tips);
     }
 
     public String getStopNumber() {

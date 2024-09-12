@@ -26,10 +26,8 @@ import java.util.Map;
 
 public class DataBaseManager {
     private static SQLiteDatabase db;
-    private static Context context;
 
     public static void initDB(Context context) {
-        DataBaseManager.context = context;
         int version;
         try {
             version = (int) context.getPackageManager().getPackageInfo(context.getPackageName(), 0).getLongVersionCode();
@@ -40,7 +38,7 @@ public class DataBaseManager {
         db = dbOpenHelper.getWritableDatabase();
     }
 
-    public static void initData(List<Route> routes, List<Stop> stops) {
+    public static void initData(List<Route> routes, List<Stop> stops, Context context) {
         Handler handler = new Handler(Looper.getMainLooper());
         handler.post(() -> Toast.makeText(context, "正在更新数据", Toast.LENGTH_SHORT).show());
 

@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -56,15 +57,21 @@ public class HomeFragment extends Fragment {
                 List<ListItemData> data = new ArrayList<>();
 
                 try {
-                    DataManager.initData();
+                    DataManager.initData(requireContext());
                     List<Route> routes = DataBaseManager.getRoutesHistory();
 
                     for (Route route : routes) {
-                        ListItemData listItemData = new ListItemData(route.getRoute(), route.getBound(), route.getOrig("zh_CN") + " -> " + route.getDest("zh_CN"), route.getBound(), route.getService_type());
+                        String tips = route.getCo().equals(Route.coCTB) ? "(城巴路线)" : "";
+                        ListItemData listItemData = new ListItemData(route.getRoute(),
+                                route.getBound(),
+                                route.getOrig("zh_CN") + " -> " + route.getDest("zh_CN"),
+                                route.getBound(),
+                                route.getService_type(),
+                                tips);
                         data.add(listItemData);
                     }
                 } catch (IOException e) {
-                    throw new RuntimeException(e);
+                    Toast.makeText(requireContext(), "获取数据失败", Toast.LENGTH_SHORT).show();
                 }
 
                 mViewModel.data.set(data);

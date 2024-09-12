@@ -84,6 +84,14 @@
                 android:layout_height="wrap_content"
                 tools:listitem="@layout/item_bus" />
 
+            <com.google.android.material.progressindicator.CircularProgressIndicator
+                android:id="@+id/dialog_loading"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:indeterminate="true"
+                android:layout_gravity="center"/>
+
         </com.google.android.material.card.MaterialCardView>
 
     </LinearLayout>

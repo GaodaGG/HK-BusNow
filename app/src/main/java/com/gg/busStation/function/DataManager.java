@@ -1,5 +1,7 @@
 package com.gg.busStation.function;
 
+import android.content.Context;
+
 import com.baidu.mapapi.model.LatLng;
 import com.gg.busStation.data.bus.ETA;
 import com.gg.busStation.data.bus.Route;
@@ -24,7 +26,7 @@ public class DataManager {
     private DataManager() {
     }
 
-    public static void initData() throws IOException {
+    public static void initData(Context context) throws IOException {
         //判断是否需要更新数据
         Map<String, String> settings = DataBaseManager.getSettings();
         String oldLastUpdateTime = settings.get("lastUpdateTime");
@@ -37,7 +39,7 @@ public class DataManager {
         List<Route> routeList = initRoutes();
         List<Stop> stopList = initStops();
 
-        DataBaseManager.initData(routeList, stopList);
+        DataBaseManager.initData(routeList, stopList, context);
     }
 
     public static List<Route> initRoutes() throws IOException {
@@ -66,7 +68,10 @@ public class DataManager {
 
     public static List<ETA> routeAndStopToETAs(Route route, Stop stop, int seq) throws IOException {
         List<ETA> etas = new ArrayList<>();
-        KMB.routeAndStopToETAs(route, stop, etas);
+        if (route.getCo().equals(Route.coKMB)) {
+            KMB.routeAndStopToETAs(route, stop, etas);
+        }
+
         CTB.routeAndStopToETAs(route, seq, etas);
 
         etas.sort((eta1, eta2) -> {
@@ -83,6 +88,10 @@ public class DataManager {
 
         if (Route.coKMB.equals(route.getCo())) {
             return KMB.routeToStops(route, itemStops);
+        }
+
+        if (Route.coCTB.equals(route.getCo())) {
+            return CTB.routeToStops(route, itemStops);
         }
 
         return itemStops;
@@ -179,6 +188,27 @@ public class DataManager {
                 route.setService_type("1");
                 routes.add(route);
             }
+        }
+
+        public static List<Stop> routeToStops(Route route, List<Stop> itemStops) throws IOException {
+            String url = CTB.routeToStopUrl + route.getRoute() + "/" + (Route.In.equals(route.getBound()) ? Route.Out : Route.In);
+            String data = HttpClientHelper.getData(url);
+            JsonArray jsonElements = JsonToBean.extractJsonArray(data);
+
+            for (JsonElement jsonElement : jsonElements) {
+                JsonObject jsonObject = jsonElement.getAsJsonObject();
+                String stopId = jsonObject.get("stop").getAsString();
+
+                itemStops.add(getStop(stopId));
+            }
+            return itemStops;
+        }
+
+        public static Stop getStop(String stopId) throws IOException {
+            String url = CTB.stopUrl + stopId;
+            String data = HttpClientHelper.getData(url);
+            JsonObject jsonObject = JsonToBean.extractJsonObject(data);
+            return JsonToBean.jsonToStop(jsonObject);
         }
 
         public static void routeAndStopToETAs(Route route, int seq, List<ETA> etas) throws IOException {

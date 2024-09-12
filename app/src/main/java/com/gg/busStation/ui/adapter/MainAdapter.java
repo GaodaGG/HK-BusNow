@@ -32,13 +32,11 @@ public class MainAdapter extends ListAdapter<ListItemData, MainAdapter.ViewHolde
     private static final DiffUtil.ItemCallback<ListItemData> DIFF_CALLBACK = new DiffUtil.ItemCallback<>() {
         @Override
         public boolean areItemsTheSame(@NonNull ListItemData oldItem, @NonNull ListItemData newItem) {
-            // 在这里比较唯一标识符，假设使用 id
             return oldItem.getStopNumber().equals(newItem.getStopNumber());
         }
 
         @Override
         public boolean areContentsTheSame(@NonNull ListItemData oldItem, @NonNull ListItemData newItem) {
-            // 在这里比较内容
             return oldItem.equals(newItem);
         }
     };
@@ -73,7 +71,7 @@ public class MainAdapter extends ListAdapter<ListItemData, MainAdapter.ViewHolde
         }
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder{
+    public static class ViewHolder extends RecyclerView.ViewHolder{
         private final ItemBusBinding binding;
 
         public ViewHolder(ItemBusBinding binding) {

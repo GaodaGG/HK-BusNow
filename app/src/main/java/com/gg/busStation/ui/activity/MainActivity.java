@@ -4,12 +4,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.activity.OnBackPressedCallback;
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import androidx.core.view.WindowCompat;
@@ -18,7 +16,6 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.transition.TransitionManager;
 
 import com.gg.busStation.R;
 import com.gg.busStation.data.bus.Route;
@@ -134,7 +131,13 @@ public class MainActivity extends AppCompatActivity {
         MainAdapter adapter = (MainAdapter) recyclerView.getAdapter();
         List<ListItemData> data = new ArrayList<>();
         for (Route route : routes) {
-            ListItemData listItemData = new ListItemData(route.getRoute(), route.getBound(), route.getOrig("zh_CN") + " -> " + route.getDest("zh_CN"), route.getBound(), route.getService_type());
+            String tips = route.getCo().equals(Route.coCTB) ? "(城巴路线)" : "";
+            ListItemData listItemData = new ListItemData(route.getRoute(),
+                    route.getBound(),
+                    route.getOrig("zh_CN") + " -> " + route.getDest("zh_CN"),
+                    route.getBound(),
+                    route.getService_type(),
+                    tips);
             data.add(listItemData);
         }
 
