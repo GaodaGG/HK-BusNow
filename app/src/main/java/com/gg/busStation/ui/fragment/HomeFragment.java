@@ -1,5 +1,7 @@
 package com.gg.busStation.ui.fragment;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -59,20 +61,21 @@ public class HomeFragment extends Fragment {
 
                 try {
                     BusDataManager.initData(requireContext());
-                    List<Route> routes = DataBaseManager.getRoutesHistory();
-
-                    for (Route route : routes) {
-                        String tips = route.getCo().equals(Route.coCTB) ? "(城巴路线)" : "";
-                        ListItemData listItemData = new ListItemData(route.getRoute(),
-                                route.getOrig("zh_CN") + " -> " + route.getDest("zh_CN"),
-                                "",
-                                route.getBound(),
-                                route.getService_type(),
-                                tips);
-                        data.add(listItemData);
-                    }
                 } catch (IOException e) {
                     Toast.makeText(requireContext(), "获取数据失败", Toast.LENGTH_SHORT).show();
+                }
+
+                List<Route> routes = DataBaseManager.getRoutesHistory();
+
+                for (Route route : routes) {
+                    String tips = route.getCo().equals(Route.coCTB) ? "(城巴路线)" : "";
+                    ListItemData listItemData = new ListItemData(route.getRoute(),
+                            route.getOrig("zh_CN") + " -> " + route.getDest("zh_CN"),
+                            "",
+                            route.getBound(),
+                            route.getService_type(),
+                            tips);
+                    data.add(listItemData);
                 }
 
                 mViewModel.data.set(data);
@@ -102,7 +105,29 @@ public class HomeFragment extends Fragment {
             binding.busScrollView.scrollTo(0, mViewModel.scrollOffset);
             binding.busScrollView.setOnScrollChangeListener((NestedScrollView.OnScrollChangeListener) (v, scrollX, scrollY, oldScrollX, oldScrollY) -> mViewModel.scrollOffset = scrollY);
 
-            loadingDialog.hide();
+            loadingDialog.dismiss();
+
+            checkPermissions();
         });
+    }
+
+    private void checkPermissions() {
+        if ("true".equals(DataBaseManager.getSettings().get("isInit"))) {
+            return;
+        }
+
+        int selfPermission = requireActivity().checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION);
+        if (selfPermission == PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+
+        new MaterialAlertDialogBuilder(requireContext())
+                .setTitle(R.string.dialog_permission_title)
+                .setMessage(R.string.dialog_permission_message)
+                .setNegativeButton(R.string.dialog_permission_decline, (dialog, which) -> {})
+                .setPositiveButton(R.string.dialog_permission_accept, (dialog, which) -> requireActivity().requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 0))
+                .show();
+
+        DataBaseManager.setInitStatus(true);
     }
 }

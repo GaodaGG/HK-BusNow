@@ -8,5 +8,9 @@
     <string name="author_name">码农</string>
     <string name="about_developers">开发者</string>
     <string name="search_hint">搜索路线</string>
-    <string name="main_history_hint">搜索并点击路线，此处将存放记录</string>
+    <string name="main_history_hint">点击右上角搜索路线，此处将存放历史记录</string>
+    <string name="dialog_permission_title">权限申请</string>
+    <string name="dialog_permission_message">该软件需要定位权限以便快速跳转最近的巴士站</string>
+    <string name="dialog_permission_decline">拒绝</string>
+    <string name="dialog_permission_accept">同意</string>
 </resources>

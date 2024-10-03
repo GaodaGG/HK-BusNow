@@ -1,6 +1,8 @@
 package com.gg.busStation.ui.activity;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -8,6 +10,7 @@ import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.activity.OnBackPressedCallback;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import androidx.core.view.WindowCompat;
@@ -25,6 +28,7 @@ import com.gg.busStation.function.BusDataManager;
 import com.gg.busStation.function.DataBaseManager;
 import com.gg.busStation.function.location.LocationHelper;
 import com.gg.busStation.ui.adapter.MainAdapter;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,15 +39,18 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        initData();
+        initView();
+    }
+
+    private void initData() {
+        DataBaseManager.initDB(this);
 
         try {
             LocationHelper.init(this);
         } catch (Exception e) {
             Toast.makeText(this, "无法获取位置信息", Toast.LENGTH_SHORT).show();
         }
-
-        DataBaseManager.initDB(this);
-        initView();
     }
 
     @Override
@@ -67,7 +74,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onQueryTextChange(String newText) {
                 setRouteList(newText);
-
                 return false;
             }
         });
@@ -147,5 +153,14 @@ public class MainActivity extends AppCompatActivity {
                 runOnUiThread(() -> adapter.submitList(data));
             }
         }).start();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if (requestCode == 0 && (grantResults.length == 0 || grantResults[0] == PackageManager.PERMISSION_DENIED)) {
+            Toast.makeText(this, "权限授权失败，请手动给予", Toast.LENGTH_SHORT).show();
+        }
     }
 }

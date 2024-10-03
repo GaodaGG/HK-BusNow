@@ -107,11 +107,12 @@ public class DataBaseManager {
         contentValues.put("key", "lastUpdateTime");
         contentValues.put("value", String.valueOf(System.currentTimeMillis()));
         db.update(SQLConstants.settingsDBName, contentValues, "key=?", new String[]{"lastUpdateTime"});
+    }
 
-
-        contentValues.clear();
+    public static void setInitStatus(boolean status) {
+        ContentValues contentValues = new ContentValues();
         contentValues.put("key", "isInit");
-        contentValues.put("value", String.valueOf(true));
+        contentValues.put("value", String.valueOf(status));
         db.update(SQLConstants.settingsDBName, contentValues, "key=?", new String[]{"isInit"});
     }
 

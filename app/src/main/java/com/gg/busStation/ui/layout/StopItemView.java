@@ -98,6 +98,7 @@ public class StopItemView extends LinearLayout {
         });
     }
 
+    //TODO 待优化
     private void getETA(Context context, View view) {
         if (isOpen) return;
 
