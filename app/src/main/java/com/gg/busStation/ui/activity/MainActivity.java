@@ -21,6 +21,7 @@ import com.gg.busStation.R;
 import com.gg.busStation.data.bus.Route;
 import com.gg.busStation.data.layout.ListItemData;
 import com.gg.busStation.databinding.ActivityMainBinding;
+import com.gg.busStation.function.BusDataManager;
 import com.gg.busStation.function.DataBaseManager;
 import com.gg.busStation.function.location.LocationHelper;
 import com.gg.busStation.ui.adapter.MainAdapter;
@@ -120,29 +121,31 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setRouteList(String newText) {
-        List<Route> routes;
-        if (newText.isEmpty()) {
-            routes = DataBaseManager.getRoutesHistory();
-        } else {
-            routes = DataBaseManager.getRoutes(newText);
-        }
+        new Thread(() -> {
+            List<Route> routes;
+            if (newText.isEmpty()) {
+                routes = DataBaseManager.getRoutesHistory();
+            } else {
+                routes = DataBaseManager.getRoutes(newText);
+            }
 
-        RecyclerView recyclerView = findViewById(R.id.bus_list_view);
-        MainAdapter adapter = (MainAdapter) recyclerView.getAdapter();
-        List<ListItemData> data = new ArrayList<>();
-        for (Route route : routes) {
-            String tips = route.getCo().equals(Route.coCTB) ? "(城巴路线)" : "";
-            ListItemData listItemData = new ListItemData(route.getRoute(),
-                    route.getBound(),
-                    route.getOrig("zh_CN") + " -> " + route.getDest("zh_CN"),
-                    route.getBound(),
-                    route.getService_type(),
-                    tips);
-            data.add(listItemData);
-        }
+            RecyclerView recyclerView = findViewById(R.id.bus_list_view);
+            MainAdapter adapter = (MainAdapter) recyclerView.getAdapter();
+            List<ListItemData> data = new ArrayList<>();
+            for (Route route : routes) {
+                String tips = route.getCo().equals(Route.coCTB) ? "(城巴路线)" : "";
+                ListItemData listItemData = new ListItemData(route.getRoute(),
+                        route.getOrig("zh_CN") + " -> " + route.getDest("zh_CN"),
+                        BusDataManager.serviceTypeToName(route.getService_type()),
+                        route.getBound(),
+                        route.getService_type(),
+                        tips);
+                data.add(listItemData);
+            }
 
-        if (adapter != null) {
-            adapter.submitList(data);
-        }
+            if (adapter != null) {
+                runOnUiThread(() -> adapter.submitList(data));
+            }
+        }).start();
     }
 }

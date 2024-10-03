@@ -25,7 +25,7 @@ import com.gg.busStation.data.bus.Stop;
 import com.gg.busStation.data.layout.StopItemData;
 import com.gg.busStation.databinding.ItemBusExpendBinding;
 import com.gg.busStation.function.DataBaseManager;
-import com.gg.busStation.function.DataManager;
+import com.gg.busStation.function.BusDataManager;
 import com.google.android.material.motion.MotionUtils;
 
 import java.io.IOException;
@@ -115,10 +115,10 @@ public class StopItemView extends LinearLayout {
                 boolean hasBus = false;
 
                 List<View> etaViews = new ArrayList<>();
-                for (ETA eta : DataManager.routeAndStopToETAs(route, stop, Integer.parseInt((String) binding.listItemNumber.getText()))) {
+                for (ETA eta : BusDataManager.routeAndStopToETAs(route, stop, Integer.parseInt((String) binding.listItemNumber.getText()))) {
                     Date date = eta.getEta();
                     hasBus = true;
-                    long time = DataManager.getMinutesRemaining(date);
+                    long time = BusDataManager.getMinutesRemaining(date);
                     View etaView;
                     if (time > 0) {
                         etaView = new ETAListLayout(context, (int) time, eta.getRmk("zh_CN"), Route.coKMB.equals(eta.getCo()) ? "九巴" : "城巴");

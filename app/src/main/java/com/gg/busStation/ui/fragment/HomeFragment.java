@@ -16,7 +16,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.gg.busStation.R;
 import com.gg.busStation.function.DataBaseManager;
-import com.gg.busStation.function.DataManager;
+import com.gg.busStation.function.BusDataManager;
 import com.gg.busStation.data.bus.Route;
 import com.gg.busStation.data.layout.HomeViewModel;
 import com.gg.busStation.data.layout.ListItemData;
@@ -51,20 +51,21 @@ public class HomeFragment extends Fragment {
             loadingDialog = new MaterialAlertDialogBuilder(requireActivity())
                     .setTitle(R.string.dialog_loading)
                     .setView(R.layout.dialog_loading)
+                    .setCancelable(false)
                     .show();
 
             new Thread(() -> {
                 List<ListItemData> data = new ArrayList<>();
 
                 try {
-                    DataManager.initData(requireContext());
+                    BusDataManager.initData(requireContext());
                     List<Route> routes = DataBaseManager.getRoutesHistory();
 
                     for (Route route : routes) {
                         String tips = route.getCo().equals(Route.coCTB) ? "(城巴路线)" : "";
                         ListItemData listItemData = new ListItemData(route.getRoute(),
-                                route.getBound(),
                                 route.getOrig("zh_CN") + " -> " + route.getDest("zh_CN"),
+                                "",
                                 route.getBound(),
                                 route.getService_type(),
                                 tips);
@@ -81,8 +82,6 @@ public class HomeFragment extends Fragment {
         } else {
             initView(mViewModel.data.get());
         }
-
-
     }
 
     private void initView(List<ListItemData> data) {

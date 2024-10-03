@@ -3,15 +3,16 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
+
         <variable
             name="data"
             type="com.gg.busStation.data.layout.ListItemData" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/list_item_layout"
         android:layout_width="match_parent"
         android:layout_height="88dp"
-        android:id="@+id/list_item_layout"
         android:foreground="?attr/selectableItemBackground">
 
         <com.google.android.material.card.MaterialCardView
@@ -31,10 +32,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:transitionName="item_number"
                 android:text="@{data.stopNumber, default = 1}"
                 android:textColor="?attr/colorOnSurface"
-                android:textSize="22sp" />
+                android:textSize="22sp"
+                android:transitionName="item_number" />
 
         </com.google.android.material.card.MaterialCardView>
 
@@ -45,11 +46,19 @@
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
             android:layout_marginBottom="16dp"
-            android:orientation="vertical"
             android:gravity="center_vertical"
+            android:orientation="vertical"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@+id/materialCardView"
             app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:id="@+id/list_item_headline"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@{data.headline, default = Headline}"
+                android:textColor="?attr/colorOnSurface"
+                android:textSize="16sp" />
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -57,12 +66,11 @@
                 android:orientation="horizontal">
 
                 <TextView
-                    android:id="@+id/list_item_headline"
+                    android:id="@+id/list_item_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@{data.headline, default = Headline}"
-                    android:textColor="?attr/colorOnSurface"
-                    android:textSize="16sp" />
+                    android:text="@{data.context, default = Supporting}"
+                    android:textSize="14sp" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -70,14 +78,8 @@
                     android:layout_marginStart="3dp"
                     android:text="@{data.tips}"
                     android:textSize="12sp" />
-            </LinearLayout>
 
-            <TextView
-                android:id="@+id/list_item_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@{data.context, default = Supporting}"
-                android:textSize="14sp" />
+            </LinearLayout>
 
         </LinearLayout>
 

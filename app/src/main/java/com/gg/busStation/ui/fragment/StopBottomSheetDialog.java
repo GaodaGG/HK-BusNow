@@ -1,14 +1,12 @@
 package com.gg.busStation.ui.fragment;
 
-import static com.gg.busStation.function.DataManager.findNearestStopIndex;
+import static com.gg.busStation.function.BusDataManager.findNearestStopIndex;
 
 import android.Manifest;
 import android.app.Dialog;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.View;
-import android.view.ViewTreeObserver;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -16,11 +14,9 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.baidu.mapapi.model.LatLng;
-import com.gg.busStation.R;
-import com.gg.busStation.data.bus.ETA;
 import com.gg.busStation.data.layout.StopItemData;
 import com.gg.busStation.function.DataBaseManager;
-import com.gg.busStation.function.DataManager;
+import com.gg.busStation.function.BusDataManager;
 import com.gg.busStation.data.bus.Route;
 import com.gg.busStation.data.bus.Stop;
 import com.gg.busStation.data.layout.ListItemData;
@@ -52,6 +48,7 @@ public class StopBottomSheetDialog extends BottomSheetDialogFragment {
         binding = DialogBusBinding.inflate(getLayoutInflater());
         binding.setData(mData);
         dialog.setContentView(binding.getRoot());
+
         initView();
         return dialog;
     }
@@ -62,7 +59,7 @@ public class StopBottomSheetDialog extends BottomSheetDialogFragment {
             Route route = DataBaseManager.findRoute(mData.getStopNumber(), mData.getBound(), mData.getService_type());
 
             try {
-                mStops = DataManager.routeToStops(route);
+                mStops = BusDataManager.routeToStops(route);
 
                 for (int i = 0; i < mStops.size(); i++) {
                     Stop stop = mStops.get(i);

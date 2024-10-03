@@ -149,7 +149,7 @@ public class DataBaseManager {
 
         List<Route> routes = getRoutes(cursor);
         // 使用自然顺序对 routes 列表进行排序
-        routes.sort((r1, r2) -> naturalOrderCompare(r1.getRoute(), r2.getRoute()));
+        routes.sort(DataBaseManager::naturalOrderCompare);
 
         return routes;
     }
@@ -167,7 +167,7 @@ public class DataBaseManager {
         List<Route> routes = getRoutes(cursor);
 
         // 使用自然顺序对 routes 列表进行排序
-        routes.sort((r1, r2) -> naturalOrderCompare(r1.getRoute(), r2.getRoute()));
+        routes.sort(DataBaseManager::naturalOrderCompare);
 
         return routes;
     }
@@ -340,23 +340,25 @@ public class DataBaseManager {
         return routes;
     }
 
-    private static int naturalOrderCompare(String routeA, String routeB) {
+    private static int naturalOrderCompare(Route routeA, Route routeB) {
         int i = 0, j = 0;
-        while (i < routeA.length() && j < routeB.length()) {
-            char charA = routeA.charAt(i);
-            char charB = routeB.charAt(j);
+        String routeAId = routeA.getRoute();
+        String routeBId = routeB.getRoute();
+        while (i < routeAId.length() && j < routeBId.length()) {
+            char charA = routeAId.charAt(i);
+            char charB = routeBId.charAt(j);
 
             // 比较数字部分
             if (Character.isDigit(charA) && Character.isDigit(charB)) {
                 int startA = i, startB = j;
 
                 // 提取数字部分
-                while (i < routeA.length() && Character.isDigit(routeA.charAt(i))) i++;
-                while (j < routeB.length() && Character.isDigit(routeB.charAt(j))) j++;
+                while (i < routeAId.length() && Character.isDigit(routeAId.charAt(i))) i++;
+                while (j < routeBId.length() && Character.isDigit(routeBId.charAt(j))) j++;
 
                 // 转换为数字进行比较
-                Integer numA = Integer.parseInt(routeA.substring(startA, i));
-                Integer numB = Integer.parseInt(routeB.substring(startB, j));
+                Integer numA = Integer.parseInt(routeAId.substring(startA, i));
+                Integer numB = Integer.parseInt(routeBId.substring(startB, j));
 
                 if (!numA.equals(numB)) {
                     return numA.compareTo(numB);
@@ -372,6 +374,6 @@ public class DataBaseManager {
         }
 
         // 比较剩余部分
-        return routeA.length() - routeB.length();
+        return routeAId.length() - routeBId.length();
     }
 }

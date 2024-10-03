@@ -20,10 +20,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-public class DataManager {
+public class BusDataManager {
     private static long lastUpdateTime = 0;
 
-    private DataManager() {
+    private BusDataManager() {
     }
 
     public static void initData(Context context) throws IOException {
@@ -133,6 +133,15 @@ public class DataManager {
         return minutesRemaining;
     }
 
+    public static String serviceTypeToName(String serviceType) {
+        return switch (serviceType) {
+            case "1" -> "特定时段或非每天服务路线";
+            case "2" -> "设假日及公共假期收费";
+            case "3" -> "特定时段或非每天服务路线及设假日及公共假期收费";
+            default -> "";
+        };
+    }
+
     private static class KMB {
         public static final String routeUrl = "https://data.etabus.gov.hk/v1/transport/kmb/route/";
         public static final String stopUrl = "https://data.etabus.gov.hk/v1/transport/kmb/stop/";
@@ -166,9 +175,12 @@ public class DataManager {
             String data = HttpClientHelper.getData(url);
 
             for (JsonElement jsonElement : JsonToBean.extractJsonArray(data)) {
+                String bound = route.getBound().equals(Route.Out) ? "O" : "I";
                 JsonObject jsonObject = jsonElement.getAsJsonObject();
-                ETA eta = JsonToBean.jsonToETA(jsonObject);
-                if (eta.getEta() != null) etas.add(eta);
+                if (!jsonObject.get("eta").isJsonNull() && bound.equals(jsonObject.get("dir").getAsString())) {
+                    ETA eta = JsonToBean.jsonToETA(jsonObject);
+                    etas.add(eta);
+                }
             }
         }
     }
@@ -226,8 +238,9 @@ public class DataManager {
             String data = HttpClientHelper.getData(url);
 
             for (JsonElement jsonElement : JsonToBean.extractJsonArray(data)) {
+                String bound = route.getBound().equals(Route.Out) ? "I" : "O";
                 JsonObject jsonObject = jsonElement.getAsJsonObject();
-                if (!"".equals(jsonObject.get("eta").getAsString())) {
+                if (!"".equals(jsonObject.get("eta").getAsString()) && bound.equals(jsonObject.get("dir").getAsString())) {
                     ETA eta = JsonToBean.jsonToETA(jsonObject);
                     etas.add(eta);
                 }
