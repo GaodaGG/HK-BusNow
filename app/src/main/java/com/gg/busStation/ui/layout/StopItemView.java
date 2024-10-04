@@ -133,6 +133,8 @@ public class StopItemView extends LinearLayout {
                 throw new RuntimeException(e);
             }
 
+            mainHandler.post(timeList::removeAllViews);
+
             if (etas.isEmpty()) {
                 TextView textView = new TextView(context);
                 textView.setText("已无预定班次");
@@ -140,7 +142,6 @@ public class StopItemView extends LinearLayout {
                 return;
             }
 
-            mainHandler.post(timeList::removeAllViews);
             for (ETA eta : etas) {
                 long time = BusDataManager.getMinutesRemaining(eta.getEta());
                 View etaView = new ETAView(context, (int) time, eta.getRmk("zh_CN"), Route.coKMB.equals(eta.getCo()) ? "九巴" : "城巴");
