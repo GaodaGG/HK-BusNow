@@ -2,8 +2,10 @@ package com.gg.busStation.ui.layout;
 
 import android.animation.TimeInterpolator;
 import android.animation.ValueAnimator;
+import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.graphics.Typeface;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.AttributeSet;
@@ -29,11 +31,25 @@ import com.gg.busStation.function.BusDataManager;
 import com.google.android.material.motion.MotionUtils;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 public class StopItemView extends LinearLayout {
+    private final BroadcastReceiver updateTimeReciver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            if (!Intent.ACTION_TIME_TICK.equals(action)) {
+                return;
+            }
+
+            LinearLayout timeList = findViewById(R.id.dialog_time_list);
+            for (int i = 0; i < timeList.getChildCount(); i++) {
+                ETAView etaView = (ETAView) timeList.getChildAt(i);
+                etaView.updateTime();
+            }
+        }
+    };
+
     private ItemBusExpendBinding binding;
     private boolean isOpen = false;
     private int openHeight;
@@ -98,7 +114,6 @@ public class StopItemView extends LinearLayout {
         });
     }
 
-    //TODO 待优化
     private void getETA(Context context, View view) {
         if (isOpen) return;
 
@@ -109,41 +124,33 @@ public class StopItemView extends LinearLayout {
         Stop stop = DataBaseManager.findStop(data.getStopId());
 
         LinearLayout timeList = view.findViewById(R.id.dialog_time_list);
-        timeList.removeAllViews();
 
         new Thread(() -> {
+            List<ETA> etas;
             try {
-                boolean hasBus = false;
-
-                List<View> etaViews = new ArrayList<>();
-                for (ETA eta : BusDataManager.routeAndStopToETAs(route, stop, Integer.parseInt((String) binding.listItemNumber.getText()))) {
-                    Date date = eta.getEta();
-                    hasBus = true;
-                    long time = BusDataManager.getMinutesRemaining(date);
-                    View etaView;
-                    if (time > 0) {
-                        etaView = new ETAListLayout(context, (int) time, eta.getRmk("zh_CN"), Route.coKMB.equals(eta.getCo()) ? "九巴" : "城巴");
-                    } else {
-                        etaView = new TextView(context);
-                        String text = "即将到站" + eta.getRmk("zh_CN") + (Route.coKMB.equals(eta.getCo()) ? "九巴" : "城巴");
-                        ((TextView) etaView).setText(text);
-                        ((TextView) etaView).setTextSize(20);
-                        ((TextView) etaView).setTypeface(null, Typeface.BOLD);
-                    }
-                    mainHandler.post(() -> {
-                        etaViews.add(etaView);
-                        timeList.addView(etaView);
-                    });
-                }
-
-                if (!hasBus) {
-                    TextView textView = new TextView(context);
-                    textView.setText("已无预定班次");
-                    mainHandler.post(() -> timeList.addView(textView));
-                }
+                etas = BusDataManager.routeAndStopToETAs(route, stop, Integer.parseInt((String) binding.listItemNumber.getText()));
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
+
+            if (etas.isEmpty()) {
+                TextView textView = new TextView(context);
+                textView.setText("已无预定班次");
+                mainHandler.post(() -> timeList.addView(textView));
+                return;
+            }
+
+            mainHandler.post(timeList::removeAllViews);
+            for (ETA eta : etas) {
+                long time = BusDataManager.getMinutesRemaining(eta.getEta());
+                View etaView = new ETAView(context, (int) time, eta.getRmk("zh_CN"), Route.coKMB.equals(eta.getCo()) ? "九巴" : "城巴");
+                mainHandler.post(() -> timeList.addView(etaView));
+            }
+
+            //注册广播更新时间
+            IntentFilter filter = new IntentFilter();
+            filter.addAction(Intent.ACTION_TIME_TICK);
+            getContext().registerReceiver(updateTimeReciver, filter);
         }).start();
 
     }

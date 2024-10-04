@@ -13,4 +13,5 @@
     <string name="dialog_permission_message">该软件需要定位权限以便快速跳转最近的巴士站</string>
     <string name="dialog_permission_decline">拒绝</string>
     <string name="dialog_permission_accept">同意</string>
+    <string name="about_use_title">引用</string>
 </resources>

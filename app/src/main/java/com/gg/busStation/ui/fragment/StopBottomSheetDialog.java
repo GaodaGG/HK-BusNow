@@ -24,6 +24,7 @@ import com.gg.busStation.databinding.DialogBusBinding;
 import com.gg.busStation.function.location.LocationHelper;
 import com.gg.busStation.ui.adapter.StopListAdapter;
 import com.gg.busStation.ui.layout.StopItemView;
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.google.android.material.divider.MaterialDividerItemDecoration;
 
@@ -101,6 +102,4 @@ public class StopBottomSheetDialog extends BottomSheetDialogFragment {
             });
         }).start();
     }
-
-
 }
