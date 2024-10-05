@@ -10,16 +10,18 @@ public class ListItemData {
     public ObservableField<String> context;
     public ObservableField<String> tips;
 
+    private String co;
     private String bound;
     private String service_type;
 
-    public ListItemData(String stopNumber, String headline, String context, String bound, String service_type, String tips) {
+    public ListItemData(String co, String stopNumber, String headline, String context, String bound, String service_type, String tips) {
         this.stopNumber = new ObservableField<>(stopNumber);
         this.headline = new ObservableField<>(headline);
         this.context = new ObservableField<>(context);
+        this.tips = new ObservableField<>(tips);
+        this.co = co;
         this.bound = bound;
         this.service_type = service_type;
-        this.tips = new ObservableField<>(tips);
     }
 
     public String getStopNumber() {
@@ -60,6 +62,14 @@ public class ListItemData {
 
     public void setBound(String bound) {
         this.bound = bound;
+    }
+
+    public String getCo() {
+        return co;
+    }
+
+    public void setCo(String co) {
+        this.co = co;
     }
 
     @Override

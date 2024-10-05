@@ -30,6 +30,7 @@ public class SQLConstants {
             ");";
 
     public static final String createRoutesHistoryDBCommand = "CREATE TABLE IF NOT EXISTS " + routesHistoryDBName + " (" +
+            "co TEXT CHECK (co IN ('KMB', 'CTB')) NOT NULL," +
             "route TEXT NOT NULL," +
             "bound TEXT CHECK (bound IN ('outbound', 'inbound')) NOT NULL," +
             "service_type TEXT NOT NULL," +

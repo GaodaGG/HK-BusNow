@@ -8,6 +8,7 @@ public class StopItemData{
     public ObservableField<String> headline;
     public ObservableField<String> context;
 
+    private String co;
     private String routeId;
     private String stopId;
     private String bound;
@@ -15,7 +16,7 @@ public class StopItemData{
 
     public ObservableBoolean isOpen = new ObservableBoolean(false);
 
-    public StopItemData(String stopNumber, String headline, String context, String bound, String service_type, String routeId, String stopId){
+    public StopItemData(String stopNumber, String headline, String context, String bound, String service_type, String co, String routeId, String stopId){
         this.stopNumber = new ObservableField<>(stopNumber);
         this.headline = new ObservableField<>(headline);
         this.context = new ObservableField<>(context);
@@ -23,6 +24,7 @@ public class StopItemData{
         this.service_type = service_type;
         this.routeId = routeId;
         this.stopId = stopId;
+        this.co = co;
     }
 
     public String getStopNumber() {
@@ -79,5 +81,13 @@ public class StopItemData{
 
     public void setRouteId(String routeId) {
         this.routeId = routeId;
+    }
+
+    public String getCo() {
+        return co;
+    }
+
+    public void setCo(String co) {
+        this.co = co;
     }
 }

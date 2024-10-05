@@ -57,14 +57,14 @@ public class StopBottomSheetDialog extends BottomSheetDialogFragment {
     public void initView() {
         new Thread(() -> {
             List<StopItemData> data = new ArrayList<>();
-            Route route = DataBaseManager.findRoute(mData.getStopNumber(), mData.getBound(), mData.getService_type());
+            Route route = DataBaseManager.findRoute(mData.getCo(), mData.getStopNumber(), mData.getBound(), mData.getService_type());
 
             try {
                 mStops = BusDataManager.routeToStops(route);
 
                 for (int i = 0; i < mStops.size(); i++) {
                     Stop stop = mStops.get(i);
-                    StopItemData stopItemData = new StopItemData(String.valueOf(i + 1), stop.getName("zh_CN"), "", route.getBound(), route.getService_type(), route.getRoute(), stop.getStop());
+                    StopItemData stopItemData = new StopItemData(String.valueOf(i + 1), stop.getName("zh_CN"), "", route.getBound(), route.getService_type(), route.getCo(), route.getRoute(), stop.getStop());
                     data.add(stopItemData);
                 }
             } catch (IOException e) {

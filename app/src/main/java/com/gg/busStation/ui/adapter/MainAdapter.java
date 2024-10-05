@@ -56,7 +56,7 @@ public class MainAdapter extends ListAdapter<ListItemData, MainViewHolder> {
         
         holder.itemView.setOnClickListener(view -> {
             new StopBottomSheetDialog(listItemData).show(((AppCompatActivity) mActivity).getSupportFragmentManager(), StopBottomSheetDialog.TAG);
-            DataBaseManager.addRoutesHistory(listItemData.getStopNumber(), listItemData.getBound(), listItemData.getService_type());
+            DataBaseManager.addRoutesHistory(listItemData.getCo(), listItemData.getStopNumber(), listItemData.getBound(), listItemData.getService_type());
         });
     }
 

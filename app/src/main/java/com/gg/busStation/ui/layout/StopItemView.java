@@ -119,7 +119,7 @@ public class StopItemView extends LinearLayout {
         Handler mainHandler = new Handler(Looper.getMainLooper());
 
         StopItemData data = binding.getData();
-        Route route = DataBaseManager.findRoute(data.getRouteId(), data.getBound(), data.getService_type());
+        Route route = DataBaseManager.findRoute(data.getCo(), data.getRouteId(), data.getBound(), data.getService_type());
         Stop stop = DataBaseManager.findStop(data.getStopId());
 
         LinearLayout timeList = view.findViewById(R.id.dialog_time_list);

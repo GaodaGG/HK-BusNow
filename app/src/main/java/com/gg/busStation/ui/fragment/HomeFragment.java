@@ -69,7 +69,8 @@ public class HomeFragment extends Fragment {
 
                 for (Route route : routes) {
                     String tips = route.getCo().equals(Route.coCTB) ? "(城巴路线)" : "";
-                    ListItemData listItemData = new ListItemData(route.getRoute(),
+                    ListItemData listItemData = new ListItemData(route.getCo(),
+                            route.getRoute(),
                             route.getOrig("zh_CN") + " -> " + route.getDest("zh_CN"),
                             "",
                             route.getBound(),

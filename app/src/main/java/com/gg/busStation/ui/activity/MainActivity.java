@@ -140,7 +140,8 @@ public class MainActivity extends AppCompatActivity {
             List<ListItemData> data = new ArrayList<>();
             for (Route route : routes) {
                 String tips = route.getCo().equals(Route.coCTB) ? "(城巴路线)" : "";
-                ListItemData listItemData = new ListItemData(route.getRoute(),
+                ListItemData listItemData = new ListItemData(route.getCo(),
+                        route.getRoute(),
                         route.getOrig("zh_CN") + " -> " + route.getDest("zh_CN"),
                         BusDataManager.serviceTypeToName(route.getService_type()),
                         route.getBound(),

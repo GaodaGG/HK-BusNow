@@ -23,6 +23,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class DataBaseManager {
     private static SQLiteDatabase db;
@@ -143,32 +146,15 @@ public class DataBaseManager {
 
     @NonNull
     public static List<Route> getRoutes(String routeId) {
-        String selection = "route LIKE ?";
+        String selection = "route LIKE ? AND service_type = 1";
         String[] selectionArgs = {routeId + "%"};
         Cursor cursor = db.query(SQLConstants.routeDBName, null, selection, selectionArgs, null, null, null);
 
         List<Route> routes = getRoutes(cursor);
-        // 使用自然顺序对 routes 列表进行排序
-        routes.sort(DataBaseManager::naturalOrderCompare);
-
-        return routes;
-    }
-
-    @NonNull
-    public static List<Route> getRoutes(int rows) {
-        Cursor cursor;
-        if (rows == 0) {
-            //获取所有数据
-            cursor = db.rawQuery("SELECT * FROM " + SQLConstants.routeDBName, null);
-        } else {
-            cursor = db.query(SQLConstants.routeDBName, null, null, null, null, null, null, String.valueOf(rows));
-        }
-
-        List<Route> routes = getRoutes(cursor);
+        cursor.close();
 
         // 使用自然顺序对 routes 列表进行排序
         routes.sort(DataBaseManager::naturalOrderCompare);
-
         return routes;
     }
 
@@ -256,9 +242,9 @@ public class DataBaseManager {
 
 
     @Nullable
-    public static Route findRoute(String routeId, String bound, String service_type) {
-        String selection = "route = ? AND bound = ? AND service_type = ?";
-        String[] selectionArgs = {routeId, bound, service_type};
+    public static Route findRoute(String co, String routeId, String bound, String service_type) {
+        String selection = "route = ? AND co = ? AND bound = ? AND service_type = ?";
+        String[] selectionArgs = {routeId, co, bound, service_type};
         Cursor cursor = db.query(SQLConstants.routeDBName, null, selection, selectionArgs, null, null, null);
         if (!cursor.moveToFirst()) {
             cursor.close();
@@ -303,10 +289,11 @@ public class DataBaseManager {
         return stop;
     }
 
-    public static void addRoutesHistory(String routeId, String bound, String service_type) {
+    public static void addRoutesHistory(String co, String routeId, String bound, String service_type) {
         long timestamp = System.currentTimeMillis();
 
         ContentValues contentValues = new ContentValues();
+        contentValues.put("co", co);
         contentValues.put("route", routeId);
         contentValues.put("bound", bound);
         contentValues.put("service_type", service_type);
@@ -326,6 +313,7 @@ public class DataBaseManager {
 
         for (int i = 0; i < cursor.getCount(); i++) {
             Route route = findRoute(
+                    cursor.getString(cursor.getColumnIndexOrThrow("co")),
                     cursor.getString(cursor.getColumnIndexOrThrow("route")),
                     cursor.getString(cursor.getColumnIndexOrThrow("bound")),
                     cursor.getString(cursor.getColumnIndexOrThrow("service_type"))
