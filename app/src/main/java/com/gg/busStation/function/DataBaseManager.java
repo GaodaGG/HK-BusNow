@@ -23,9 +23,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class DataBaseManager {
     private static SQLiteDatabase db;
@@ -71,6 +68,7 @@ public class DataBaseManager {
     }
 
     private static void insertRoutes(List<Route> routes) {
+        routes.sort(DataBaseManager::naturalOrderCompare);
         ContentValues contentValues = new ContentValues();
         for (Route route : routes) {
             contentValues.put("co", route.getCo());
@@ -152,9 +150,6 @@ public class DataBaseManager {
 
         List<Route> routes = getRoutes(cursor);
         cursor.close();
-
-        // 使用自然顺序对 routes 列表进行排序
-        routes.sort(DataBaseManager::naturalOrderCompare);
         return routes;
     }
 
