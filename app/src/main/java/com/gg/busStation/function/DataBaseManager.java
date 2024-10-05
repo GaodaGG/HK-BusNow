@@ -147,7 +147,6 @@ public class DataBaseManager {
         String[] selectionArgs = {routeId + "%"};
         Cursor cursor = db.query(SQLConstants.routeDBName, null, selection, selectionArgs, null, null, null);
 
-
         List<Route> routes = getRoutes(cursor);
         // 使用自然顺序对 routes 列表进行排序
         routes.sort(DataBaseManager::naturalOrderCompare);

@@ -72,12 +72,11 @@ public class StopItemView extends LinearLayout {
 
     private void init(Context context) {
         binding = ItemBusExpendBinding.inflate(LayoutInflater.from(context), this, true);
-        this.setOrientation(VERTICAL);
-        ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(
+        setOrientation(VERTICAL);
+        setLayoutParams(new ViewGroup.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, // 确保宽度为 match_parent
                 ViewGroup.LayoutParams.WRAP_CONTENT
-        );
-        this.setLayoutParams(layoutParams);
+        ));
 
         // 设置点击监听器来处理展开/收起
         setOnClickListener(view -> {
