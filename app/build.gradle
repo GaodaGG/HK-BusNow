@@ -15,7 +15,7 @@ android {
         applicationId "com.gg.busStation"
         minSdk 28
         targetSdk 34
-        versionCode 1
+        versionCode Integer.parseInt(new Date().format('yyyyMMdd'))
         versionName "1.0"
 
         ndk {
