@@ -24,7 +24,6 @@ import com.gg.busStation.databinding.DialogBusBinding;
 import com.gg.busStation.function.location.LocationHelper;
 import com.gg.busStation.ui.adapter.StopListAdapter;
 import com.gg.busStation.ui.layout.StopItemView;
-import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.google.android.material.divider.MaterialDividerItemDecoration;
 
@@ -97,9 +96,19 @@ public class StopBottomSheetDialog extends BottomSheetDialogFragment {
                 dialogList.post(() -> {
                     binding.dialogLoading.setVisibility(View.GONE);
                     StopItemView view = (StopItemView) dialogList.findViewHolderForAdapterPosition(finalNearestStopIndex).itemView;
-                    view.post(() -> view.performClick());
+                    view.post(view::performClick);
                 });
             });
         }).start();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        RecyclerView dialogList = binding.dialogList;
+        for (int i = 0; i < dialogList.getChildCount(); i++) {
+            StopItemView view = (StopItemView) dialogList.getChildAt(i);
+            if (view.isOpen()) view.updateTime(view.getContext(), true);
+        }
     }
 }

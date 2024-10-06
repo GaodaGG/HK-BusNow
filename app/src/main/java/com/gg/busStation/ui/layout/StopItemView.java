@@ -34,6 +34,7 @@ import java.io.IOException;
 import java.util.List;
 
 public class StopItemView extends LinearLayout {
+    private int updateCounter = 0;
     private final BroadcastReceiver updateTimeReciver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -42,11 +43,7 @@ public class StopItemView extends LinearLayout {
                 return;
             }
 
-            LinearLayout timeList = findViewById(R.id.dialog_time_list);
-            for (int i = 0; i < timeList.getChildCount(); i++) {
-                ETAView etaView = (ETAView) timeList.getChildAt(i);
-                etaView.updateTime();
-            }
+            updateTime(context, false);
         }
     };
 
@@ -90,14 +87,6 @@ public class StopItemView extends LinearLayout {
         binding.executePendingBindings();
         this.isOpen = data.isOpen.get();  // 绑定初始状态
 
-//        if (!etaViews.isEmpty()) {
-//            LinearLayout timeList = binding.dialogTimeList;
-//            timeList.removeAllViews();
-//            for (View etaView : etaViews) {
-//                timeList.addView(etaView);
-//            }
-//        }
-
         // 计算初始展开和收起的高度
         this.post(() -> {
             if (closeHeight == 0) {
@@ -111,6 +100,23 @@ public class StopItemView extends LinearLayout {
             ViewGroup.LayoutParams layoutParams = StopItemView.this.getLayoutParams();
             switchItemHeight(isOpen, false, layoutParams);
         });
+    }
+
+    public void updateTime(Context context, boolean ignoreCount) {
+        // 每隔5分钟重新获取一次时间
+        if (updateCounter == 5 || ignoreCount) {
+            getETA(context, StopItemView.this);
+            updateCounter = 0;
+            return;
+        }
+
+        updateCounter++;
+
+        LinearLayout timeList = findViewById(R.id.dialog_time_list);
+        for (int i = 0; i < timeList.getChildCount(); i++) {
+            ETAView etaView = (ETAView) timeList.getChildAt(i);
+            etaView.updateTime();
+        }
     }
 
     private void getETA(Context context, View view) {
@@ -190,5 +196,9 @@ public class StopItemView extends LinearLayout {
             this.setLayoutParams(layoutParams);
         });
         valueAnimator.start();
+    }
+
+    public boolean isOpen() {
+        return isOpen;
     }
 }

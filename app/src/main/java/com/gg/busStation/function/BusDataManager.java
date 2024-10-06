@@ -125,8 +125,8 @@ public class BusDataManager {
         long minutesRemaining = TimeUnit.MILLISECONDS.toMinutes(timeDifferenceMillis);
         long remainderMillis = timeDifferenceMillis % TimeUnit.MINUTES.toMillis(1);
 
-        // 如果还有剩余的毫秒数，表示还没到下一分钟，手动加一分钟
-        if (remainderMillis > 0) {
+        // 四舍五入
+        if (remainderMillis >= 1000 * 30) {
             minutesRemaining++;
         }
 
