@@ -1,6 +1,6 @@
 # HK BusNow 我巴士呢
 **HK BusNow** 是一款专为香港巴士乘客提供巴士到站时间和路线信息的应用  
-![HK BusNow 图标](./icon.webp)
+![HK BusNow 图标](./app.webp)
 
 ## 应用特点
 - 使用MD3设计风格，无广告干扰
@@ -14,4 +14,5 @@
 [城巴数据](https://data.gov.hk/sc-data/dataset/ctb-eta-transport-realtime-eta/)
 
 ## 应用截图 (正在开发)
-![HK BusNow 图标](./app_scrennshot.png)
+![应用截图1](./app_screenshot1.png)
+![应用截图2](./app_screenshot2.png)
