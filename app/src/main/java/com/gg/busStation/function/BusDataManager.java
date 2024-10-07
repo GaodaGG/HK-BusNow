@@ -6,6 +6,7 @@ import com.baidu.mapapi.model.LatLng;
 import com.gg.busStation.data.bus.ETA;
 import com.gg.busStation.data.bus.Route;
 import com.gg.busStation.data.bus.Stop;
+import com.gg.busStation.data.layout.ListItemData;
 import com.gg.busStation.function.internet.HttpClientHelper;
 import com.gg.busStation.function.internet.JsonToBean;
 import com.gg.busStation.function.location.LocationHelper;
@@ -131,6 +132,23 @@ public class BusDataManager {
         }
 
         return minutesRemaining;
+    }
+
+    public static List<ListItemData> routesToListItemData(List<Route> routes) {
+        List<ListItemData> data = new ArrayList<>();
+        for (Route route : routes) {
+            String tips = route.getCo().equals(Route.coCTB) ? "(城巴路线)" : "";
+            ListItemData listItemData = new ListItemData(route.getCo(),
+                    route.getRoute(),
+                    route.getOrig("zh_CN") + " -> " + route.getDest("zh_CN"),
+                    "",
+//                        BusDataManager.serviceTypeToName(route.getService_type()),
+                    route.getBound(),
+                    route.getService_type(),
+                    tips);
+            data.add(listItemData);
+        }
+        return data;
     }
 
     public static String serviceTypeToName(String serviceType) {

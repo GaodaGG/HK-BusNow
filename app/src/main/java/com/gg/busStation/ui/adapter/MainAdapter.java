@@ -1,19 +1,24 @@
 package com.gg.busStation.ui.adapter;
 
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.SearchView;
+import androidx.appcompat.widget.Toolbar;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.ListAdapter;
 
+import com.gg.busStation.data.bus.Route;
 import com.gg.busStation.data.layout.ListItemData;
 import com.gg.busStation.R;
 import com.gg.busStation.databinding.ItemBusBinding;
+import com.gg.busStation.function.BusDataManager;
 import com.gg.busStation.function.DataBaseManager;
 import com.gg.busStation.ui.fragment.StopBottomSheetDialog;
 
@@ -59,11 +64,22 @@ public class MainAdapter extends ListAdapter<ListItemData, MainViewHolder> {
         holder.itemView.setOnClickListener(view -> {
             new StopBottomSheetDialog(listItemData).show(mActivity.getSupportFragmentManager(), StopBottomSheetDialog.TAG);
             DataBaseManager.addRoutesHistory(listItemData.getCo(), listItemData.getStopNumber(), listItemData.getBound(), listItemData.getService_type());
+
+            //当正在搜索时不再更新列表
+            MenuItem item = ((Toolbar) mActivity.findViewById(R.id.toolBar)).getMenu().findItem(R.id.search_toolbar_item);
+            SearchView searchView = (SearchView) item.getActionView();
+            if (searchView.getQuery().length() > 0) {
+                return;
+            }
+
+            List<Route> routesHistory = DataBaseManager.getRoutesHistory();
+            submitList(BusDataManager.routesToListItemData(routesHistory));
         });
 
         holder.getAdapterPosition();
     }
 
+    @Override
     public void submitList(@Nullable List<ListItemData> list) {
         super.submitList(list);
 

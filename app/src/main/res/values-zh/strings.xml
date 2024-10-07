@@ -14,4 +14,5 @@
     <string name="dialog_permission_decline">拒绝</string>
     <string name="dialog_permission_accept">同意</string>
     <string name="about_use_title">引用</string>
+    <string name="error_getdata">获取数据失败</string>
 </resources>

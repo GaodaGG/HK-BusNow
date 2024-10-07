@@ -57,35 +57,28 @@ public class HomeFragment extends Fragment {
                     .show();
 
             new Thread(() -> {
-                List<ListItemData> data = new ArrayList<>();
-
                 try {
                     BusDataManager.initData(requireContext());
                 } catch (IOException e) {
-                    Toast.makeText(requireContext(), "获取数据失败", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(requireContext(), R.string.error_getdata, Toast.LENGTH_SHORT).show();
                 }
 
                 List<Route> routes = DataBaseManager.getRoutesHistory();
+                List<ListItemData> data = BusDataManager.routesToListItemData(routes);
 
-                for (Route route : routes) {
-                    String tips = route.getCo().equals(Route.coCTB) ? "(城巴路线)" : "";
-                    ListItemData listItemData = new ListItemData(route.getCo(),
-                            route.getRoute(),
-                            route.getOrig("zh_CN") + " -> " + route.getDest("zh_CN"),
-                            "",
-                            route.getBound(),
-                            route.getService_type(),
-                            tips);
-                    data.add(listItemData);
-                }
-
-                mViewModel.data.set(data);
                 initView(data);
-
             }).start();
         } else {
             initView(mViewModel.data.get());
         }
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        List<Route> routes = DataBaseManager.getRoutesHistory();
+        List<ListItemData> data = BusDataManager.routesToListItemData(routes);
+        mViewModel.data.set(data);
     }
 
     private void initView(List<ListItemData> data) {

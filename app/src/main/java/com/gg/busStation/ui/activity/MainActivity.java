@@ -1,6 +1,5 @@
 package com.gg.busStation.ui.activity;
 
-import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -28,9 +27,7 @@ import com.gg.busStation.function.BusDataManager;
 import com.gg.busStation.function.DataBaseManager;
 import com.gg.busStation.function.location.LocationHelper;
 import com.gg.busStation.ui.adapter.MainAdapter;
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
@@ -62,12 +59,11 @@ public class MainActivity extends AppCompatActivity {
             return false;
         }
 
-        searchView.setQueryHint(getResources().getString(R.string.search_hint));
+        searchView.setQueryHint(getString(R.string.search_hint));
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                Toast.makeText(MainActivity.this, query, Toast.LENGTH_SHORT).show();
                 return true;
             }
 
@@ -138,19 +134,7 @@ public class MainActivity extends AppCompatActivity {
 
             RecyclerView recyclerView = findViewById(R.id.bus_list_view);
             MainAdapter adapter = (MainAdapter) recyclerView.getAdapter();
-            List<ListItemData> data = new ArrayList<>();
-            for (Route route : routes) {
-                String tips = route.getCo().equals(Route.coCTB) ? "(城巴路线)" : "";
-                ListItemData listItemData = new ListItemData(route.getCo(),
-                        route.getRoute(),
-                        route.getOrig("zh_CN") + " -> " + route.getDest("zh_CN"),
-                        "",
-//                        BusDataManager.serviceTypeToName(route.getService_type()),
-                        route.getBound(),
-                        route.getService_type(),
-                        tips);
-                data.add(listItemData);
-            }
+            List<ListItemData> data = BusDataManager.routesToListItemData(routes);
 
             if (adapter != null) {
                 runOnUiThread(() -> adapter.submitList(data));

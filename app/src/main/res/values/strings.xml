@@ -14,4 +14,5 @@
     <string name="dialog_permission_decline">Decline</string>
     <string name="dialog_permission_accept">Accept</string>
     <string name="about_use_title">References</string>
+    <string name="error_getdata">Failed to get data</string>
 </resources>
