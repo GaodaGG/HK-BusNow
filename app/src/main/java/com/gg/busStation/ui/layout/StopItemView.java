@@ -34,6 +34,11 @@ import java.io.IOException;
 import java.util.List;
 
 public class StopItemView extends LinearLayout {
+    private ItemBusExpendBinding binding;
+    private boolean isOpen = false;
+    private int openHeight;
+    private int closeHeight;
+
     private int updateCounter = 0;
     private final BroadcastReceiver updateTimeReciver = new BroadcastReceiver() {
         @Override
@@ -46,11 +51,6 @@ public class StopItemView extends LinearLayout {
             updateTime(context, false);
         }
     };
-
-    private ItemBusExpendBinding binding;
-    private boolean isOpen = false;
-    private int openHeight;
-    private int closeHeight;
 
     public StopItemView(@NonNull Context context) {
         super(context);

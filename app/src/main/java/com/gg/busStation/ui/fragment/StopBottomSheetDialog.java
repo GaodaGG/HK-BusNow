@@ -71,6 +71,8 @@ public class StopBottomSheetDialog extends BottomSheetDialogFragment {
             }
 
             int nearestStopIndex = 0;
+
+            if (!isAdded()) return;
             LatLng location = LocationHelper.getLocation();
             if (requireActivity().checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                 nearestStopIndex = findNearestStopIndex(mStops, location);

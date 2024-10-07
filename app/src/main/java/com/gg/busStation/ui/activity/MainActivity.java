@@ -144,7 +144,8 @@ public class MainActivity extends AppCompatActivity {
                 ListItemData listItemData = new ListItemData(route.getCo(),
                         route.getRoute(),
                         route.getOrig("zh_CN") + " -> " + route.getDest("zh_CN"),
-                        BusDataManager.serviceTypeToName(route.getService_type()),
+                        "",
+//                        BusDataManager.serviceTypeToName(route.getService_type()),
                         route.getBound(),
                         route.getService_type(),
                         tips);

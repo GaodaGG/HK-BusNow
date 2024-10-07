@@ -1,14 +1,13 @@
 package com.gg.busStation.ui.adapter;
 
-import android.app.Activity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
+import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.ListAdapter;
 
@@ -21,9 +20,9 @@ import com.gg.busStation.ui.fragment.StopBottomSheetDialog;
 import java.util.List;
 
 public class MainAdapter extends ListAdapter<ListItemData, MainViewHolder> {
-    private final Activity mActivity;
+    private final FragmentActivity mActivity;
 
-    public MainAdapter(Activity context){
+    public MainAdapter(FragmentActivity context){
         super(DIFF_CALLBACK);
         this.mActivity = context;
     }
@@ -31,7 +30,10 @@ public class MainAdapter extends ListAdapter<ListItemData, MainViewHolder> {
     private static final DiffUtil.ItemCallback<ListItemData> DIFF_CALLBACK = new DiffUtil.ItemCallback<>() {
         @Override
         public boolean areItemsTheSame(@NonNull ListItemData oldItem, @NonNull ListItemData newItem) {
-            return oldItem.getStopNumber().equals(newItem.getStopNumber());
+            return oldItem.getStopNumber().equals(newItem.getStopNumber()) &&
+                    oldItem.getCo().equals(newItem.getCo()) &&
+                    oldItem.getBound().equals(newItem.getBound()) &&
+                    oldItem.getService_type().equals(newItem.getService_type());
         }
 
         @Override
@@ -53,20 +55,24 @@ public class MainAdapter extends ListAdapter<ListItemData, MainViewHolder> {
     public void onBindViewHolder(@NonNull MainViewHolder holder, int position) {
         ListItemData listItemData = getItem(position);
         holder.getBinding().setData(listItemData);
-        
+
         holder.itemView.setOnClickListener(view -> {
-            new StopBottomSheetDialog(listItemData).show(((AppCompatActivity) mActivity).getSupportFragmentManager(), StopBottomSheetDialog.TAG);
+            new StopBottomSheetDialog(listItemData).show(mActivity.getSupportFragmentManager(), StopBottomSheetDialog.TAG);
             DataBaseManager.addRoutesHistory(listItemData.getCo(), listItemData.getStopNumber(), listItemData.getBound(), listItemData.getService_type());
         });
+
+        holder.getAdapterPosition();
     }
 
-    @Override
     public void submitList(@Nullable List<ListItemData> list) {
         super.submitList(list);
+
+        View errorView = mActivity.findViewById(R.id.main_error_layout);
+        if (errorView == null) return;
         if (list == null || list.isEmpty()) {
-            mActivity.findViewById(R.id.main_error_layout).setVisibility(View.VISIBLE);
+            errorView.setVisibility(View.VISIBLE);
         } else {
-            mActivity.findViewById(R.id.main_error_layout).setVisibility(View.GONE);
+            errorView.setVisibility(View.GONE);
         }
     }
 }
