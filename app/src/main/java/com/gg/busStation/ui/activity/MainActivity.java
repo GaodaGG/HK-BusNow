@@ -42,12 +42,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void initData() {
         DataBaseManager.initDB(this);
-
-        try {
-            LocationHelper.init(this);
-        } catch (Exception e) {
-            Toast.makeText(this, "无法获取位置信息", Toast.LENGTH_SHORT).show();
-        }
+        LocationHelper.init(this);
     }
 
     @Override
@@ -140,14 +135,5 @@ public class MainActivity extends AppCompatActivity {
                 runOnUiThread(() -> adapter.submitList(data));
             }
         }).start();
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-
-        if (requestCode == 0 && (grantResults.length == 0 || grantResults[0] == PackageManager.PERMISSION_DENIED)) {
-            Toast.makeText(this, "权限授权失败，请手动给予", Toast.LENGTH_SHORT).show();
-        }
     }
 }

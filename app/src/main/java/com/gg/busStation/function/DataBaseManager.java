@@ -191,7 +191,7 @@ public class DataBaseManager {
         if (rows == 0) {
             //获取所有数据
             cursor = db.rawQuery("SELECT * FROM " + SQLConstants.stopDBName, null);
-            location = LocationHelper.getLocation();
+            location = LocationHelper.getLocation(false);
         } else {
             cursor = db.query(SQLConstants.stopDBName, null, null, null, null, null, null, String.valueOf(rows));
         }

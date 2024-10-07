@@ -1,9 +1,7 @@
 package com.gg.busStation.function.location;
 
 import android.content.Context;
-import android.util.Log;
 
-import com.baidu.location.BDLocation;
 import com.baidu.location.LocationClient;
 import com.baidu.location.LocationClientOption;
 import com.baidu.mapapi.SDKInitializer;
@@ -16,14 +14,21 @@ public class LocationHelper {
     private static LocationClientOption mLocationClientOption;
     private static final String apiKey = "D4GLNJOTDV8d2JooN0EMm3qdHLLr7pao";
 
-    public static void init(Context context) throws Exception {
+    private LocationHelper() {
+    }
+
+    public static void init(Context context){
         LocationClient.setKey(apiKey);
         SDKInitializer.setApiKey(apiKey);
         LocationClient.setAgreePrivacy(true);
         SDKInitializer.setAgreePrivacy(context.getApplicationContext(),true);
 
         SDKInitializer.initialize(context.getApplicationContext());
-        mLocationClient = new LocationClient(context.getApplicationContext());
+        try {
+            mLocationClient = new LocationClient(context.getApplicationContext());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
         mLocationClientOption = new LocationClientOption();
 
         mLocationClientOption.setLocationMode(LocationClientOption.LocationMode.Fuzzy_Locating);
@@ -44,9 +49,10 @@ public class LocationHelper {
         return coord.convert();
     }
 
-    public static LatLng getLocation() {
-        if (System.currentTimeMillis() - LocationListener.getLastUpdateTime() >= 60000) {
+    public static LatLng getLocation(boolean updateNow) {
+        if (System.currentTimeMillis() - LocationListener.getLastUpdateTime() >= 60000 || updateNow) {
             mLocationClient.requestLocation();
+            mLocationClient.start();
         }
 
         double latitude = getLatitude();

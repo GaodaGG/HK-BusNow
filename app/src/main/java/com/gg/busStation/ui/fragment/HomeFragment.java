@@ -8,6 +8,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
@@ -22,19 +24,28 @@ import com.gg.busStation.function.BusDataManager;
 import com.gg.busStation.data.bus.Route;
 import com.gg.busStation.data.layout.HomeViewModel;
 import com.gg.busStation.data.layout.ListItemData;
+import com.gg.busStation.function.location.LocationHelper;
 import com.gg.busStation.ui.adapter.MainAdapter;
 import com.gg.busStation.databinding.FragmentHomeBinding;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.divider.MaterialDividerItemDecoration;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 public class HomeFragment extends Fragment {
     private FragmentHomeBinding binding;
     private HomeViewModel mViewModel;
     AlertDialog loadingDialog;
+
+    // 权限申请回调
+    private final ActivityResultLauncher<String> requestPermission = registerForActivityResult(new ActivityResultContracts.RequestPermission(), result -> {
+        if (Boolean.FALSE.equals(result)) {
+            Toast.makeText(requireContext(), "权限授权失败，请手动给予", Toast.LENGTH_SHORT).show();
+        } else {
+            LocationHelper.getLocation(true);
+        }
+    });
 
     @Nullable
     @Override
@@ -119,7 +130,7 @@ public class HomeFragment extends Fragment {
                 .setTitle(R.string.dialog_permission_title)
                 .setMessage(R.string.dialog_permission_message)
                 .setNegativeButton(R.string.dialog_permission_decline, (dialog, which) -> {})
-                .setPositiveButton(R.string.dialog_permission_accept, (dialog, which) -> requireActivity().requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 0))
+                .setPositiveButton(R.string.dialog_permission_accept, (dialog, which) -> requestPermission.launch(Manifest.permission.ACCESS_FINE_LOCATION))
                 .show();
 
         DataBaseManager.setInitStatus(true);

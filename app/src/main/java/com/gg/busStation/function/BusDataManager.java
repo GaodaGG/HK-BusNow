@@ -22,8 +22,6 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 public class BusDataManager {
-    private static long lastUpdateTime = 0;
-
     private BusDataManager() {
     }
 
@@ -31,7 +29,7 @@ public class BusDataManager {
         //判断是否需要更新数据
         Map<String, String> settings = DataBaseManager.getSettings();
         String oldLastUpdateTime = settings.get("lastUpdateTime");
-        lastUpdateTime = Long.parseLong(oldLastUpdateTime);
+        long lastUpdateTime = Long.parseLong(oldLastUpdateTime);
 
         if (System.currentTimeMillis() <= lastUpdateTime + Long.parseLong(settings.get("updateTime")) && "true".equals(settings.get("isInit"))) {
             return;
