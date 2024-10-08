@@ -14,5 +14,12 @@
 [城巴数据](https://data.gov.hk/sc-data/dataset/ctb-eta-transport-realtime-eta/)
 
 ## 应用截图 (正在开发)
-![应用截图1](./app_screenshot1.png)
-![应用截图2](./app_screenshot2.png)
+<p align = "left">    
+  <img src="./app_screenshot1.png" width="300px">
+  <img src="./app_screenshot2.png" width="300px">
+</p>
+
+## 未来目标 [数据来源](https://data.gov.hk/sc-data/dataset/hk-td-tis_23-routes-fares-geojson)
+- 对共同运营路线的过滤
+- 车费查看
+- 城巴路线存入本地
