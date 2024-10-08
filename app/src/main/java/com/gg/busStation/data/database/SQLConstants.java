@@ -8,7 +8,7 @@ public class SQLConstants {
     public static final String settingsDBName = "userSettings";
 
     public static final String createRouteDBCommand = "CREATE TABLE IF NOT EXISTS " + routeDBName + " (" +
-            "co TEXT CHECK (co IN ('KMB', 'CTB')) NOT NULL," +
+            "co TEXT CHECK (co IN ('KMB', 'CTB', 'KMB+CTB')) NOT NULL," +
             "route TEXT NOT NULL," +
             "bound TEXT CHECK (bound IN ('outbound', 'inbound')) NOT NULL," +
             "service_type TEXT NOT NULL," +
@@ -30,7 +30,7 @@ public class SQLConstants {
             ");";
 
     public static final String createRoutesHistoryDBCommand = "CREATE TABLE IF NOT EXISTS " + routesHistoryDBName + " (" +
-            "co TEXT CHECK (co IN ('KMB', 'CTB')) NOT NULL," +
+            "co TEXT CHECK (co IN ('KMB', 'CTB', 'KMB+CTB')) NOT NULL," +
             "route TEXT NOT NULL," +
             "bound TEXT CHECK (bound IN ('outbound', 'inbound')) NOT NULL," +
             "service_type TEXT NOT NULL," +

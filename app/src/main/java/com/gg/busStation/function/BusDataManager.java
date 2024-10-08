@@ -113,7 +113,7 @@ public class BusDataManager {
     public static List<Stop> routeToStops(Route route) throws IOException {
         List<Stop> itemStops = new ArrayList<>();
 
-        if (Route.coKMB.equals(route.getCo())) {
+        if (Route.coKMB.equals(route.getCo()) || Route.coBoth.equals(route.getCo())) {
             return KMB.routeToStops(route, itemStops);
         }
 
