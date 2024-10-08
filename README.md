@@ -20,6 +20,6 @@
 </p>
 
 ## 未来目标 [数据来源](https://data.gov.hk/sc-data/dataset/hk-td-tis_23-routes-fares-geojson)
-- 对共同运营路线的过滤
 - 车费查看
 - 城巴路线存入本地
+- 降低内存占用
