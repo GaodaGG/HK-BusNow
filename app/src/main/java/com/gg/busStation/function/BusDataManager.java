@@ -2,7 +2,7 @@ package com.gg.busStation.function;
 
 import android.content.Context;
 
-import androidx.fragment.app.Fragment;
+import androidx.annotation.NonNull;
 
 import com.baidu.mapapi.model.LatLng;
 import com.gg.busStation.data.bus.ETA;
@@ -49,6 +49,18 @@ public class BusDataManager {
         List<Route> routes = new ArrayList<>();
 
         // 重复路线标记
+        ArrayList<String> bothRoutes = getBothRoutes();
+
+        // 获取九巴路线列表
+        KMB.initRoutes(routes, bothRoutes);
+
+        // 获取城巴路线列表
+        CTB.initRoutes(routes, bothRoutes);
+
+        return routes;
+    }
+
+    private static @NonNull ArrayList<String> getBothRoutes() throws IOException {
         ArrayList<String> bothRoute = new ArrayList<>();
         String data = HttpClientHelper.getData(govJsonUrl);
         List<Feature> features = JsonToBean.parseFeaturesFromString(data);
@@ -64,14 +76,7 @@ public class BusDataManager {
                 bothRoute.add(routeName);
             }
         });
-
-        // 获取九巴路线列表
-        KMB.initRoutes(routes, bothRoute);
-
-        // 获取城巴路线列表
-        CTB.initRoutes(routes, bothRoute);
-
-        return routes;
+        return bothRoute;
     }
 
     private static List<Stop> initStops() throws IOException {
@@ -242,8 +247,24 @@ public class BusDataManager {
                 Route route = JsonToBean.jsonToRoute(jsonObject);
                 route.setBound(Route.In);
                 route.setService_type("1");
+
+                Route routeOut = createOppositeRoute(route);
+
                 routes.add(route);
+                routes.add(routeOut);
             }
+        }
+
+        private static Route createOppositeRoute(Route route) {
+            Route routeOut = new Route(route);
+            routeOut.setBound(Route.Out);
+            routeOut.setDest_en(route.getOrig("en"));
+            routeOut.setDest_tc(route.getOrig("zh_HK"));
+            routeOut.setDest_sc(route.getOrig("zh_CN"));
+            routeOut.setOrig_en(route.getDest("en"));
+            routeOut.setOrig_tc(route.getDest("zh_HK"));
+            routeOut.setOrig_sc(route.getDest("zh_CN"));
+            return routeOut;
         }
 
         public static List<Stop> routeToStops(Route route, List<Stop> itemStops) throws IOException {

@@ -36,6 +36,19 @@ public class Route {
         this.dest_sc = dest_sc;
     }
 
+    public Route(Route route) {
+        this.co = route.co;
+        this.route = route.route;
+        this.bound = route.bound;
+        this.service_type = route.service_type;
+        this.orig_en = route.orig_en;
+        this.orig_tc = route.orig_tc;
+        this.orig_sc = route.orig_sc;
+        this.dest_en = route.dest_en;
+        this.dest_tc = route.dest_tc;
+        this.dest_sc = route.dest_sc;
+    }
+
     public String getOrig(String language) {
         if ("en".equals(language)) {
             return orig_en;
