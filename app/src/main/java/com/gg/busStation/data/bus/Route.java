@@ -6,6 +6,7 @@ public class Route {
 
     public static String coKMB = "KMB";
     public static String coCTB = "CTB";
+    public static String coBoth = "KMB+CTB";
 
     private String co;
     private String route;

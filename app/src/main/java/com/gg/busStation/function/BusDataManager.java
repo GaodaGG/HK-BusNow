@@ -2,8 +2,11 @@ package com.gg.busStation.function;
 
 import android.content.Context;
 
+import androidx.fragment.app.Fragment;
+
 import com.baidu.mapapi.model.LatLng;
 import com.gg.busStation.data.bus.ETA;
+import com.gg.busStation.data.bus.Feature;
 import com.gg.busStation.data.bus.Route;
 import com.gg.busStation.data.bus.Stop;
 import com.gg.busStation.data.layout.ListItemData;
@@ -22,6 +25,7 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 public class BusDataManager {
+    private static final String govJsonUrl = "https://static.data.gov.hk/td/routes-fares-geojson/JSON_BUS.json";
     private BusDataManager() {
     }
 
@@ -41,19 +45,36 @@ public class BusDataManager {
         DataBaseManager.initData(routeList, stopList, context);
     }
 
-    public static List<Route> initRoutes() throws IOException {
+    private static List<Route> initRoutes() throws IOException {
         List<Route> routes = new ArrayList<>();
 
+        // 重复路线标记
+        ArrayList<String> bothRoute = new ArrayList<>();
+        String data = HttpClientHelper.getData(govJsonUrl);
+        List<Feature> features = JsonToBean.parseFeaturesFromString(data);
+        features.forEach(feature -> {
+            String routeName = feature.properties.routeNameC;
+            String companyCode = feature.properties.companyCode;
+
+            if (bothRoute.contains(routeName)) {
+                return;
+            }
+
+            if ("KMB+CTB".equals(companyCode)) {
+                bothRoute.add(routeName);
+            }
+        });
+
         // 获取九巴路线列表
-        KMB.initRoutes(routes);
+        KMB.initRoutes(routes, bothRoute);
 
         // 获取城巴路线列表
-        CTB.initRoutes(routes);
+        CTB.initRoutes(routes, bothRoute);
 
         return routes;
     }
 
-    public static List<Stop> initStops() throws IOException {
+    private static List<Stop> initStops() throws IOException {
         List<Stop> stops = new ArrayList<>();
 
         // 获取九巴站点数据
@@ -67,11 +88,13 @@ public class BusDataManager {
 
     public static List<ETA> routeAndStopToETAs(Route route, Stop stop, int seq) throws IOException {
         List<ETA> etas = new ArrayList<>();
-        if (route.getCo().equals(Route.coKMB)) {
+        if (route.getCo().equals(Route.coKMB) || route.getCo().equals(Route.coBoth)) {
             KMB.routeAndStopToETAs(route, stop, etas);
         }
 
-        CTB.routeAndStopToETAs(route, seq, etas);
+        if (route.getCo().equals(Route.coCTB) || route.getCo().equals(Route.coBoth)) {
+            CTB.routeAndStopToETAs(route, seq, etas);
+        }
 
         etas.sort((eta1, eta2) -> {
             if (eta1.getEta() == null || eta2.getEta() == null) {
@@ -164,12 +187,12 @@ public class BusDataManager {
         public static final String routeToStopUrl = "https://data.etabus.gov.hk/v1/transport/kmb/route-stop/";
         public static final String routeAndStopToETAUrl = "https://data.etabus.gov.hk/v1/transport/kmb/eta/";
 
-        private static void initRoutes(List<Route> routes) throws IOException {
+        private static void initRoutes(List<Route> routes, List<String> bothRoutes) throws IOException {
             String kmbData = HttpClientHelper.getData(KMB.routeUrl);
             for (JsonElement jsonElement : JsonToBean.extractJsonArray(kmbData)) {
                 JsonObject jsonObject = jsonElement.getAsJsonObject();
                 Route route = JsonToBean.jsonToRoute(jsonObject);
-                route.setCo(Route.coKMB);
+                route.setCo(bothRoutes.contains(route.getRoute()) ? Route.coBoth : Route.coKMB);
                 routes.add(route);
             }
         }
@@ -207,10 +230,15 @@ public class BusDataManager {
         public static final String routeToStopUrl = "https://rt.data.gov.hk/v2/transport/citybus/route-stop/ctb/";
         public static final String routeAndStopToETAUrl = "https://rt.data.gov.hk/v2/transport/citybus/eta/ctb/";
 
-        public static void initRoutes(List<Route> routes) throws IOException {
+        public static void initRoutes(List<Route> routes, List<String> bothRoutes) throws IOException {
             String ctbData = HttpClientHelper.getData(CTB.routeUrl);
             for (JsonElement jsonElement : JsonToBean.extractJsonArray(ctbData)) {
                 JsonObject jsonObject = jsonElement.getAsJsonObject();
+
+                if (bothRoutes.contains(jsonObject.get("route").getAsString())) {
+                    continue;
+                }
+
                 Route route = JsonToBean.jsonToRoute(jsonObject);
                 route.setBound(Route.In);
                 route.setService_type("1");

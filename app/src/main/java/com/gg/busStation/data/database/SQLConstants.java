@@ -38,9 +38,14 @@ public class SQLConstants {
             "UNIQUE(route, bound, service_type)" +
             ");";
 
-//    public static final String createFareDBCommand = "CREATE TABLE IF NOT EXISTS " + fareDBName + " (" +
     public static final String createSettingsDBCommand = "CREATE TABLE IF NOT EXISTS " + settingsDBName + " (" +
             "key TEXT NOT NULL," +
             "value TEXT NOT NULL" +
             ");";
+
+//    public static final String createFareDBCommand = "CREATE TABLE IF NOT EXISTS " + fareDBName + " (" +
+//            "route TEXT NOT NULL," +
+//            "bound TEXT CHECK (bound IN ('outbound', 'inbound')) NOT NULL," +
+//            "service_type TEXT NOT NULL,"
+
 }

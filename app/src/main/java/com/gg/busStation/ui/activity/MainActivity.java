@@ -3,6 +3,7 @@ package com.gg.busStation.ui.activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
@@ -25,10 +26,16 @@ import com.gg.busStation.data.layout.ListItemData;
 import com.gg.busStation.databinding.ActivityMainBinding;
 import com.gg.busStation.function.BusDataManager;
 import com.gg.busStation.function.DataBaseManager;
+import com.gg.busStation.function.internet.HttpClientHelper;
 import com.gg.busStation.function.location.LocationHelper;
 import com.gg.busStation.ui.adapter.MainAdapter;
 
+import java.io.IOException;
 import java.util.List;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.Response;
 
 public class MainActivity extends AppCompatActivity {
     private ActivityMainBinding binding;
