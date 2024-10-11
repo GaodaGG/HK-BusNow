@@ -11,14 +11,14 @@
         android:id="@+id/main_error_layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:visibility="gone"
         android:gravity="center"
+        android:orientation="vertical"
         android:paddingBottom="90dp"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" >
+        app:layout_constraintTop_toTopOf="parent">
 
         <TextView
             android:layout_width="wrap_content"
@@ -30,23 +30,17 @@
     </LinearLayout>
 
     <androidx.core.widget.NestedScrollView
+        android:id="@+id/bus_scroll_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/bus_scroll_view">
+        android:layout_height="match_parent">
 
-        <LinearLayout
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/bus_list_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical">
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:id="@+id/bus_list_view"
-                android:paddingBottom="90dp"
-                android:clipToPadding="false"
-                tools:listitem="@layout/item_bus" />
-        </LinearLayout>
+            android:clipToPadding="false"
+            android:paddingBottom="90dp"
+            tools:listitem="@layout/item_bus" />
 
     </androidx.core.widget.NestedScrollView>
 

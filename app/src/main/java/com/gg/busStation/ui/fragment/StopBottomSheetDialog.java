@@ -97,7 +97,9 @@ public class StopBottomSheetDialog extends BottomSheetDialogFragment {
                 ((LinearLayoutManager) dialogList.getLayoutManager()).scrollToPositionWithOffset(finalNearestStopIndex, 0);
                 dialogList.post(() -> {
                     binding.dialogLoading.setVisibility(View.GONE);
-                    StopItemView view = (StopItemView) dialogList.findViewHolderForAdapterPosition(finalNearestStopIndex).itemView;
+                    RecyclerView.ViewHolder holder = dialogList.findViewHolderForAdapterPosition(finalNearestStopIndex);
+                    if (holder == null) return;
+                    StopItemView view = (StopItemView) holder.itemView;
                     view.post(view::performClick);
                 });
             });

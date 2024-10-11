@@ -38,7 +38,9 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.divider.MaterialDividerItemDecoration;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Executors;
 
 public class HomeFragment extends Fragment {
     private FragmentHomeBinding binding;
@@ -79,6 +81,7 @@ public class HomeFragment extends Fragment {
 
     private int page = 1;
     private final int pageSize = 25;
+    private boolean isLoading = false;
     private List<ListItemData> mData;
 
     // 权限申请回调
@@ -148,22 +151,43 @@ public class HomeFragment extends Fragment {
         manager.setInitialPrefetchItemCount(10);
         divider.setLastItemDecorated(false);
 
+        binding.busScrollView.setOnScrollChangeListener((NestedScrollView.OnScrollChangeListener) (v, scrollX, scrollY, oldScrollX, oldScrollY) -> {
+            mViewModel.scrollOffset = scrollY;
+
+            if (isLoading || scrollY + v.getMeasuredHeight() + 200 < v.getChildAt(0).getMeasuredHeight()) {
+                return;
+            }
+            isLoading = true;
+
+            Executors.newSingleThreadExecutor().execute(() -> {
+                int startIndex = pageSize * (page - 1);
+                int endIndex = Math.min(pageSize * page, mData.size());
+                if (startIndex >= mData.size()) {
+                    isLoading = false;
+                    return;
+                }
+
+                List<ListItemData> newData = mData.subList(startIndex, endIndex);
+                List<ListItemData> listItemData = new ArrayList<>(mainAdapter.getCurrentList());
+                listItemData.addAll(newData);
+                binding.getRoot().post(() -> {
+                    mainAdapter.submitList(listItemData);
+                    page++;
+                    isLoading = false;
+                });
+            });
+        });
+
         activity.runOnUiThread(() -> {
             requireActivity().addMenuProvider(menuProvider);
 
-            binding.busListView.setLayoutManager(manager);
-            binding.busListView.addItemDecoration(divider);
-            binding.busListView.setHasFixedSize(true);
+            RecyclerView busListView = binding.busListView;
+            busListView.setLayoutManager(manager);
+            busListView.addItemDecoration(divider);
+            busListView.setHasFixedSize(true);
 
-            binding.busListView.setAdapter(mainAdapter);
+            busListView.setAdapter(mainAdapter);
             binding.busScrollView.scrollTo(0, mViewModel.scrollOffset);
-            binding.busScrollView.setOnScrollChangeListener((NestedScrollView.OnScrollChangeListener) (v, scrollX, scrollY, oldScrollX, oldScrollY) -> {
-                mViewModel.scrollOffset = scrollY;
-
-                if (scrollY == v.getChildAt(0).getMeasuredHeight() - v.getMeasuredHeight()) {
-                    mainAdapter.submitList(mData.subList(0, Math.min(pageSize * ++page, mData.size())));
-                }
-            });
 
             loadingDialog.dismiss();
 
@@ -171,7 +195,6 @@ public class HomeFragment extends Fragment {
         });
     }
 
-    //TODO 分页加载
     private void setRouteList(String newText) {
         new Thread(() -> {
             List<Route> routes;
@@ -185,6 +208,8 @@ public class HomeFragment extends Fragment {
             MainAdapter adapter = (MainAdapter) recyclerView.getAdapter();
 
             mData = BusDataManager.routesToListItemData(routes);
+            page = 1;
+
             if (adapter != null) {
                 requireActivity().runOnUiThread(() -> adapter.submitList(mData.subList(0, Math.min(pageSize, mData.size()))));
             }
