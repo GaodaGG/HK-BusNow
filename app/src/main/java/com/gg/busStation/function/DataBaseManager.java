@@ -51,18 +51,19 @@ public class DataBaseManager {
             //更新路线数据
             if (routes != null) {
                 insertRoutes(routes);
+                routes.clear();
             }
 
             //更新站点数据
             if (stops != null) {
                 insertStops(stops);
+                stops.clear();
             }
 
             db.setTransactionSuccessful();
         } finally {
             db.endTransaction();
         }
-
 
         updateTime();
     }

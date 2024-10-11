@@ -12,7 +12,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:visibility="visible"
+        android:visibility="gone"
         android:gravity="center"
         android:paddingBottom="90dp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -20,16 +20,12 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" >
 
-        <ImageView
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:src="@drawable/error_48px"/>
-
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/main_history_hint"
-            android:textSize="16sp"/>
+            android:textSize="16sp"
+            app:drawableTopCompat="@drawable/error_48px" />
 
     </LinearLayout>
 

@@ -27,6 +27,7 @@ import java.util.concurrent.TimeUnit;
 
 public class BusDataManager {
     private static final String govJsonUrl = "https://static.data.gov.hk/td/routes-fares-geojson/JSON_BUS.json";
+
     private BusDataManager() {
     }
 
@@ -58,6 +59,8 @@ public class BusDataManager {
         // 获取城巴路线列表
         CTB.initRoutes(routes, bothRoutes);
 
+        bothRoutes.clear();
+
         return routes;
     }
 
@@ -65,6 +68,7 @@ public class BusDataManager {
         ArrayList<String> bothRoute = new ArrayList<>();
         InputStream data = HttpClientHelper.getDataStream(govJsonUrl);
         List<Feature> features = JsonToBean.parseFeaturesFromStream(data);
+        data.close();
         features.forEach(feature -> {
             String routeName = feature.properties.routeNameC;
             String companyCode = feature.properties.companyCode;

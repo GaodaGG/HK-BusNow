@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class JsonToBean {
+    private JsonToBean() {}
     public static Route jsonToRoute(JsonObject json) {
         Gson gson = new Gson();
         return gson.fromJson(json, Route.class);
@@ -60,7 +61,7 @@ public class JsonToBean {
                     reader.skipValue();  // 跳过其他键值对
                 }
             }
-            reader.endObject();  // 结束 JSON 对象
+            reader.endObject();// 结束 JSON 对象
         } catch (IOException e) {
             e.printStackTrace();
         }
