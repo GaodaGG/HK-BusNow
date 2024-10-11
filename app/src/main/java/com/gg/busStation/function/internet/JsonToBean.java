@@ -11,7 +11,8 @@ import com.google.gson.JsonParser;
 import com.google.gson.stream.JsonReader;
 
 import java.io.IOException;
-import java.io.StringReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,10 +42,10 @@ public class JsonToBean {
         return data;
     }
 
-    public static List<Feature> parseFeaturesFromString(String jsonString) {
+    public static List<Feature> parseFeaturesFromStream(InputStream stream) {
         List<Feature> features = new ArrayList<>();
 
-        try (JsonReader reader = new JsonReader(new StringReader(jsonString))) {
+        try (JsonReader reader = new JsonReader(new InputStreamReader(stream))) {
             reader.beginObject();  // 开始解析 JSON 对象
             while (reader.hasNext()) {
                 String key = reader.nextName();  // 获取键名

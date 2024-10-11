@@ -18,6 +18,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -62,8 +63,8 @@ public class BusDataManager {
 
     private static @NonNull ArrayList<String> getBothRoutes() throws IOException {
         ArrayList<String> bothRoute = new ArrayList<>();
-        String data = HttpClientHelper.getData(govJsonUrl);
-        List<Feature> features = JsonToBean.parseFeaturesFromString(data);
+        InputStream data = HttpClientHelper.getDataStream(govJsonUrl);
+        List<Feature> features = JsonToBean.parseFeaturesFromStream(data);
         features.forEach(feature -> {
             String routeName = feature.properties.routeNameC;
             String companyCode = feature.properties.companyCode;
