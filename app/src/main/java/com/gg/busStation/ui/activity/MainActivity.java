@@ -42,19 +42,18 @@ public class MainActivity extends AppCompatActivity {
         LocationHelper.init(this);
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.top_bar_menu, menu);
-        MenuItem item = menu.findItem(R.id.search_toolbar_item);
-        SearchView searchView = (SearchView) item.getActionView();
-        if (searchView == null) {
-            return false;
-        }
-
-        searchView.setQueryHint(getString(R.string.search_hint));
-
-        return true;
-    }
+//    @Override
+//    public boolean onCreateOptionsMenu(Menu menu) {
+//        getMenuInflater().inflate(R.menu.top_bar_menu, menu);
+//        MenuItem item = menu.findItem(R.id.search_toolbar_item);
+//        SearchView searchView = (SearchView) item.getActionView();
+//        if (searchView == null) {
+//            return false;
+//        }
+//
+//        searchView.setQueryHint(getString(R.string.search_hint));
+//        return true;
+//    }
 
     private void initView() {
         binding = ActivityMainBinding.inflate(getLayoutInflater());
@@ -73,13 +72,6 @@ public class MainActivity extends AppCompatActivity {
             NavigationUI.onNavDestinationSelected(item, navController);
             binding.toolBar.setNavigationIcon(null);
 
-            MenuItem menuItem = binding.toolBar.getMenu().findItem(R.id.search_toolbar_item);
-            if (item.getItemId() != R.id.home_fragment) {
-                menuItem.setVisible(false);
-                menuItem.collapseActionView();
-            } else {
-                menuItem.setVisible(true);
-            }
             return true;
         });
 

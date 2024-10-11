@@ -5,6 +5,7 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,7 +17,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.SearchView;
-import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.MenuProvider;
 import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
@@ -33,7 +34,6 @@ import com.gg.busStation.data.layout.ListItemData;
 import com.gg.busStation.function.location.LocationHelper;
 import com.gg.busStation.ui.adapter.MainAdapter;
 import com.gg.busStation.databinding.FragmentHomeBinding;
-import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.divider.MaterialDividerItemDecoration;
 
@@ -44,6 +44,42 @@ public class HomeFragment extends Fragment {
     private FragmentHomeBinding binding;
     private HomeViewModel mViewModel;
     AlertDialog loadingDialog;
+
+    MenuProvider menuProvider = new MenuProvider() {
+        @Override
+        public void onCreateMenu(@NonNull Menu menu, @NonNull MenuInflater menuInflater) {
+            menuInflater.inflate(R.menu.top_bar_menu, menu);
+            MenuItem item = menu.findItem(R.id.search_toolbar_item);
+            SearchView searchView = (SearchView) item.getActionView();
+            if (searchView == null) {
+                return;
+            }
+
+            searchView.setQueryHint(getString(R.string.search_hint));
+            searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+                @Override
+                public boolean onQueryTextSubmit(String query) {
+                    setRouteList(query);
+                    return true;
+                }
+
+                @Override
+                public boolean onQueryTextChange(String newText) {
+                    setRouteList(newText);
+                    return true;
+                }
+            });
+        }
+
+        @Override
+        public boolean onMenuItemSelected(@NonNull MenuItem menuItem) {
+            return false;
+        }
+    };
+
+    private int page = 1;
+    private final int pageSize = 25;
+    private List<ListItemData> mData;
 
     // 权限申请回调
     private final ActivityResultLauncher<String> requestPermission = registerForActivityResult(new ActivityResultContracts.RequestPermission(), result -> {
@@ -97,12 +133,12 @@ public class HomeFragment extends Fragment {
         List<Route> routes = DataBaseManager.getRoutesHistory();
         List<ListItemData> data = BusDataManager.routesToListItemData(routes);
         mViewModel.data.set(data);
+
+        requireActivity().removeMenuProvider(menuProvider);
     }
 
     private void initView(List<ListItemData> data) {
         FragmentActivity activity = requireActivity();
-        Menu menu = ((MaterialToolbar) activity.findViewById(R.id.toolBar)).getMenu();
-        initMenu(menu);
 
         MainAdapter mainAdapter = new MainAdapter(activity);
         mainAdapter.submitList(data);
@@ -113,34 +149,25 @@ public class HomeFragment extends Fragment {
         divider.setLastItemDecorated(false);
 
         activity.runOnUiThread(() -> {
+            requireActivity().addMenuProvider(menuProvider);
+
             binding.busListView.setLayoutManager(manager);
             binding.busListView.addItemDecoration(divider);
             binding.busListView.setHasFixedSize(true);
 
             binding.busListView.setAdapter(mainAdapter);
             binding.busScrollView.scrollTo(0, mViewModel.scrollOffset);
-            binding.busScrollView.setOnScrollChangeListener((NestedScrollView.OnScrollChangeListener) (v, scrollX, scrollY, oldScrollX, oldScrollY) -> mViewModel.scrollOffset = scrollY);
+            binding.busScrollView.setOnScrollChangeListener((NestedScrollView.OnScrollChangeListener) (v, scrollX, scrollY, oldScrollX, oldScrollY) -> {
+                mViewModel.scrollOffset = scrollY;
+
+                if (scrollY == v.getChildAt(0).getMeasuredHeight() - v.getMeasuredHeight()) {
+                    mainAdapter.submitList(mData.subList(0, Math.min(pageSize * ++page, mData.size())));
+                }
+            });
 
             loadingDialog.dismiss();
 
             checkPermissions();
-        });
-    }
-
-    private void initMenu(Menu menu) {
-        SearchView searchView = (SearchView) menu.findItem(R.id.search_toolbar_item).getActionView();
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                setRouteList(query);
-                return true;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                setRouteList(newText);
-                return true;
-            }
         });
     }
 
@@ -156,10 +183,10 @@ public class HomeFragment extends Fragment {
 
             RecyclerView recyclerView = binding.busListView;
             MainAdapter adapter = (MainAdapter) recyclerView.getAdapter();
-            List<ListItemData> data = BusDataManager.routesToListItemData(routes);
 
+            mData = BusDataManager.routesToListItemData(routes);
             if (adapter != null) {
-                requireActivity().runOnUiThread(() -> adapter.submitList(data));
+                requireActivity().runOnUiThread(() -> adapter.submitList(mData.subList(0, Math.min(pageSize, mData.size()))));
             }
         }).start();
     }
