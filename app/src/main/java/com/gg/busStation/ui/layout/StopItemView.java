@@ -6,6 +6,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.icu.util.Calendar;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.AttributeSet;
@@ -31,6 +32,7 @@ import com.gg.busStation.function.BusDataManager;
 import com.google.android.material.motion.MotionUtils;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
 
 public class StopItemView extends LinearLayout {
@@ -40,15 +42,17 @@ public class StopItemView extends LinearLayout {
     private int closeHeight;
 
     private int updateCounter = 0;
+    private int lastUpdateTime = Calendar.getInstance().get(java.util.Calendar.MINUTE);
+
     private final BroadcastReceiver updateTimeReciver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
-            if (!Intent.ACTION_TIME_TICK.equals(action)) {
-                return;
+            int updateTime = Calendar.getInstance().get(java.util.Calendar.MINUTE);
+            if (Intent.ACTION_TIME_TICK.equals(action) && updateTime - lastUpdateTime >= 1) {
+                updateTime(context, false);
+                lastUpdateTime = updateTime;
             }
-
-            updateTime(context, false);
         }
     };
 
@@ -77,7 +81,7 @@ public class StopItemView extends LinearLayout {
 
         // 设置点击监听器来处理展开/收起
         setOnClickListener(view -> {
-            getETA(context, view);
+            if (!isOpen) getETA(context, view);
             toggle();
         });
     }
@@ -105,7 +109,7 @@ public class StopItemView extends LinearLayout {
     public void updateTime(Context context, boolean ignoreCount) {
         // 每隔5分钟重新获取一次时间
         if (updateCounter == 5 || ignoreCount) {
-            getETA(context, StopItemView.this);
+            getETA(context, this);
             updateCounter = 0;
             return;
         }
@@ -119,9 +123,7 @@ public class StopItemView extends LinearLayout {
         }
     }
 
-    private void getETA(Context context, View view) {
-        if (isOpen) return;
-
+    public void getETA(Context context, View view) {
         Handler mainHandler = new Handler(Looper.getMainLooper());
 
         StopItemData data = binding.getData();
