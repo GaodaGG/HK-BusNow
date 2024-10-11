@@ -53,19 +53,6 @@ public class MainActivity extends AppCompatActivity {
 
         searchView.setQueryHint(getString(R.string.search_hint));
 
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                return true;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                setRouteList(newText);
-                return false;
-            }
-        });
-
         return true;
     }
 
@@ -112,25 +99,5 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-    }
-
-    //TODO 分页加载
-    private void setRouteList(String newText) {
-        new Thread(() -> {
-            List<Route> routes;
-            if (newText.isEmpty()) {
-                routes = DataBaseManager.getRoutesHistory();
-            } else {
-                routes = DataBaseManager.getRoutes(newText);
-            }
-
-            RecyclerView recyclerView = findViewById(R.id.bus_list_view);
-            MainAdapter adapter = (MainAdapter) recyclerView.getAdapter();
-            List<ListItemData> data = BusDataManager.routesToListItemData(routes);
-
-            if (adapter != null) {
-                runOnUiThread(() -> adapter.submitList(data));
-            }
-        }).start();
     }
 }

@@ -75,8 +75,6 @@ public class MainAdapter extends ListAdapter<ListItemData, MainViewHolder> {
             List<Route> routesHistory = DataBaseManager.getRoutesHistory();
             submitList(BusDataManager.routesToListItemData(routesHistory));
         });
-
-        holder.getAdapterPosition();
     }
 
     @Override

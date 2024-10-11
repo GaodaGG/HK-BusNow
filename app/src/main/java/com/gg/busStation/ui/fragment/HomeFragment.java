@@ -4,6 +4,8 @@ import android.Manifest;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
@@ -13,10 +15,14 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.SearchView;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.gg.busStation.R;
 import com.gg.busStation.function.DataBaseManager;
@@ -27,6 +33,7 @@ import com.gg.busStation.data.layout.ListItemData;
 import com.gg.busStation.function.location.LocationHelper;
 import com.gg.busStation.ui.adapter.MainAdapter;
 import com.gg.busStation.databinding.FragmentHomeBinding;
+import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.divider.MaterialDividerItemDecoration;
 
@@ -93,7 +100,11 @@ public class HomeFragment extends Fragment {
     }
 
     private void initView(List<ListItemData> data) {
-        MainAdapter mainAdapter = new MainAdapter(requireActivity());
+        FragmentActivity activity = requireActivity();
+        Menu menu = ((MaterialToolbar) activity.findViewById(R.id.toolBar)).getMenu();
+        initMenu(menu);
+
+        MainAdapter mainAdapter = new MainAdapter(activity);
         mainAdapter.submitList(data);
         LinearLayoutManager manager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
         MaterialDividerItemDecoration divider = new MaterialDividerItemDecoration(requireContext(), LinearLayoutManager.VERTICAL);
@@ -101,7 +112,7 @@ public class HomeFragment extends Fragment {
         manager.setInitialPrefetchItemCount(10);
         divider.setLastItemDecorated(false);
 
-        requireActivity().runOnUiThread(() -> {
+        activity.runOnUiThread(() -> {
             binding.busListView.setLayoutManager(manager);
             binding.busListView.addItemDecoration(divider);
             binding.busListView.setHasFixedSize(true);
@@ -114,6 +125,43 @@ public class HomeFragment extends Fragment {
 
             checkPermissions();
         });
+    }
+
+    private void initMenu(Menu menu) {
+        SearchView searchView = (SearchView) menu.findItem(R.id.search_toolbar_item).getActionView();
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                setRouteList(query);
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                setRouteList(newText);
+                return true;
+            }
+        });
+    }
+
+    //TODO 分页加载
+    private void setRouteList(String newText) {
+        new Thread(() -> {
+            List<Route> routes;
+            if (newText.isEmpty()) {
+                routes = DataBaseManager.getRoutesHistory();
+            } else {
+                routes = DataBaseManager.getRoutes(newText);
+            }
+
+            RecyclerView recyclerView = binding.busListView;
+            MainAdapter adapter = (MainAdapter) recyclerView.getAdapter();
+            List<ListItemData> data = BusDataManager.routesToListItemData(routes);
+
+            if (adapter != null) {
+                requireActivity().runOnUiThread(() -> adapter.submitList(data));
+            }
+        }).start();
     }
 
     private void checkPermissions() {
