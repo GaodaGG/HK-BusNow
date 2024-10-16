@@ -1,5 +1,6 @@
 package com.gg.busStation.ui.adapter;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -84,9 +85,9 @@ public class MainAdapter extends ListAdapter<ListItemData, MainViewHolder> {
         View errorView = mActivity.findViewById(R.id.main_error_layout);
         if (errorView == null) return;
         if (list == null || list.isEmpty()) {
-            errorView.setVisibility(View.VISIBLE);
+            mActivity.runOnUiThread(() -> errorView.setVisibility(View.VISIBLE));
         } else {
-            errorView.setVisibility(View.GONE);
+            mActivity.runOnUiThread(() -> errorView.setVisibility(View.GONE));
         }
     }
 }

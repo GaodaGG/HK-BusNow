@@ -3,6 +3,7 @@ package com.gg.busStation.ui.fragment;
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -47,6 +48,11 @@ public class HomeFragment extends Fragment {
     private HomeViewModel mViewModel;
     AlertDialog loadingDialog;
 
+    private int page = 1;
+    private final int pageSize = 15;
+    private boolean isLoading = false;
+    private List<ListItemData> mData;
+
     MenuProvider menuProvider = new MenuProvider() {
         @Override
         public void onCreateMenu(@NonNull Menu menu, @NonNull MenuInflater menuInflater) {
@@ -78,11 +84,6 @@ public class HomeFragment extends Fragment {
             return false;
         }
     };
-
-    private int page = 1;
-    private final int pageSize = 25;
-    private boolean isLoading = false;
-    private List<ListItemData> mData;
 
     // 权限申请回调
     private final ActivityResultLauncher<String> requestPermission = registerForActivityResult(new ActivityResultContracts.RequestPermission(), result -> {
@@ -159,7 +160,7 @@ public class HomeFragment extends Fragment {
             }
             isLoading = true;
 
-            Executors.newSingleThreadExecutor().execute(() -> {
+            Executors.newFixedThreadPool(1).execute(() -> {
                 int startIndex = pageSize * (page - 1);
                 int endIndex = Math.min(pageSize * page, mData.size());
                 if (startIndex >= mData.size()) {
@@ -170,11 +171,9 @@ public class HomeFragment extends Fragment {
                 List<ListItemData> newData = mData.subList(startIndex, endIndex);
                 List<ListItemData> listItemData = new ArrayList<>(mainAdapter.getCurrentList());
                 listItemData.addAll(newData);
-                binding.getRoot().post(() -> {
-                    mainAdapter.submitList(listItemData);
-                    page++;
-                    isLoading = false;
-                });
+                mainAdapter.submitList(listItemData);
+                page++;
+                isLoading = false;
             });
         });
 
@@ -211,7 +210,7 @@ public class HomeFragment extends Fragment {
             page = 1;
 
             if (adapter != null) {
-                requireActivity().runOnUiThread(() -> adapter.submitList(mData.subList(0, Math.min(pageSize, mData.size()))));
+                adapter.submitList(mData.subList(0, Math.min(pageSize, mData.size())));
             }
         }).start();
     }

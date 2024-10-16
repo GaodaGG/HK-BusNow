@@ -6,6 +6,7 @@ import android.Manifest;
 import android.app.Dialog;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 
 import androidx.annotation.NonNull;
@@ -67,7 +68,7 @@ public class StopBottomSheetDialog extends BottomSheetDialogFragment {
                     data.add(stopItemData);
                 }
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                Log.e(TAG, "initView: ", e);
             }
 
             int nearestStopIndex = 0;
