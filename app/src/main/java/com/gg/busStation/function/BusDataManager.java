@@ -172,7 +172,7 @@ public class BusDataManager {
                     .append(" -> ")
                     .append(route.getDest("zh_CN"));
 
-            if (headline.length() > 25) {
+            if (headline.length() > 20) {
                 headline = new StringBuilder().append(route.getOrig("zh_CN"))
                         .append(" ->\n")
                         .append(route.getDest("zh_CN"));

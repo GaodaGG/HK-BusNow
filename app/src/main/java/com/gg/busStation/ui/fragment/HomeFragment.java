@@ -202,8 +202,7 @@ public class HomeFragment extends Fragment {
                 routes = DataBaseManager.getRoutes(newText);
             }
 
-            RecyclerView recyclerView = binding.busListView;
-            MainAdapter adapter = (MainAdapter) recyclerView.getAdapter();
+            MainAdapter adapter = (MainAdapter) binding.busListView.getAdapter();
 
             mData = BusDataManager.routesToListItemData(routes);
             page = 1;

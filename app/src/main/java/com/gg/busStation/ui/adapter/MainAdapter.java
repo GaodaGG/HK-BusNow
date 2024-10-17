@@ -69,7 +69,7 @@ public class MainAdapter extends ListAdapter<ListItemData, MainViewHolder> {
             //当正在搜索时不再更新列表
             MenuItem item = ((Toolbar) mActivity.findViewById(R.id.toolBar)).getMenu().findItem(R.id.search_toolbar_item);
             SearchView searchView = (SearchView) item.getActionView();
-            if (searchView.getQuery().length() > 0) {
+            if (searchView != null && searchView.getQuery().length() > 0) {
                 return;
             }
 
