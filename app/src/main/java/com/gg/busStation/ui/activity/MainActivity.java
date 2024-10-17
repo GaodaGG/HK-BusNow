@@ -14,9 +14,6 @@ import androidx.navigation.ui.NavigationUI;
 
 import com.gg.busStation.R;
 import com.gg.busStation.databinding.ActivityMainBinding;
-import com.gg.busStation.function.DataBaseManager;
-import com.gg.busStation.function.location.LocationHelper;
-import com.google.android.material.color.DynamicColors;
 
 public class MainActivity extends AppCompatActivity {
     private ActivityMainBinding binding;
@@ -24,13 +21,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        initData();
         initView();
-    }
-
-    private void initData() {
-        DataBaseManager.initDB(this);
-        LocationHelper.init(this);
     }
 
     private void initView() {
