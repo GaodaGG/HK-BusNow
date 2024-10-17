@@ -2,30 +2,21 @@ package com.gg.busStation.ui.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
 
 import androidx.activity.EdgeToEdge;
 import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.SearchView;
 import androidx.core.view.WindowCompat;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.gg.busStation.R;
-import com.gg.busStation.data.bus.Route;
-import com.gg.busStation.data.layout.ListItemData;
 import com.gg.busStation.databinding.ActivityMainBinding;
-import com.gg.busStation.function.BusDataManager;
 import com.gg.busStation.function.DataBaseManager;
 import com.gg.busStation.function.location.LocationHelper;
-import com.gg.busStation.ui.adapter.MainAdapter;
-
-import java.util.List;
+import com.google.android.material.color.DynamicColors;
 
 public class MainActivity extends AppCompatActivity {
     private ActivityMainBinding binding;
@@ -41,19 +32,6 @@ public class MainActivity extends AppCompatActivity {
         DataBaseManager.initDB(this);
         LocationHelper.init(this);
     }
-
-//    @Override
-//    public boolean onCreateOptionsMenu(Menu menu) {
-//        getMenuInflater().inflate(R.menu.top_bar_menu, menu);
-//        MenuItem item = menu.findItem(R.id.search_toolbar_item);
-//        SearchView searchView = (SearchView) item.getActionView();
-//        if (searchView == null) {
-//            return false;
-//        }
-//
-//        searchView.setQueryHint(getString(R.string.search_hint));
-//        return true;
-//    }
 
     private void initView() {
         binding = ActivityMainBinding.inflate(getLayoutInflater());

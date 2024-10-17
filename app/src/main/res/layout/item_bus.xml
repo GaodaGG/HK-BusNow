@@ -27,9 +27,9 @@
 
             <TextView
                 android:id="@+id/list_item_number"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
                 android:text="@{data.stopNumber, default = 1}"
                 android:textColor="?attr/colorOnSurface"
                 android:textSize="22sp"
@@ -39,14 +39,16 @@
 
         <TextView
             android:id="@+id/list_item_headline"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
             android:layout_marginTop="16dp"
             android:text="@{data.headline, default = Headline}"
             android:textColor="?attr/colorOnSurface"
             android:textSize="16sp"
             app:layout_constraintBottom_toTopOf="@id/list_item_context"
+            app:layout_constraintEnd_toStartOf="@+id/list_item_more"
             app:layout_constraintStart_toEndOf="@+id/materialCardView"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_chainStyle="packed" />
@@ -67,13 +69,14 @@
             android:id="@+id/list_item_tips"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="1dp"
             android:text="@{data.tips, default = KMB}"
             android:textSize="12sp"
-            android:layout_marginStart="1dp"
             app:layout_constraintBaseline_toBaselineOf="@id/list_item_context"
             app:layout_constraintStart_toEndOf="@+id/list_item_context" />
 
         <ImageView
+            android:id="@+id/list_item_more"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"

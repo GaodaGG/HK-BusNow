@@ -168,10 +168,20 @@ public class BusDataManager {
     public static List<ListItemData> routesToListItemData(List<Route> routes) {
         List<ListItemData> data = new ArrayList<>();
         for (Route route : routes) {
+            StringBuilder headline = new StringBuilder().append(route.getOrig("zh_CN"))
+                    .append(" -> ")
+                    .append(route.getDest("zh_CN"));
+
+            if (headline.length() > 25) {
+                headline = new StringBuilder().append(route.getOrig("zh_CN"))
+                        .append(" ->\n")
+                        .append(route.getDest("zh_CN"));
+            }
+
             String tips = route.getCo().equals(Route.coCTB) ? "(城巴路线)" : "";
             ListItemData listItemData = new ListItemData(route.getCo(),
                     route.getRoute(),
-                    route.getOrig("zh_CN") + " -> " + route.getDest("zh_CN"),
+                    headline.toString(),
                     "",
 //                        BusDataManager.serviceTypeToName(route.getService_type()),
                     route.getBound(),
