@@ -43,6 +43,19 @@ android {
         }
     }
 
+    applicationVariants.configureEach { variant ->
+        variant.outputs.configureEach { output ->
+            def appName = "HK BusNow"
+            def versionCode = variant.versionCode
+            def buildType = variant.buildType.name
+            def arch = output.getFilter(com.android.build.OutputFile.ABI)
+            if (arch == null) {
+                arch = "universal"
+            }
+            outputFileName = "${appName}_${versionCode}_${buildType}_${arch}.apk"
+        }
+    }
+
     signingConfigs {
         config {
             keyAlias keystoreProperties['keyAlias']
