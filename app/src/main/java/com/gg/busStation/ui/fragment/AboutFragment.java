@@ -9,12 +9,17 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 
 import com.gg.busStation.databinding.FragmentAboutBinding;
+import com.gg.busStation.databinding.ItemAboutReferencesBinding;
 
 public class AboutFragment extends Fragment {
     private FragmentAboutBinding binding;
+
+    private static final String[] referencesName = new String[]{"Google/Gson", "square/OKHttp3", "Google/Material Design", "Baidu/Baidu Location"};
+    private static final String[] referencesLink = new String[]{"https://github.com/google/gson/", "https://github.com/square/okhttp/", "https://material.io/", "https://lbsyun.baidu.com/location/"};
 
     @Nullable
     @Override
@@ -31,6 +36,23 @@ public class AboutFragment extends Fragment {
             Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/GaodaGG"));
             startActivity(intent);
         });
+
+        initReferences();
+    }
+
+    private void initReferences() {
+        for (int i = 0; i < referencesName.length; i++) {
+            ItemAboutReferencesBinding referencesBinding = ItemAboutReferencesBinding.inflate(getLayoutInflater(), binding.referencesList, true);
+            referencesBinding.itemReferencesName.setText(referencesName[i]);
+            referencesBinding.itemReferencesLink.setText(referencesLink[i]);
+
+            ConstraintLayout layout = referencesBinding.getRoot();
+            int finalI = i;
+            layout.setOnClickListener(v -> {
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(referencesLink[finalI]));
+                startActivity(intent);
+            });
+        }
     }
 
     @Override

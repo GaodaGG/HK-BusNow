@@ -96,13 +96,17 @@ android {
 }
 
 dependencies {
+    // Baidumap: https://lbsyun.baidu.com
 //    implementation libs.baidumapsdk.base
     implementation libs.baidumapsdk.util
     implementation libs.baidumapsdk.location
+    //Gson: https://github.com/google/gson
     implementation libs.gson
+    //OKHttp: https://github.com/square/okhttp
     implementation libs.okhttp
 
     implementation libs.appcompat
+    // Material design: https://material.io
     implementation libs.material
     implementation libs.navigation.fragment
     implementation libs.navigation.ui
