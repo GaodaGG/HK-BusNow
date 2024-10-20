@@ -7,41 +7,26 @@
     android:orientation="vertical"
     tools:context=".ui.fragment.HomeFragment">
 
-    <LinearLayout
+    <TextView
         android:id="@+id/main_error_layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:gravity="center"
-        android:orientation="vertical"
         android:paddingBottom="90dp"
+        android:text="@string/main_history_hint"
+        android:textSize="16sp"
         android:visibility="gone"
+        app:drawableTopCompat="@drawable/error_48px"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/main_history_hint"
-            android:textSize="16sp"
-            app:drawableTopCompat="@drawable/error_48px" />
-
-    </LinearLayout>
-
-    <androidx.core.widget.NestedScrollView
-        android:id="@+id/bus_scroll_view"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/bus_list_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:paddingBottom="90dp"
+        tools:listitem="@layout/item_bus" />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/bus_list_view"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:clipToPadding="false"
-            android:paddingBottom="90dp"
-            tools:listitem="@layout/item_bus" />
-
-    </androidx.core.widget.NestedScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

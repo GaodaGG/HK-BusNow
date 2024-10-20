@@ -27,12 +27,11 @@ import com.gg.busStation.data.bus.Route;
 import com.gg.busStation.data.bus.Stop;
 import com.gg.busStation.data.layout.StopItemData;
 import com.gg.busStation.databinding.ItemBusExpendBinding;
-import com.gg.busStation.function.DataBaseManager;
 import com.gg.busStation.function.BusDataManager;
+import com.gg.busStation.function.DataBaseManager;
 import com.google.android.material.motion.MotionUtils;
 
 import java.io.IOException;
-import java.util.Date;
 import java.util.List;
 
 public class StopItemView extends LinearLayout {
@@ -44,7 +43,10 @@ public class StopItemView extends LinearLayout {
     private int updateCounter = 0;
     private int lastUpdateTime = Calendar.getInstance().get(java.util.Calendar.MINUTE);
 
-    private final BroadcastReceiver updateTimeReciver = new BroadcastReceiver() {
+    public StopItemView(@NonNull Context context) {
+        super(context);
+        init(context);
+    }    private final BroadcastReceiver updateTimeReciver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
@@ -55,11 +57,6 @@ public class StopItemView extends LinearLayout {
             }
         }
     };
-
-    public StopItemView(@NonNull Context context) {
-        super(context);
-        init(context);
-    }
 
     public StopItemView(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
@@ -203,4 +200,6 @@ public class StopItemView extends LinearLayout {
     public boolean isOpen() {
         return isOpen;
     }
+
+
 }

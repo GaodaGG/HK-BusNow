@@ -61,6 +61,7 @@ public class MainAdapter extends ListAdapter<ListItemData, MainViewHolder> {
     public void onBindViewHolder(@NonNull MainViewHolder holder, int position) {
         ListItemData listItemData = getItem(position);
         holder.getBinding().setData(listItemData);
+        Log.d("tag", "onBindViewHolder>>" + holder.itemView);
 
         holder.itemView.setOnClickListener(view -> {
             new StopBottomSheetDialog(listItemData).show(mActivity.getSupportFragmentManager(), StopBottomSheetDialog.TAG);

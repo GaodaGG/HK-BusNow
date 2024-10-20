@@ -18,7 +18,6 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.SearchView;
 import androidx.core.view.MenuProvider;
-import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.ViewModelProvider;
@@ -26,31 +25,32 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.gg.busStation.R;
-import com.gg.busStation.function.DataBaseManager;
-import com.gg.busStation.function.BusDataManager;
 import com.gg.busStation.data.bus.Route;
 import com.gg.busStation.data.layout.HomeViewModel;
 import com.gg.busStation.data.layout.ListItemData;
+import com.gg.busStation.databinding.FragmentHomeBinding;
+import com.gg.busStation.function.BusDataManager;
+import com.gg.busStation.function.DataBaseManager;
 import com.gg.busStation.function.location.LocationHelper;
 import com.gg.busStation.ui.adapter.MainAdapter;
-import com.gg.busStation.databinding.FragmentHomeBinding;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.divider.MaterialDividerItemDecoration;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Executors;
 
 public class HomeFragment extends Fragment {
-    private FragmentHomeBinding binding;
-    private HomeViewModel mViewModel;
-    AlertDialog loadingDialog;
+    // 权限申请回调
+    private final ActivityResultLauncher<String> requestPermission = registerForActivityResult(new ActivityResultContracts.RequestPermission(), result -> {
+        if (Boolean.FALSE.equals(result)) {
+            Toast.makeText(requireContext(), "权限授权失败，请手动给予", Toast.LENGTH_SHORT).show();
+        } else {
+            LocationHelper.getLocation(true);
+        }
+    });
 
-    private int page = 1;
-    private final int pageSize = 15;
-    private boolean isLoading = false;
-    private List<ListItemData> mData;
+    AlertDialog loadingDialog;
+    private FragmentHomeBinding binding;
 
     MenuProvider menuProvider = new MenuProvider() {
         @Override
@@ -84,14 +84,7 @@ public class HomeFragment extends Fragment {
         }
     };
 
-    // 权限申请回调
-    private final ActivityResultLauncher<String> requestPermission = registerForActivityResult(new ActivityResultContracts.RequestPermission(), result -> {
-        if (Boolean.FALSE.equals(result)) {
-            Toast.makeText(requireContext(), "权限授权失败，请手动给予", Toast.LENGTH_SHORT).show();
-        } else {
-            LocationHelper.getLocation(true);
-        }
-    });
+    private HomeViewModel mViewModel;
 
     @Nullable
     @Override
@@ -151,31 +144,6 @@ public class HomeFragment extends Fragment {
         manager.setInitialPrefetchItemCount(10);
         divider.setLastItemDecorated(false);
 
-        binding.busScrollView.setOnScrollChangeListener((NestedScrollView.OnScrollChangeListener) (v, scrollX, scrollY, oldScrollX, oldScrollY) -> {
-            mViewModel.scrollOffset = scrollY;
-
-            if (isLoading || scrollY + v.getMeasuredHeight() + 200 < v.getChildAt(0).getMeasuredHeight()) {
-                return;
-            }
-            isLoading = true;
-
-            Executors.newFixedThreadPool(1).execute(() -> {
-                int startIndex = pageSize * (page - 1);
-                int endIndex = Math.min(pageSize * page, mData.size());
-                if (startIndex >= mData.size()) {
-                    isLoading = false;
-                    return;
-                }
-
-                List<ListItemData> newData = mData.subList(startIndex, endIndex);
-                List<ListItemData> listItemData = new ArrayList<>(mainAdapter.getCurrentList());
-                listItemData.addAll(newData);
-                mainAdapter.submitList(listItemData);
-                page++;
-                isLoading = false;
-            });
-        });
-
         activity.runOnUiThread(() -> {
             requireActivity().addMenuProvider(menuProvider);
 
@@ -183,9 +151,7 @@ public class HomeFragment extends Fragment {
             busListView.setLayoutManager(manager);
             busListView.addItemDecoration(divider);
             busListView.setHasFixedSize(true);
-
             busListView.setAdapter(mainAdapter);
-            binding.busScrollView.scrollTo(0, mViewModel.scrollOffset);
 
             loadingDialog.dismiss();
 
@@ -204,11 +170,9 @@ public class HomeFragment extends Fragment {
 
             MainAdapter adapter = (MainAdapter) binding.busListView.getAdapter();
 
-            mData = BusDataManager.routesToListItemData(routes);
-            page = 1;
 
             if (adapter != null) {
-                adapter.submitList(mData.subList(0, Math.min(pageSize, mData.size())));
+                adapter.submitList(BusDataManager.routesToListItemData(routes));
             }
         }).start();
     }
@@ -226,7 +190,8 @@ public class HomeFragment extends Fragment {
         new MaterialAlertDialogBuilder(requireContext())
                 .setTitle(R.string.dialog_permission_title)
                 .setMessage(R.string.dialog_permission_message)
-                .setNegativeButton(R.string.dialog_permission_decline, (dialog, which) -> {})
+                .setNegativeButton(R.string.dialog_permission_decline, (dialog, which) -> {
+                })
                 .setPositiveButton(R.string.dialog_permission_accept, (dialog, which) -> requestPermission.launch(Manifest.permission.ACCESS_FINE_LOCATION))
                 .show();
 
