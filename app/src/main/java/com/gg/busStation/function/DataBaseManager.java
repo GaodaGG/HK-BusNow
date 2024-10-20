@@ -27,12 +27,15 @@ import java.util.Map;
 public class DataBaseManager {
     private static SQLiteDatabase db;
 
+    private DataBaseManager() {
+    }
+
     public static void initDB(Context context) {
         int version;
         try {
             version = (int) context.getPackageManager().getPackageInfo(context.getPackageName(), 0).getLongVersionCode();
         } catch (PackageManager.NameNotFoundException e) {
-            throw new RuntimeException(e);
+            version = 0;
         }
         DBOpenHelper dbOpenHelper = new DBOpenHelper(context, "userdata.db", null, version);
         db = dbOpenHelper.getWritableDatabase();
@@ -111,11 +114,11 @@ public class DataBaseManager {
         db.update(SQLConstants.settingsDBName, contentValues, "key=?", new String[]{"lastUpdateTime"});
     }
 
-    public static void setInitStatus(boolean status) {
+    public static void updateSetting(String key, String value) {
         ContentValues contentValues = new ContentValues();
-        contentValues.put("key", "isInit");
-        contentValues.put("value", String.valueOf(status));
-        db.update(SQLConstants.settingsDBName, contentValues, "key=?", new String[]{"isInit"});
+        contentValues.put("key", key);
+        contentValues.put("value", value);
+        db.update(SQLConstants.settingsDBName, contentValues, "key=?", new String[]{key});
     }
 
     public static Map<String, String> getSettings() {
@@ -127,7 +130,7 @@ public class DataBaseManager {
         Map<String, String> settingsMap = new HashMap<>();
 
         if (cursor.getCount() <= 0) {
-            return null;
+            return settingsMap;
         }
 
         cursor.moveToFirst();

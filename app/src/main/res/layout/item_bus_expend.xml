@@ -39,8 +39,7 @@
                     android:layout_gravity="center"
                     android:text="@{data.stopNumber, default = 1}"
                     android:textColor="?attr/colorOnSurface"
-                    android:textSize="22sp"
-                    android:transitionName="item_number" />
+                    android:textSize="22sp" />
 
             </com.google.android.material.card.MaterialCardView>
 

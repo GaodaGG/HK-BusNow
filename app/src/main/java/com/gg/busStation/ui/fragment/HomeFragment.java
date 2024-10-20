@@ -195,6 +195,6 @@ public class HomeFragment extends Fragment {
                 .setPositiveButton(R.string.dialog_permission_accept, (dialog, which) -> requestPermission.launch(Manifest.permission.ACCESS_FINE_LOCATION))
                 .show();
 
-        DataBaseManager.setInitStatus(true);
+        DataBaseManager.updateSetting("isInit", "true");
     }
 }

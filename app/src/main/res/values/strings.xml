@@ -15,4 +15,9 @@
     <string name="dialog_permission_accept">Accept</string>
     <string name="about_use_title">References</string>
     <string name="error_getdata">Failed to get data</string>
+    <string name="dialog_update_title">New Version</string>
+    <string name="dialog_update_message">New version available, do you want to update?</string>
+    <string name="dialog_update_never">Never</string>
+    <string name="dialog_update_yes">Yes</string>
+    <string name="dialog_update_no">No</string>
 </resources>

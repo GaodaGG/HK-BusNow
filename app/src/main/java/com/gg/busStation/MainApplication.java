@@ -10,7 +10,6 @@ public class MainApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-
         //动态颜色
         DynamicColors.applyToActivitiesIfAvailable(this);
 

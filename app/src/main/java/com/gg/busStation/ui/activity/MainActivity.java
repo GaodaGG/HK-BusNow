@@ -1,6 +1,8 @@
 package com.gg.busStation.ui.activity;
 
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.activity.EdgeToEdge;
@@ -14,14 +16,23 @@ import androidx.navigation.ui.NavigationUI;
 
 import com.gg.busStation.R;
 import com.gg.busStation.databinding.ActivityMainBinding;
+import com.gg.busStation.function.DataBaseManager;
+import com.gg.busStation.function.internet.HttpClientHelper;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+
+import java.io.IOException;
 
 public class MainActivity extends AppCompatActivity {
+    private static final String releaseUrl = "https://api.github.com/repos/GaodaGG/HK-BusNow/releases/latest";
     private ActivityMainBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         initView();
+        new Thread(this::checkAppUpdate).start();
     }
 
     private void initView() {
@@ -60,5 +71,40 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+    }
+
+    private void checkAppUpdate() {
+        String dontUpdate = DataBaseManager.getSettings().get("dontUpdate");
+        if ("true".equals(dontUpdate)) {
+            return;
+        }
+
+        String data;
+        String oldVersion;
+        try {
+            data = HttpClientHelper.getData(releaseUrl);
+            oldVersion = getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
+        } catch (IOException | PackageManager.NameNotFoundException e) {
+            return;
+        }
+
+        JsonObject jsonObject = JsonParser.parseString(data).getAsJsonObject();
+        String version = jsonObject.get("tag_name").getAsString();
+        if (oldVersion.equals(version.substring(1))) {
+            return;
+        }
+
+        String downloadUrl = jsonObject.getAsJsonArray("assets").get(0).getAsJsonObject().get("browser_download_url").getAsString();
+        MaterialAlertDialogBuilder dialog = new MaterialAlertDialogBuilder(this)
+                .setTitle(R.string.dialog_update_title)
+                .setMessage(R.string.dialog_update_message)
+                .setNeutralButton(R.string.dialog_update_never, (dialogInterface, i) -> DataBaseManager.updateSetting("dontUpdate", "true"))
+                .setNegativeButton(R.string.dialog_update_no, (dialogInterface, i) -> {
+                })
+                .setPositiveButton(R.string.dialog_update_yes, (dialogInterface, i) -> {
+                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(downloadUrl));
+                    startActivity(intent);
+                });
+        runOnUiThread(dialog::show);
     }
 }
