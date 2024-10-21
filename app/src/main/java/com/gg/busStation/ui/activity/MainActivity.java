@@ -3,7 +3,9 @@ package com.gg.busStation.ui.activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 
 import androidx.activity.EdgeToEdge;
 import androidx.activity.OnBackPressedCallback;
@@ -94,8 +96,16 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
+        String abi = Build.SUPPORTED_ABIS[0];
+        int index = switch (abi) {
+            case "arm64-v8a" -> 0;
+            case "armeabi-v7a" -> 1;
+            default -> 2;
+        };
+        Log.d("AppUpdate", "App ABI: " + abi);
+
         String updateContent = jsonObject.get("body").getAsString();
-        String downloadUrl = jsonObject.getAsJsonArray("assets").get(0).getAsJsonObject().get("browser_download_url").getAsString();
+        String downloadUrl = jsonObject.getAsJsonArray("assets").get(index).getAsJsonObject().get("browser_download_url").getAsString();
         MaterialAlertDialogBuilder dialog = new MaterialAlertDialogBuilder(this)
                 .setTitle(getString(R.string.dialog_update_title) + " " + version)
                 .setMessage(getString(R.string.dialog_update_message) + "\n" + updateContent)
