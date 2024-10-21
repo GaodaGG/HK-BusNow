@@ -10,6 +10,8 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 public class HttpClientHelper {
+    private HttpClientHelper() {
+    }
     public static void getDataAsync(String url, Callback callback) {
         OkHttpClient client = new OkHttpClient();
 

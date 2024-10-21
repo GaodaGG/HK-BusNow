@@ -1,18 +1,20 @@
 package com.gg.busStation.ui.activity;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.WindowManager;
 
 import androidx.activity.EdgeToEdge;
 import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.WindowCompat;
 import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
@@ -25,13 +27,32 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 public class MainActivity extends AppCompatActivity {
     private static final String releaseUrl = "https://api.github.com/repos/GaodaGG/HK-BusNow/releases/latest";
     private ActivityMainBinding binding;
 
+    private static boolean isMIUI() {
+        String miuiName;
+        try {
+            @SuppressLint("PrivateApi") Class<?> clazz = Class.forName("android.os.SystemProperties");
+            Method get = clazz.getMethod("get", String.class);
+            miuiName = (String) get.invoke(clazz, "ro.miui.ui.version.name");
+        } catch (ClassNotFoundException | NoSuchMethodException | IllegalAccessException |
+                 InvocationTargetException e) {
+            return false;
+        }
+
+        return miuiName != null;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        //防止ContentFrameLayout.setDecorPadding()报错
+        getWindow().getDecorView();
+
         super.onCreate(savedInstanceState);
         initView();
         new Thread(this::checkAppUpdate).start();
@@ -41,11 +62,17 @@ public class MainActivity extends AppCompatActivity {
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        //解决MIUI小白条问题
+        if (isMIUI()) {
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
+        }
+
         EdgeToEdge.enable(this);
         setSupportActionBar(binding.toolBar);
 
         WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
-        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
+        NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment_content_main);
+        NavController navController = navHostFragment.getNavController();
         AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(navController.getGraph()).build();
 
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
