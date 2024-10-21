@@ -3,6 +3,8 @@ package com.gg.busStation.data.layout;
 import androidx.databinding.ObservableBoolean;
 import androidx.databinding.ObservableField;
 
+import com.gg.busStation.ui.layout.ETAView;
+
 public class StopItemData{
     public ObservableField<String> stopNumber;
     public ObservableField<String> headline;
@@ -13,6 +15,8 @@ public class StopItemData{
     private String stopId;
     private String bound;
     private String service_type;
+
+    private ETAView[] etas;
 
     public ObservableBoolean isOpen = new ObservableBoolean(false);
 
@@ -89,5 +93,13 @@ public class StopItemData{
 
     public void setCo(String co) {
         this.co = co;
+    }
+
+    public ETAView[] getEtas() {
+        return etas;
+    }
+
+    public void setEtas(ETAView[] etas) {
+        this.etas = etas;
     }
 }

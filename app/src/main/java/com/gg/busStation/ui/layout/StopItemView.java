@@ -32,6 +32,7 @@ import com.gg.busStation.function.DataBaseManager;
 import com.google.android.material.motion.MotionUtils;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class StopItemView extends LinearLayout {
@@ -43,10 +44,7 @@ public class StopItemView extends LinearLayout {
     private int updateCounter = 0;
     private int lastUpdateTime = Calendar.getInstance().get(java.util.Calendar.MINUTE);
 
-    public StopItemView(@NonNull Context context) {
-        super(context);
-        init(context);
-    }    private final BroadcastReceiver updateTimeReciver = new BroadcastReceiver() {
+    private final BroadcastReceiver updateTimeReciver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
@@ -57,6 +55,11 @@ public class StopItemView extends LinearLayout {
             }
         }
     };
+
+    public StopItemView(@NonNull Context context) {
+        super(context);
+        init(context);
+    }
 
     public StopItemView(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
@@ -87,6 +90,18 @@ public class StopItemView extends LinearLayout {
         binding.setData(data);
         binding.executePendingBindings();
         this.isOpen = data.isOpen.get();  // 绑定初始状态
+
+        if (isOpen) {
+            for (ETAView eta : data.getEtas()) {
+                ((ViewGroup) eta.getParent()).removeView(eta);
+                binding.dialogTimeList.addView(eta);
+
+                //注册广播更新时间
+                IntentFilter filter = new IntentFilter();
+                filter.addAction(Intent.ACTION_TIME_TICK);
+                getContext().registerReceiver(updateTimeReciver, filter);
+            }
+        }
 
         // 计算初始展开和收起的高度
         this.post(() -> {
@@ -146,18 +161,21 @@ public class StopItemView extends LinearLayout {
                 return;
             }
 
+            List<ETAView> etaViews = new ArrayList<>();
             for (ETA eta : etas) {
                 long time = BusDataManager.getMinutesRemaining(eta.getEta());
-                View etaView = new ETAView(context, (int) time, eta.getRmk("zh_CN"), Route.coKMB.equals(eta.getCo()) ? "九巴" : "城巴");
+                ETAView etaView = new ETAView(context, (int) time, eta.getRmk("zh_CN"), Route.coKMB.equals(eta.getCo()) ? "九巴" : "城巴");
+                etaViews.add(etaView);
                 mainHandler.post(() -> timeList.addView(etaView));
             }
+
+            data.setEtas(etaViews.toArray(new ETAView[0]));
 
             //注册广播更新时间
             IntentFilter filter = new IntentFilter();
             filter.addAction(Intent.ACTION_TIME_TICK);
             getContext().registerReceiver(updateTimeReciver, filter);
         }).start();
-
     }
 
     public void toggle() {
@@ -200,6 +218,8 @@ public class StopItemView extends LinearLayout {
     public boolean isOpen() {
         return isOpen;
     }
+
+
 
 
 }

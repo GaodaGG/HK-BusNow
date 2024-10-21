@@ -10,7 +10,7 @@ import com.gg.busStation.ui.layout.StopItemView;
 
 import java.util.List;
 
-public class StopListAdapter extends RecyclerView.Adapter<StopListAdapter.ViewHolder> {
+public class StopListAdapter extends RecyclerView.Adapter<StopViewHolder> {
 
     private final List<StopItemData> mData;
 
@@ -20,29 +20,20 @@ public class StopListAdapter extends RecyclerView.Adapter<StopListAdapter.ViewHo
 
     @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public StopViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         StopItemView itemView = new StopItemView(parent.getContext());
 
-        return new ViewHolder(itemView);
+        return new StopViewHolder(itemView);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull StopViewHolder holder, int position) {
         StopItemData stopItemData = mData.get(position);
-        holder.stopItemView.bindData(stopItemData);
+        holder.getStopItemView().bindData(stopItemData);
     }
 
     @Override
     public int getItemCount() {
         return mData.size();
-    }
-
-    public static class ViewHolder extends RecyclerView.ViewHolder {
-        public StopItemView stopItemView;
-
-        public ViewHolder(@NonNull StopItemView itemView) {
-            super(itemView);
-            stopItemView = itemView;
-        }
     }
 }
