@@ -94,10 +94,11 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
+        String updateContent = jsonObject.get("body").getAsString();
         String downloadUrl = jsonObject.getAsJsonArray("assets").get(0).getAsJsonObject().get("browser_download_url").getAsString();
         MaterialAlertDialogBuilder dialog = new MaterialAlertDialogBuilder(this)
-                .setTitle(R.string.dialog_update_title)
-                .setMessage(R.string.dialog_update_message)
+                .setTitle(getString(R.string.dialog_update_title) + " " + version)
+                .setMessage(getString(R.string.dialog_update_message) + "\n" + updateContent)
                 .setNeutralButton(R.string.dialog_update_never, (dialogInterface, i) -> DataBaseManager.updateSetting("dontUpdate", "true"))
                 .setNegativeButton(R.string.dialog_update_no, (dialogInterface, i) -> {
                 })
