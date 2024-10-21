@@ -42,6 +42,7 @@ public class StopItemView extends LinearLayout {
     private int closeHeight;
 
     private int updateCounter = 0;
+    //记录上次更新时间 防止多次更新 比如从后台切回前台
     private int lastUpdateTime = Calendar.getInstance().get(java.util.Calendar.MINUTE);
 
     private final BroadcastReceiver updateTimeReciver = new BroadcastReceiver() {

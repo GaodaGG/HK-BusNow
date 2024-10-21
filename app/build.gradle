@@ -45,7 +45,7 @@ android {
 
     applicationVariants.configureEach { variant ->
         variant.outputs.configureEach { output ->
-            def appName = "HK BusNow"
+            def appName = "HKBusNow"
             def versionCode = variant.versionCode
             def buildType = variant.buildType.name
             def arch = output.getFilter(com.android.build.OutputFile.ABI)
