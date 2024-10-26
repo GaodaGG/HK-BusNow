@@ -133,6 +133,10 @@ public class BusDataManager {
         double minDistance = Double.MAX_VALUE;
         int nearestIndex = -1;
 
+        if (location.latitude == Double.MIN_VALUE || location.latitude == 0) {
+            return 0;
+        }
+
         for (int i = 0; i < stops.size(); i++) {
             Stop stop = stops.get(i);
             LatLng stopLocation = new LatLng(Double.parseDouble(stop.getLat()), Double.parseDouble(stop.getLong()));
