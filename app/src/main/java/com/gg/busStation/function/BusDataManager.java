@@ -1,6 +1,7 @@
 package com.gg.busStation.function;
 
 import android.content.Context;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 
@@ -21,9 +22,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 public class BusDataManager {
     private static final String govJsonUrl = "https://static.data.gov.hk/td/routes-fares-geojson/JSON_BUS.json";
@@ -113,6 +117,58 @@ public class BusDataManager {
             return eta1.getEta().compareTo(eta2.getEta());
         });
         return etas;
+    }
+
+    // TODO: 增加CTB站点
+    public static List<ETA> stopToETAs(Stop stop) throws IOException {
+        List<ETA> etasKMB = new ArrayList<>();
+        KMB.stopToETAs(stop, etasKMB);
+        return etasKMB;
+    }
+
+    public static List<Route> getNearRoutes(int distance) {
+        LatLng location = LocationHelper.getLocation(false);
+        List<Stop> stopsByLocation = DataBaseManager.findStopsByLocation(location, distance);
+
+        if (stopsByLocation.isEmpty()) {
+            return;
+        }
+
+        List<ETA> etas = new ArrayList<>();
+        stopsByLocation.forEach(stop -> {
+            try {
+                etas.addAll(BusDataManager.stopToETAs(stop));
+            } catch (IOException e) {
+                Log.e("Stops", "Error while getting ETAs", e);
+            }
+        });
+
+        //对etas根据eta.getRoute()进行filter 去重
+        Set<String> seenIds = new HashSet<>();
+
+        etas.stream().filter(eta -> eta.getEta() == null).collect(Collectors.toList());
+        etas.sort((eta1, eta2) -> {
+            if (eta1.getEta() == null || eta2.getEta() == null) {
+                return 0; // 处理空值（如果有）
+            }
+
+            return eta1.getEta().compareTo(eta2.getEta());
+        });
+        etas.forEach(eta -> Log.d("ETA", eta.getRoute() + " " + eta.getEta()));
+        etas.stream()
+                .filter(eta -> seenIds.add(eta.getRoute()))
+                .collect(Collectors.toList());
+        etas.forEach(eta -> Log.d("ETAFilter", eta.getRoute() + " " + eta.getEta()));
+
+        List<Route> routes = new ArrayList<>();
+        for (ETA eta : etas) {
+            Route route = DataBaseManager.findRoute(eta.getCo(), eta.getRoute(), "O", eta.getService_type());
+            if (route != null) {
+                routes.add(route);
+            }
+        }
+
+        return routes;
     }
 
     public static List<Stop> routeToStops(Route route) throws IOException {
@@ -210,6 +266,7 @@ public class BusDataManager {
         public static final String stopUrl = "https://data.etabus.gov.hk/v1/transport/kmb/stop/";
         public static final String routeToStopUrl = "https://data.etabus.gov.hk/v1/transport/kmb/route-stop/";
         public static final String routeAndStopToETAUrl = "https://data.etabus.gov.hk/v1/transport/kmb/eta/";
+        public static final String StopToETAUrl = "https://data.etabus.gov.hk/v1/transport/kmb/stop-eta/";
 
         private static void initRoutes(List<Route> routes, List<String> bothRoutes) throws IOException {
             String kmbData = HttpClientHelper.getData(KMB.routeUrl);
@@ -244,6 +301,17 @@ public class BusDataManager {
                     ETA eta = JsonToBean.jsonToETA(jsonObject);
                     etas.add(eta);
                 }
+            }
+        }
+
+        public static void stopToETAs(Stop stop, List<ETA> etas) throws IOException {
+            String url = KMB.StopToETAUrl + stop.getStop();
+            String data = HttpClientHelper.getData(url);
+
+            for (JsonElement jsonElement : JsonToBean.extractJsonArray(data)) {
+                JsonObject jsonObject = jsonElement.getAsJsonObject();
+                ETA eta = JsonToBean.jsonToETA(jsonObject);
+                etas.add(eta);
             }
         }
     }

@@ -88,6 +88,10 @@ public class LocationHelper {
     private static LatLng getLastLocation() {
         LocationManager locationManager = (LocationManager) mContext.getSystemService(Context.LOCATION_SERVICE);
         Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-        return new LatLng(lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude());
+        if (lastKnownLocation != null) {
+            return new LatLng(lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude());
+        }
+
+        return new LatLng(0, 0);
     }
 }

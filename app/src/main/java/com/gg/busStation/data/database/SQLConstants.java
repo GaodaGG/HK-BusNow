@@ -25,8 +25,8 @@ public class SQLConstants {
             "name_en TEXT NOT NULL," +
             "name_tc TEXT NOT NULL," +
             "name_sc TEXT NOT NULL," +
-            "lat TEXT NOT NULL," +
-            "long TEXT NOT NULL" +
+            "lat REAL NOT NULL," +
+            "long REAL NOT NULL" +
             ");";
 
     public static final String createRoutesHistoryDBCommand = "CREATE TABLE IF NOT EXISTS " + routesHistoryDBName + " (" +

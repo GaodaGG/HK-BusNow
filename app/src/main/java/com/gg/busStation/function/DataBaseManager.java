@@ -288,6 +288,34 @@ public class DataBaseManager {
         return stop;
     }
 
+    public static List<Stop> findStopsByLocation(LatLng currentLocation, int distance) {
+        List<Stop> stops = new ArrayList<>();
+        // 当前的经纬度
+        Cursor cursor = db.rawQuery("SELECT * FROM " + SQLConstants.stopDBName, null);
+
+        // 处理查询结果
+        while (cursor.moveToNext()) {
+            String lat = cursor.getString(cursor.getColumnIndexOrThrow("lat"));
+            String aLong = cursor.getString(cursor.getColumnIndexOrThrow("long"));
+            LatLng stopLocation = new LatLng(Double.parseDouble(lat), Double.parseDouble(aLong));
+            double stopDistance = LocationHelper.distance(currentLocation, stopLocation);
+            if (stopDistance >= distance) {
+                continue;
+            }
+            Stop stop = new Stop(cursor.getString(cursor.getColumnIndexOrThrow("stop")),
+                    cursor.getString(cursor.getColumnIndexOrThrow("name_en")),
+                    cursor.getString(cursor.getColumnIndexOrThrow("name_tc")),
+                    cursor.getString(cursor.getColumnIndexOrThrow("name_sc")),
+                    lat,
+                    aLong
+            );
+            stops.add(stop);
+        }
+        cursor.close();
+
+        return stops;
+    }
+
     public static void addRoutesHistory(String co, String routeId, String bound, String service_type) {
         long timestamp = System.currentTimeMillis();
 

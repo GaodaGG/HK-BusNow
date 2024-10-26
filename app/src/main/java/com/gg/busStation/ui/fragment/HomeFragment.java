@@ -116,6 +116,8 @@ public class HomeFragment extends Fragment {
                 List<Route> routes = DataBaseManager.getRoutesHistory();
                 List<ListItemData> data = BusDataManager.routesToListItemData(routes);
 
+//                BusDataManager.getNearRoutes(100);
+
                 initView(data);
             }).start();
         } else {
