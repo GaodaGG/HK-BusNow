@@ -20,4 +20,5 @@
     <string name="dialog_update_never">永不更新</string>
     <string name="dialog_update_yes">是</string>
     <string name="dialog_update_no">否</string>
+    <string name="error_nodata">没有找到路线</string>
 </resources>

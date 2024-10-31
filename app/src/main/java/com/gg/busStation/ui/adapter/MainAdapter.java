@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -84,10 +85,13 @@ public class MainAdapter extends ListAdapter<ListItemData, MainViewHolder> {
     public void submitList(@Nullable List<ListItemData> list) {
         super.submitList(list);
 
-        View errorView = mActivity.findViewById(R.id.main_error_layout);
+        TextView errorView = mActivity.findViewById(R.id.main_error_layout);
         if (errorView == null) return;
         if (list == null || list.isEmpty()) {
-            mActivity.runOnUiThread(() -> errorView.setVisibility(View.VISIBLE));
+            mActivity.runOnUiThread(() -> {
+                errorView.setVisibility(View.VISIBLE);
+                errorView.setText(R.string.error_nodata);
+            });
         } else {
             mActivity.runOnUiThread(() -> errorView.setVisibility(View.GONE));
         }
