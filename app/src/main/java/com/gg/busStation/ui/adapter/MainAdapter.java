@@ -14,6 +14,7 @@ import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.ListAdapter;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.gg.busStation.data.bus.Route;
 import com.gg.busStation.data.layout.ListItemData;
@@ -90,5 +91,11 @@ public class MainAdapter extends ListAdapter<ListItemData, MainViewHolder> {
         } else {
             mActivity.runOnUiThread(() -> errorView.setVisibility(View.GONE));
         }
+    }
+
+    @Override
+    public void onCurrentListChanged(@NonNull List<ListItemData> previousList, @NonNull List<ListItemData> currentList) {
+        super.onCurrentListChanged(previousList, currentList);
+        ((RecyclerView)mActivity.findViewById(R.id.bus_list_view)).scrollToPosition(0);
     }
 }
