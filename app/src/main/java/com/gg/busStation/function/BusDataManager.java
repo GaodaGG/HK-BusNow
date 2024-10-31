@@ -155,7 +155,7 @@ public class BusDataManager {
         return etasKMB;
     }
 
-    public static Map<String, String> initFares() throws IOException {
+    private static Map<String, String> initFares() throws IOException {
         if (routeIdToName.isEmpty()) {
             getBothRoutes();
         }

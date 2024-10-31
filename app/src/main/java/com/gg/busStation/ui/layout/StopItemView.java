@@ -92,18 +92,6 @@ public class StopItemView extends LinearLayout {
         binding.executePendingBindings();
         this.isOpen = data.isOpen.get();  // 绑定初始状态
 
-        if (isOpen) {
-            for (ETAView eta : data.getEtas()) {
-                ((ViewGroup) eta.getParent()).removeView(eta);
-                binding.dialogTimeList.addView(eta);
-
-                //注册广播更新时间
-                IntentFilter filter = new IntentFilter();
-                filter.addAction(Intent.ACTION_TIME_TICK);
-                getContext().registerReceiver(updateTimeReciver, filter);
-            }
-        }
-
         // 计算初始展开和收起的高度
         this.post(() -> {
             if (closeHeight == 0) {
@@ -117,6 +105,29 @@ public class StopItemView extends LinearLayout {
             ViewGroup.LayoutParams layoutParams = StopItemView.this.getLayoutParams();
             switchItemHeight(isOpen, false, layoutParams);
         });
+
+        if (isOpen) {
+            ETAView[] etas = data.getEtas();
+            if (etas == null) {
+                TextView textView = new TextView(binding.getRoot().getContext());
+                textView.setText("已无预定班次");
+                binding.dialogTimeList.removeAllViews();
+                binding.dialogTimeList.addView(textView);
+                return;
+            }
+
+            for (ETAView eta : etas) {
+                ((ViewGroup) eta.getParent()).removeView(eta);
+                binding.dialogTimeList.addView(eta);
+
+                //注册广播更新时间
+                IntentFilter filter = new IntentFilter();
+                filter.addAction(Intent.ACTION_TIME_TICK);
+                getContext().registerReceiver(updateTimeReciver, filter);
+            }
+
+            getLayoutParams().height = openHeight;
+        }
     }
 
     public void updateTime(Context context, boolean ignoreCount) {

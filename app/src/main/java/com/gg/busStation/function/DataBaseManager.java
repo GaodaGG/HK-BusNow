@@ -331,6 +331,20 @@ public class DataBaseManager {
         return stops;
     }
 
+    public static String findFare(String route, String bound) {
+        String selection = "route = ? AND bound = ? AND service_type = ?";
+        String[] selectionArgs = {route, bound, "1"};
+        Cursor cursor = db.query(SQLConstants.fareDBName, null, selection, selectionArgs, null, null, null);
+        if (!cursor.moveToFirst()) {
+            cursor.close();
+            return null;
+        }
+
+        String fare = cursor.getString(cursor.getColumnIndexOrThrow("fare"));
+        cursor.close();
+        return fare;
+    }
+
     public static void addRoutesHistory(String co, String routeId, String bound, String service_type) {
         long timestamp = System.currentTimeMillis();
 

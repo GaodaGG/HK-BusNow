@@ -62,9 +62,27 @@ public class StopBottomSheetDialog extends BottomSheetDialogFragment {
             try {
                 mStops = BusDataManager.routeToStops(route);
 
+                //获取车费
+                String[] stopFares = new String[mStops.size()];
+                String fare = DataBaseManager.findFare(route.getRoute(), route.getBound());
+                String[] fares = fare.split(";");
+                for (String s : fares) {
+                    String[] fareData = s.split(",");
+                    String[] pickStopRange = fareData[0].split("-");
+                    int start = Integer.parseInt(pickStopRange[0]);
+                    int end = Integer.parseInt(pickStopRange[1]);
+                    for (int i = start; i <= end; i++) {
+                        if (i - 1 >= mStops.size()) {
+                            stopFares[mStops.size() - 1] = "";
+                            break;
+                        }
+                        stopFares[i - 1] = fareData[1] + " HKD";
+                    }
+                }
+
                 for (int i = 0; i < mStops.size(); i++) {
                     Stop stop = mStops.get(i);
-                    StopItemData stopItemData = new StopItemData(String.valueOf(i + 1), stop.getName("zh_CN"), "", route.getBound(), route.getService_type(), route.getCo(), route.getRoute(), stop.getStop());
+                    StopItemData stopItemData = new StopItemData(String.valueOf(i + 1), stop.getName("zh_CN"), stopFares[i], route.getBound(), route.getService_type(), route.getCo(), route.getRoute(), stop.getStop());
                     data.add(stopItemData);
                 }
             } catch (IOException e) {
