@@ -94,6 +94,9 @@ public class JsonToBean {
         while (reader.hasNext()) {
             String key = reader.nextName();
             switch (key) {
+                case "routeId":
+                    properties.routeId = reader.nextInt();
+                    break;
                 case "routeNameC":
                     properties.routeNameC = reader.nextString();
                     break;

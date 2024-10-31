@@ -3,6 +3,7 @@ package com.gg.busStation.ui.fragment;
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -38,6 +39,7 @@ import com.google.android.material.divider.MaterialDividerItemDecoration;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 public class HomeFragment extends Fragment {
     // 权限申请回调
@@ -110,7 +112,7 @@ public class HomeFragment extends Fragment {
                 try {
                     BusDataManager.initData(requireContext());
                 } catch (IOException e) {
-                    Toast.makeText(requireContext(), R.string.error_getdata, Toast.LENGTH_SHORT).show();
+                    requireActivity().runOnUiThread(() -> Toast.makeText(requireContext(), R.string.error_getdata, Toast.LENGTH_SHORT).show());
                 }
 
                 List<Route> routes = DataBaseManager.getRoutesHistory();

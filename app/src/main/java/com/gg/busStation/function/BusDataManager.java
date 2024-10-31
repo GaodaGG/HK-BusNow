@@ -18,10 +18,13 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -31,6 +34,8 @@ import java.util.stream.Collectors;
 
 public class BusDataManager {
     private static final String govJsonUrl = "https://static.data.gov.hk/td/routes-fares-geojson/JSON_BUS.json";
+    private static final String faresJsonUrl = "https://static.data.gov.hk/td/pt-headway-tc/fare_attributes.txt";
+    private static Map<Integer, String> routeIdToName = new HashMap<>();
 
     private BusDataManager() {
     }
@@ -47,15 +52,16 @@ public class BusDataManager {
 
         List<Route> routeList = initRoutes();
         List<Stop> stopList = initStops();
+        Map<String, String> fareMap = initFares();
 
-        DataBaseManager.initData(routeList, stopList, context);
+        DataBaseManager.initData(routeList, stopList, fareMap, context);
     }
 
     private static List<Route> initRoutes() throws IOException {
         List<Route> routes = new ArrayList<>();
 
-        // 重复路线标记
-        ArrayList<String> bothRoutes = getBothRoutes();
+        // 获取路线资料
+        List<String> bothRoutes = getBothRoutes();
 
         // 获取九巴路线列表
         KMB.initRoutes(routes, bothRoutes);
@@ -68,8 +74,31 @@ public class BusDataManager {
         return routes;
     }
 
-    private static @NonNull ArrayList<String> getBothRoutes() throws IOException {
-        ArrayList<String> bothRoute = new ArrayList<>();
+    private static @NonNull List<String> getBothRoutes() throws IOException {
+        ArrayList<Feature> features = getRoutes();
+        List<String> bothRoutes = new ArrayList<>();
+
+        features.forEach(feature -> {
+            Integer routeId = feature.properties.routeId;
+            String routeName = feature.properties.routeNameC;
+            String companyCode = feature.properties.companyCode;
+            //存入Route id和name的对应关系
+            routeIdToName.put(routeId, routeName);
+
+            //获取重复路线
+            if (bothRoutes.contains(routeName)) {
+                return;
+            }
+
+            if ("KMB+CTB".equals(companyCode)) {
+                bothRoutes.add(routeName);
+            }
+        });
+        return bothRoutes;
+    }
+
+    private static @NonNull ArrayList<Feature> getRoutes() throws IOException {
+        ArrayList<Feature> bothRoute = new ArrayList<>();
         InputStream data = HttpClientHelper.getDataStream(govJsonUrl);
         List<Feature> features = JsonToBean.parseFeaturesFromStream(data);
         data.close();
@@ -81,8 +110,8 @@ public class BusDataManager {
                 return;
             }
 
-            if ("KMB+CTB".equals(companyCode)) {
-                bothRoute.add(routeName);
+            if ("KMB".equals(companyCode) || "CTB".equals(companyCode) || "KMB+CTB".equals(companyCode)) {
+                bothRoute.add(feature);
             }
         });
         return bothRoute;
@@ -126,12 +155,83 @@ public class BusDataManager {
         return etasKMB;
     }
 
+    public static Map<String, String> initFares() throws IOException {
+        if (routeIdToName.isEmpty()) {
+            getBothRoutes();
+        }
+
+        InputStream dataStream = HttpClientHelper.getDataStream(faresJsonUrl);
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(dataStream))) {
+            Map<String, String> fares = new HashMap<>();
+            String line;
+
+            // 跳过表头行
+            reader.readLine();
+
+            String lastRouteId = "";
+            String lastBound = "";
+            String lastFare = "";
+            String startPickStop = "";
+            String lastPickStop = "";
+            StringBuilder routeFare = new StringBuilder();
+
+            while ((line = reader.readLine()) != null) {
+                String[] fare = line.split(",");
+
+                if (!fare[5].equals("KMB") && !fare[5].equals("CTB") && !fare[5].equals("KMB+CTB")) {
+                    continue;
+                }
+
+                String[] fareId = fare[0].split("-");
+
+                String routeId = fareId[0];
+                String bound = fareId[1];
+                String currentPickStop = fareId[2];
+                String fareValue = fare[1];
+
+                if (!lastRouteId.equals(routeId) || !lastBound.equals(bound)) {
+                    // 如果为新的路线或方向则保存之前的数据
+                    if (!lastRouteId.isEmpty()) {
+                        routeFare.append(startPickStop).append("-").append(lastPickStop)
+                                .append(",").append(lastFare);
+
+                        String routeName = routeIdToName.get(Integer.parseInt(lastRouteId));
+                        String routeBound = lastBound.equals("1") ? Route.Out : Route.In;
+                        fares.put(routeName + "_" + routeBound, routeFare.toString());
+                    }
+
+                    // 为新的路线或方向重置
+                    routeFare.setLength(0);
+                    lastRouteId = routeId;
+                    lastBound = bound;
+                    startPickStop = currentPickStop;
+                    lastPickStop = currentPickStop;
+                    lastFare = fareValue;
+                }
+
+                // 将fare附加到 StringBuilder
+                if (!lastPickStop.equals(currentPickStop) && !fareValue.equals(lastFare)) {
+                    routeFare.append(startPickStop).append("-").append(lastPickStop)
+                            .append(",").append(lastFare).append(";");
+                    startPickStop = currentPickStop;
+                    lastFare = fareValue;
+                }
+
+                lastPickStop = currentPickStop;
+
+            }
+
+            return fares;
+        }
+    }
+
     public static List<Route> getNearRoutes(int distance) {
         LatLng location = LocationHelper.getLocation(false);
         List<Stop> stopsByLocation = DataBaseManager.findStopsByLocation(location, distance);
+        List<Route> routes = new ArrayList<>();
 
         if (stopsByLocation.isEmpty()) {
-            return;
+            return routes;
         }
 
         List<ETA> etas = new ArrayList<>();
@@ -160,9 +260,8 @@ public class BusDataManager {
                 .collect(Collectors.toList());
         etas.forEach(eta -> Log.d("ETAFilter", eta.getRoute() + " " + eta.getEta()));
 
-        List<Route> routes = new ArrayList<>();
         for (ETA eta : etas) {
-            Route route = DataBaseManager.findRoute(eta.getCo(), eta.getRoute(), "O", eta.getService_type());
+            Route route = DataBaseManager.findRoute(eta.getCo(), eta.getRoute(), "O", String.valueOf(eta.getService_type()));
             if (route != null) {
                 routes.add(route);
             }

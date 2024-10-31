@@ -41,7 +41,7 @@ public class DataBaseManager {
         db = dbOpenHelper.getWritableDatabase();
     }
 
-    public static void initData(List<Route> routes, List<Stop> stops, Context context) {
+    public static void initData(List<Route> routes, List<Stop> stops, Map<String, String> fares,Context context) {
         Handler handler = new Handler(Looper.getMainLooper());
         handler.post(() -> Toast.makeText(context, "正在更新数据", Toast.LENGTH_SHORT).show());
 
@@ -61,6 +61,21 @@ public class DataBaseManager {
             if (stops != null) {
                 insertStops(stops);
                 stops.clear();
+            }
+
+            if (!fares.isEmpty()) {
+                ContentValues contentValues = new ContentValues();
+                fares.forEach((key, value) -> {
+                    String[] split = key.split("_");
+                    String route = split[0];
+                    String bound = split[1];
+                    contentValues.put("route", route);
+                    contentValues.put("bound", bound);
+                    contentValues.put("service_type", "1");
+                    contentValues.put("fare", value);
+                    db.insert(SQLConstants.fareDBName, null, contentValues);
+                    contentValues.clear();
+                });
             }
 
             db.setTransactionSuccessful();

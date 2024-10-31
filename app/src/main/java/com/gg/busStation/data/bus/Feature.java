@@ -10,14 +10,16 @@ public class Feature {
                 '}';
     }
 
-    // 定义 Properties 类，只包含需要的字段
+
     public static class Properties {
+        public Integer routeId;
         public String routeNameC;
         public String companyCode;
 
         @Override
         public String toString() {
             return "Properties{" +
+                    "routeId='" + routeId + '\'' +
                     "routeNameC='" + routeNameC + '\'' +
                     ", companyCode='" + companyCode + '\'' +
                     '}';

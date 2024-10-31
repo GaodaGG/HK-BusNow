@@ -43,9 +43,10 @@ public class SQLConstants {
             "value TEXT NOT NULL" +
             ");";
 
-//    public static final String createFareDBCommand = "CREATE TABLE IF NOT EXISTS " + fareDBName + " (" +
-//            "route TEXT NOT NULL," +
-//            "bound TEXT CHECK (bound IN ('outbound', 'inbound')) NOT NULL," +
-//            "service_type TEXT NOT NULL,"
-
+    public static final String createFareDBCommand = "CREATE TABLE IF NOT EXISTS " + fareDBName + " (" +
+            "route TEXT NOT NULL," +
+            "bound TEXT CHECK (bound IN ('outbound', 'inbound')) NOT NULL," +
+            "service_type TEXT," +
+            "fare TEXT NOT NULL" +
+            ");";
 }

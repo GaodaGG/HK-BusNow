@@ -9,6 +9,9 @@ import android.database.sqlite.SQLiteOpenHelper;
 import androidx.annotation.Nullable;
 
 public class DBOpenHelper extends SQLiteOpenHelper {
+    private final String[] tableNames = {SQLConstants.routeDBName, SQLConstants.stopDBName, SQLConstants.routesHistoryDBName, SQLConstants.fareDBName};
+    private final String[] tableCommands = {SQLConstants.createRouteDBCommand, SQLConstants.createStopDBCommand, SQLConstants.createRoutesHistoryDBCommand, SQLConstants.createFareDBCommand};
+
     public DBOpenHelper(@Nullable Context context, @Nullable String name, @Nullable SQLiteDatabase.CursorFactory factory, int version) {
         super(context, name, factory, version);
     }
@@ -33,16 +36,10 @@ public class DBOpenHelper extends SQLiteOpenHelper {
             }
         }
 
-        if (!isTableExist(db, SQLConstants.routeDBName)) {
-            db.execSQL(SQLConstants.createRouteDBCommand);
-        }
-
-        if (!isTableExist(db, SQLConstants.stopDBName)) {
-            db.execSQL(SQLConstants.createStopDBCommand);
-        }
-
-        if (!isTableExist(db, SQLConstants.routesHistoryDBName)) {
-            db.execSQL(SQLConstants.createRoutesHistoryDBCommand);
+        for (int i = 0; i < tableNames.length; i++) {
+            if (!isTableExist(db, tableNames[i])) {
+                db.execSQL(tableCommands[i]);
+            }
         }
     }
 
