@@ -44,6 +44,10 @@ public class HomeFragment extends Fragment {
     private void initView(List<ListItemData> data) {
         FragmentActivity activity = requireActivity();
 
+        if (data.isEmpty()) {
+            binding.mainErrorLayout.setVisibility(View.VISIBLE);
+        }
+
         MainAdapter mainAdapter = new MainAdapter(activity);
         mainAdapter.submitList(data);
         LinearLayoutManager manager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
