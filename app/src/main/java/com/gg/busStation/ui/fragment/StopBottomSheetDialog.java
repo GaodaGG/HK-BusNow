@@ -30,6 +30,7 @@ import com.google.android.material.divider.MaterialDividerItemDecoration;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class StopBottomSheetDialog extends BottomSheetDialogFragment {
@@ -59,35 +60,7 @@ public class StopBottomSheetDialog extends BottomSheetDialogFragment {
             List<StopItemData> data = new ArrayList<>();
             Route route = DataBaseManager.findRoute(mData.getCo(), mData.getStopNumber(), mData.getBound(), mData.getService_type());
 
-            try {
-                mStops = BusDataManager.routeToStops(route);
-
-                //获取车费
-                String[] stopFares = new String[mStops.size()];
-                String fare = DataBaseManager.findFare(route.getRoute(), route.getBound());
-                String[] fares = fare.split(";");
-                for (String s : fares) {
-                    String[] fareData = s.split(",");
-                    String[] pickStopRange = fareData[0].split("-");
-                    int start = Integer.parseInt(pickStopRange[0]);
-                    int end = Integer.parseInt(pickStopRange[1]);
-                    for (int i = start; i <= end; i++) {
-                        if (i - 1 >= mStops.size()) {
-                            stopFares[mStops.size() - 1] = "";
-                            break;
-                        }
-                        stopFares[i - 1] = fareData[1] + " HKD";
-                    }
-                }
-
-                for (int i = 0; i < mStops.size(); i++) {
-                    Stop stop = mStops.get(i);
-                    StopItemData stopItemData = new StopItemData(String.valueOf(i + 1), stop.getName("zh_CN"), stopFares[i], route.getBound(), route.getService_type(), route.getCo(), route.getRoute(), stop.getStop());
-                    data.add(stopItemData);
-                }
-            } catch (IOException e) {
-                Log.e(TAG, "initView: ", e);
-            }
+            initData(route, data);
 
             int nearestStopIndex = 0;
 
@@ -123,6 +96,43 @@ public class StopBottomSheetDialog extends BottomSheetDialogFragment {
                 });
             });
         }).start();
+    }
+
+    private void initData(Route route, List<StopItemData> data) {
+        try {
+            mStops = BusDataManager.routeToStops(route);
+
+            //获取车费
+            String[] stopFares = new String[mStops.size()];
+            String fare = DataBaseManager.findFare(route.getRoute(), route.getBound());
+            String[] fares = fare.split(";");
+            for (String s : fares) {
+                String[] fareData = s.split(",");
+                String[] pickStopRange = fareData[0].split("-");
+                int start = Integer.parseInt(pickStopRange[0]);
+                int end = Integer.parseInt(pickStopRange[1]);
+                if (end > mStops.size()) {
+                    Arrays.fill(stopFares, "");
+                    break;
+                }
+
+                for (int i = start; i <= end; i++) {
+                    if (i - 1 >= mStops.size()) {
+                        stopFares[mStops.size() - 1] = "";
+                        break;
+                    }
+                    stopFares[i - 1] = fareData[1] + " HKD";
+                }
+            }
+
+            for (int i = 0; i < mStops.size(); i++) {
+                Stop stop = mStops.get(i);
+                StopItemData stopItemData = new StopItemData(String.valueOf(i + 1), stop.getName("zh_CN"), stopFares[i], route.getBound(), route.getService_type(), route.getCo(), route.getRoute(), stop.getStop());
+                data.add(stopItemData);
+            }
+        } catch (IOException e) {
+            Log.e(TAG, "initView: ", e);
+        }
     }
 
     @Override
