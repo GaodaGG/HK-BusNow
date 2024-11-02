@@ -21,4 +21,6 @@
     <string name="dialog_update_yes">是</string>
     <string name="dialog_update_no">否</string>
     <string name="error_nodata">没有找到路线</string>
+    <string name="search_keyboard_delete">清除</string>
+    <string name="search_keyboard_backspace">退格</string>
 </resources>

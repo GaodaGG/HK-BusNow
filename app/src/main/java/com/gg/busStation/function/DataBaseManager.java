@@ -21,8 +21,11 @@ import com.gg.busStation.function.location.LocationHelper;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class DataBaseManager {
     private static SQLiteDatabase db;
@@ -41,7 +44,7 @@ public class DataBaseManager {
         db = dbOpenHelper.getWritableDatabase();
     }
 
-    public static void initData(List<Route> routes, List<Stop> stops, Map<String, String> fares,Context context) {
+    public static void initData(List<Route> routes, List<Stop> stops, Map<String, String> fares, Context context) {
         Handler handler = new Handler(Looper.getMainLooper());
         handler.post(() -> Toast.makeText(context, "正在更新数据", Toast.LENGTH_SHORT).show());
 
@@ -280,6 +283,33 @@ public class DataBaseManager {
 
         cursor.close();
         return route;
+    }
+
+    public static List<String> getRouteNthCharacters(String filterStr, int index) {
+        Set<String> charactersSet = new HashSet<>();
+        String query = "SELECT Route FROM " + SQLConstants.routeDBName;
+        Cursor cursor = db.rawQuery(query, null);
+
+        if (cursor == null) {
+            return new ArrayList<>();
+        }
+
+        while (cursor.moveToNext()) {
+            String route = cursor.getString(0);
+            if (route.length() >= index) {
+                String charAtN = String.valueOf(route.charAt(index - 1));
+                if (index > 1) {
+                    if (route.startsWith(filterStr)) {
+                        charactersSet.add(charAtN);
+                    }
+                } else {
+                    charactersSet.add(charAtN);
+                }
+            }
+        }
+        cursor.close();
+
+        return new ArrayList<>(charactersSet);
     }
 
     public static Stop findStop(String stopId) {

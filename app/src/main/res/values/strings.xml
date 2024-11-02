@@ -21,4 +21,6 @@
     <string name="dialog_update_never">Never</string>
     <string name="dialog_update_yes">Yes</string>
     <string name="dialog_update_no">No</string>
+    <string name="search_keyboard_delete">Delete</string>
+    <string name="search_keyboard_backspace">Backspace</string>
 </resources>
