@@ -40,7 +40,7 @@ public class BusDataManager {
     private BusDataManager() {
     }
 
-    public static void initData(Context context) throws IOException {
+    public static void initData() throws IOException {
         //判断是否需要更新数据
         Map<String, String> settings = DataBaseManager.getSettings();
         String oldLastUpdateTime = settings.get("lastUpdateTime");
@@ -54,7 +54,7 @@ public class BusDataManager {
         List<Stop> stopList = initStops();
         Map<String, String> fareMap = initFares();
 
-        DataBaseManager.initData(routeList, stopList, fareMap, context);
+        DataBaseManager.initData(routeList, stopList, fareMap);
     }
 
     private static List<Route> initRoutes() throws IOException {
