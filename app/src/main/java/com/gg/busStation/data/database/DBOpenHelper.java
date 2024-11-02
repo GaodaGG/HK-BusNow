@@ -45,6 +45,10 @@ public class DBOpenHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        if (oldVersion <= 20241102) {
+            insertSettings(db, "lastUpdateTime", "0");
+        }
+
         if (oldVersion <= 20241017) {
             insertSettings(db, "dontUpdate", String.valueOf(false));
         }
