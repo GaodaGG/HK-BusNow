@@ -1,9 +1,9 @@
 package com.gg.busStation.function;
 
-import android.content.Context;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 
 import com.baidu.mapapi.model.LatLng;
 import com.gg.busStation.data.bus.ETA;
@@ -40,7 +40,7 @@ public class BusDataManager {
     private BusDataManager() {
     }
 
-    public static void initData() throws IOException {
+    public static void initData(OnDataInitListener onDataInitListener) throws IOException {
         //判断是否需要更新数据
         Map<String, String> settings = DataBaseManager.getSettings();
         String oldLastUpdateTime = settings.get("lastUpdateTime");
@@ -50,11 +50,14 @@ public class BusDataManager {
             return;
         }
 
+        onDataInitListener.start();
+
         List<Route> routeList = initRoutes();
         List<Stop> stopList = initStops();
         Map<String, String> fareMap = initFares();
-
         DataBaseManager.initData(routeList, stopList, fareMap);
+
+        onDataInitListener.finish();
     }
 
     private static List<Route> initRoutes() throws IOException {
@@ -497,5 +500,10 @@ public class BusDataManager {
                 }
             }
         }
+    }
+
+    public interface OnDataInitListener {
+        void start();
+        void finish();
     }
 }

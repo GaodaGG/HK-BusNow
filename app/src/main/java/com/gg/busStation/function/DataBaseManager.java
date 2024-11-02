@@ -5,9 +5,6 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.os.Handler;
-import android.os.Looper;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -43,10 +40,7 @@ public class DataBaseManager {
         db = dbOpenHelper.getWritableDatabase();
     }
 
-    public static void initData(List<Route> routes, List<Stop> stops, Map<String, String> fares, Context context) {
-        Handler handler = new Handler(Looper.getMainLooper());
-        handler.post(() -> Toast.makeText(context, "正在更新数据", Toast.LENGTH_SHORT).show());
-
+    public static void initData(List<Route> routes, List<Stop> stops, Map<String, String> fares) {
         //清除老数据
         db.delete(SQLConstants.routeDBName, null, null);
         db.delete(SQLConstants.stopDBName, null, null);
@@ -65,6 +59,7 @@ public class DataBaseManager {
                 stops.clear();
             }
 
+            //更新票价数据
             if (!fares.isEmpty()) {
                 ContentValues contentValues = new ContentValues();
                 fares.forEach((key, value) -> {

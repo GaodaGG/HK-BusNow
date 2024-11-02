@@ -7,20 +7,20 @@
     <string name="dialog_loading">正在更新数据</string>
     <string name="author_name">码农</string>
     <string name="about_developers">开发者</string>
-    <string name="search_hint">搜索路线</string>
-    <string name="main_history_hint">点击右上角搜索路线，此处将存放历史记录</string>
+    <string name="searchbar_hint">搜索路线</string>
+    <string name="main_history_hint">搜索路线并点击，此处将存放历史记录</string>
     <string name="dialog_permission_title">权限申请</string>
     <string name="dialog_permission_message">该软件需要定位权限以便快速跳转最近的巴士站</string>
     <string name="dialog_permission_decline">拒绝</string>
     <string name="dialog_permission_accept">同意</string>
     <string name="about_use_title">引用</string>
-    <string name="error_getdata">获取数据失败</string>
     <string name="dialog_update_title">发现新版本</string>
     <string name="dialog_update_message">新版本已发布，是否要更新？</string>
     <string name="dialog_update_never">永不更新</string>
     <string name="dialog_update_yes">是</string>
     <string name="dialog_update_no">否</string>
-    <string name="error_nodata">没有找到路线</string>
     <string name="search_keyboard_delete">清除</string>
     <string name="search_keyboard_backspace">退格</string>
+    <string name="search_hint">点击键盘以搜索</string>
+    <string name="error_getdata">获取数据失败</string>
 </resources>

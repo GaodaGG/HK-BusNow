@@ -26,7 +26,9 @@ public class SearchKeyboardView extends ConstraintLayout {
     public SearchKeyboardView(Context context) {
         super(context);
         initView(context);
-    }    private final View.OnClickListener onClickListener = v -> {
+    }
+
+    private final View.OnClickListener onClickListener = v -> {
         MaterialButton button = (MaterialButton) v;
         String text = button.getText().toString();
         if (text.isEmpty()) {
@@ -105,6 +107,7 @@ public class SearchKeyboardView extends ConstraintLayout {
 
     public void setOutputText(String outputText) {
         this.outputText = outputText;
+        setButtonStatus(outputText.length() + 1);
     }
 
     public void setOnKeyClickListener(OnKeyClickListener onKeyClickListener) {

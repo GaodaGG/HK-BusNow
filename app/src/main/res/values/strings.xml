@@ -7,15 +7,13 @@
     <string name="author_account" translatable="false">\@GaodaGG</string>
     <string name="about_developers">Developers</string>
     <string name="dialog_loading">"Updating data"</string>
-    <string name="search_hint">Search for a route</string>
+    <string name="searchbar_hint">Search for a route</string>
     <string name="main_history_hint">Search and Click a route to save it here</string>
     <string name="dialog_permission_title">Permission request</string>
     <string name="dialog_permission_message">This app requires location permissions to quickly jump to the nearest bus stop.</string>
     <string name="dialog_permission_decline">Decline</string>
     <string name="dialog_permission_accept">Accept</string>
     <string name="about_use_title">References</string>
-    <string name="error_getdata">Failed to get data</string>
-    <string name="error_nodata">Failed to find route</string>
     <string name="dialog_update_title">New Version</string>
     <string name="dialog_update_message">New version available, do you want to update?</string>
     <string name="dialog_update_never">Never</string>
@@ -23,4 +21,6 @@
     <string name="dialog_update_no">No</string>
     <string name="search_keyboard_delete">Delete</string>
     <string name="search_keyboard_backspace">Backspace</string>
+    <string name="search_hint">Click keyboard to search</string>
+    <string name="error_getdata">Failed to get data</string>
 </resources>

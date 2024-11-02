@@ -1,5 +1,6 @@
 package com.gg.busStation.ui.activity;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -8,9 +9,13 @@ import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.WindowManager;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.activity.OnBackPressedCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.WindowCompat;
 import androidx.navigation.NavController;
@@ -20,8 +25,10 @@ import androidx.navigation.ui.NavigationUI;
 
 import com.gg.busStation.R;
 import com.gg.busStation.databinding.ActivityMainBinding;
+import com.gg.busStation.function.BusDataManager;
 import com.gg.busStation.function.DataBaseManager;
 import com.gg.busStation.function.internet.HttpClientHelper;
+import com.gg.busStation.function.location.LocationHelper;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -31,7 +38,33 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 public class MainActivity extends AppCompatActivity {
+    // 权限申请回调
+    private final ActivityResultLauncher<String> requestPermission = registerForActivityResult(new ActivityResultContracts.RequestPermission(), result -> {
+        if (Boolean.FALSE.equals(result)) {
+            Toast.makeText(this, "权限授权失败，请手动给予", Toast.LENGTH_SHORT).show();
+        } else {
+            LocationHelper.getLocation(true);
+        }
+    });
+
+    // 数据初始化监听器
+    BusDataManager.OnDataInitListener onDataInitListener = new BusDataManager.OnDataInitListener() {
+        @Override
+        public void start() {
+            runOnUiThread(loadingDialog::show);
+        }
+
+        @Override
+        public void finish() {
+            runOnUiThread(() -> {
+                loadingDialog.dismiss();
+                checkPermissions();
+            });
+        }
+    };
+
     private static final String releaseUrl = "https://api.github.com/repos/GaodaGG/HK-BusNow/releases/latest";
+    public AlertDialog loadingDialog;
     private ActivityMainBinding binding;
 
     private static boolean isMIUI() {
@@ -100,6 +133,42 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+        loadingDialog = new MaterialAlertDialogBuilder(this)
+                .setTitle(R.string.dialog_loading)
+                .setView(R.layout.dialog_loading)
+                .setCancelable(false)
+                .create();
+
+        new Thread(() -> {
+            try {
+                BusDataManager.initData(onDataInitListener);
+            } catch (IOException e) {
+                runOnUiThread(() -> Toast.makeText(this, R.string.error_getdata, Toast.LENGTH_SHORT).show());
+            }
+//                BusDataManager.getNearRoutes(100);
+        }).start();
+    }
+
+    private void checkPermissions() {
+        if ("true".equals(DataBaseManager.getSettings().get("isInit"))) {
+            return;
+        }
+
+        int selfPermission = checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION);
+        if (selfPermission == PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+
+        new MaterialAlertDialogBuilder(this)
+                .setTitle(R.string.dialog_permission_title)
+                .setMessage(R.string.dialog_permission_message)
+                .setNegativeButton(R.string.dialog_permission_decline, (dialog, which) -> {
+                })
+                .setPositiveButton(R.string.dialog_permission_accept, (dialog, which) -> requestPermission.launch(Manifest.permission.ACCESS_FINE_LOCATION))
+                .show();
+
+        DataBaseManager.updateSetting("isInit", "true");
     }
 
     private void checkAppUpdate() {

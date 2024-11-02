@@ -7,5 +7,5 @@
         android:title="@string/search_title"
         app:actionViewClass="androidx.appcompat.widget.SearchView"
         app:showAsAction="ifRoom|collapseActionView"
-        android:contentDescription="@string/search_hint"/>
+        android:contentDescription="@string/searchbar_hint"/>
 </menu>

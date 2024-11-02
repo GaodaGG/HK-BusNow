@@ -5,13 +5,15 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+<!--    TODO: 背景颜色跟随Toolbar颜色-->
     <com.google.android.material.search.SearchBar
         android:id="@+id/searchBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="@string/search_hint"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:layout_editor_absoluteX="16dp" />
+        android:hint="@string/searchbar_hint"
+        android:layout_marginBottom="16dp"
+        app:layout_constraintBottom_toTopOf="@id/bus_list_view"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/bus_list_view"
@@ -20,6 +22,19 @@
         app:layout_constraintBottom_toTopOf="@id/searchKeyboardCard"
         app:layout_constraintTop_toBottomOf="@id/searchBar"
         tools:listitem="@layout/item_bus" />
+
+    <TextView
+        android:id="@+id/search_error_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/search_hint"
+        android:textSize="16sp"
+        android:visibility="gone"
+        app:drawableTopCompat="@drawable/error_48px"
+        app:layout_constraintBottom_toBottomOf="@id/bus_list_view"
+        app:layout_constraintEnd_toEndOf="@id/bus_list_view"
+        app:layout_constraintStart_toStartOf="@id/bus_list_view"
+        app:layout_constraintTop_toTopOf="@id/bus_list_view" />
 
     <com.google.android.material.card.MaterialCardView
         style="?attr/materialCardViewElevatedStyle"

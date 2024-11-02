@@ -9,11 +9,13 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.gg.busStation.data.bus.Route;
 import com.gg.busStation.data.layout.ListItemData;
+import com.gg.busStation.data.layout.SearchViewModel;
 import com.gg.busStation.databinding.FragmentSearchBinding;
 import com.gg.busStation.function.BusDataManager;
 import com.gg.busStation.function.DataBaseManager;
@@ -25,20 +27,26 @@ import java.util.List;
 
 public class SearchFragment extends Fragment {
     private FragmentSearchBinding binding;
+    private SearchViewModel mViewModel;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         binding = FragmentSearchBinding.inflate(inflater, container, false);
+        mViewModel = new ViewModelProvider(this).get(SearchViewModel.class);
         return binding.getRoot();
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
-        initView(new ArrayList<>());
+        if (mViewModel.listItemData.isEmpty()) {
+            initView(new ArrayList<>());
+        } else {
+            initView(mViewModel.listItemData);
+        }
     }
+
 
     @Override
     public void onStart() {
@@ -47,6 +55,7 @@ public class SearchFragment extends Fragment {
         if (!outputText.isEmpty()) {
             binding.searchKeyboard.setOutputText(outputText);
         }
+        binding.searchErrorLayout.setVisibility(outputText.isEmpty() ? View.VISIBLE : View.GONE);
 
         binding.searchKeyboard.setOnKeyClickListener(key -> {
             binding.searchBar.setText(key);
@@ -57,12 +66,15 @@ public class SearchFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        mViewModel.listItemData = ((MainAdapter) binding.busListView.getAdapter()).getCurrentList();
+        mViewModel.outputText = binding.searchBar.getText().toString();
     }
 
     private void initView(List<ListItemData> data) {
         FragmentActivity activity = requireActivity();
 
         MainAdapter mainAdapter = new MainAdapter(activity);
+        mainAdapter.getCurrentList();
         mainAdapter.submitList(data);
         LinearLayoutManager manager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
         MaterialDividerItemDecoration divider = new MaterialDividerItemDecoration(requireContext(), LinearLayoutManager.VERTICAL);
@@ -81,16 +93,10 @@ public class SearchFragment extends Fragment {
 
     private void setRouteList(String newText) {
         new Thread(() -> {
-            List<Route> routes;
-            if (newText.isEmpty()) {
-                routes = DataBaseManager.getRoutesHistory();
-            } else {
-                routes = DataBaseManager.getRoutes(newText);
-            }
+            List<Route> routes = newText.isEmpty() ? new ArrayList<>() : DataBaseManager.getRoutes(newText);
+            requireActivity().runOnUiThread(() -> binding.searchErrorLayout.setVisibility(newText.isEmpty() ? View.VISIBLE : View.GONE));
 
             MainAdapter adapter = (MainAdapter) binding.busListView.getAdapter();
-
-
             if (adapter != null) {
                 adapter.submitList(BusDataManager.routesToListItemData(routes));
             }
