@@ -170,6 +170,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/item_search_keyboard_3"
         app:layout_constraintTop_toTopOf="parent"
+        android:scrollbars="none"
         tools:ignore="SpeakableTextPresentCheck">
 
         <LinearLayout
