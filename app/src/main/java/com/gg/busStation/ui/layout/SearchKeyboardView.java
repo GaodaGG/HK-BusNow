@@ -88,7 +88,8 @@ public class SearchKeyboardView extends ConstraintLayout {
             View child = binding.getRoot().getChildAt(i);
             if (child instanceof MaterialButton button) {
                 button.setOnClickListener(onClickListener);
-                button.setEnabled(leftKeys.contains(button.getText().toString()) || button.getText().toString().isEmpty());
+
+                button.setEnabled(leftKeys.contains(button.getText().toString()) || (button.getText().toString().isEmpty() && !outputText.isEmpty()));
             }
         }
     }

@@ -25,7 +25,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 public class DataBaseManager {
     private static SQLiteDatabase db;
@@ -296,16 +295,19 @@ public class DataBaseManager {
 
         while (cursor.moveToNext()) {
             String route = cursor.getString(0);
-            if (route.length() >= index) {
-                String charAtN = String.valueOf(route.charAt(index - 1));
-                if (index > 1) {
-                    if (route.startsWith(filterStr)) {
-                        charactersSet.add(charAtN);
-                    }
-                } else {
+            if (route.length() < index) {
+                continue;
+            }
+
+            String charAtN = String.valueOf(route.charAt(index - 1));
+            if (index > 1) {
+                if (route.startsWith(filterStr)) {
                     charactersSet.add(charAtN);
                 }
+                continue;
             }
+
+            charactersSet.add(charAtN);
         }
         cursor.close();
 
