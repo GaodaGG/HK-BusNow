@@ -86,12 +86,16 @@ public class LocationHelper {
 
     @SuppressLint("MissingPermission")
     private static LatLng getLastLocation() {
-        LocationManager locationManager = (LocationManager) mContext.getSystemService(Context.LOCATION_SERVICE);
-        Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-        if (lastKnownLocation != null) {
-            return new LatLng(lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude());
-        }
+        try {
+            LocationManager locationManager = (LocationManager) mContext.getSystemService(Context.LOCATION_SERVICE);
+            Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            if (lastKnownLocation != null) {
+                return new LatLng(lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude());
+            }
 
-        return new LatLng(0, 0);
+            return new LatLng(0, 0);
+        } catch (Exception e) {
+            return new LatLng(Double.MIN_VALUE, Double.MIN_VALUE);
+        }
     }
 }
