@@ -34,9 +34,9 @@
 
                 <TextView
                     android:id="@+id/list_item_number"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
                     android:text="@{data.stopNumber, default = 1}"
                     android:textColor="?attr/colorOnSurface"
                     android:textSize="22sp" />
@@ -45,14 +45,16 @@
 
             <TextView
                 android:id="@+id/list_item_headline"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
                 android:text="@{data.headline, default = Headline}"
                 android:textColor="?attr/colorOnSurface"
                 android:textSize="16sp"
                 app:layout_constraintBottom_toTopOf="@id/list_item_context"
+                app:layout_constraintEnd_toStartOf="@+id/list_item_more"
                 app:layout_constraintStart_toEndOf="@+id/materialCardView"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintVertical_chainStyle="packed" />
@@ -69,7 +71,9 @@
                 app:layout_constraintStart_toStartOf="@+id/list_item_headline"
                 app:layout_constraintTop_toBottomOf="@+id/list_item_headline" />
 
+
             <ImageView
+                android:id="@+id/list_item_more"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="16dp"
@@ -78,7 +82,6 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
-
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <LinearLayout
@@ -88,9 +91,7 @@
             android:layout_marginStart="43.5dp"
             android:layout_marginBottom="16dp"
             android:minHeight="88dp"
-            android:orientation="vertical">
-
-        </LinearLayout>
+            android:orientation="vertical"/>
 
     </LinearLayout>
 
