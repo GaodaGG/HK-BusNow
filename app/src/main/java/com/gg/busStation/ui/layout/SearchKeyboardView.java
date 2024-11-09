@@ -12,15 +12,12 @@ import com.gg.busStation.databinding.SearchKeyboardBinding;
 import com.gg.busStation.function.DataBaseManager;
 import com.google.android.material.button.MaterialButton;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class SearchKeyboardView extends ConstraintLayout {
     private SearchKeyboardBinding binding;
     private OnKeyClickListener onKeyClickListener;
-    private List<String> leftKeys = new ArrayList<>();
-    private List<String> rightKeys = new ArrayList<>();
     private String outputText = "";
 
     public SearchKeyboardView(Context context) {
@@ -75,11 +72,9 @@ public class SearchKeyboardView extends ConstraintLayout {
     private void setButtonStatus(int index) {
         List<String> routeNthCharacters = DataBaseManager.getRouteNthCharacters(outputText, index);
 
-        rightKeys = routeNthCharacters.stream()
+        List<String> rightKeys = routeNthCharacters.stream()
                 .filter(s -> s.matches("^[a-zA-Z]+$"))
                 .collect(Collectors.toList());
-        routeNthCharacters.containsAll(rightKeys);
-        leftKeys = routeNthCharacters;
 
         binding.itemSearchKeyboardScrollview.removeAllViews();
         for (String rightKey : rightKeys) {
@@ -91,7 +86,7 @@ public class SearchKeyboardView extends ConstraintLayout {
             if (child instanceof MaterialButton button) {
                 button.setOnClickListener(onClickListener);
 
-                button.setEnabled(leftKeys.contains(button.getText().toString()) || (button.getText().toString().isEmpty() && !outputText.isEmpty()));
+                button.setEnabled(routeNthCharacters.contains(button.getText().toString()) || (button.getText().toString().isEmpty() && !outputText.isEmpty()));
             }
         }
     }
@@ -117,6 +112,4 @@ public class SearchKeyboardView extends ConstraintLayout {
     public interface OnKeyClickListener {
         void onKeyClick(String key);
     }
-
-
 }
