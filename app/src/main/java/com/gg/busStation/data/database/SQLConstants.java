@@ -1,6 +1,9 @@
 package com.gg.busStation.data.database;
 
 public class SQLConstants {
+    private SQLConstants() {
+    }
+
     public static final String routeDBName = "routes";
     public static final String stopDBName = "stops";
     public static final String routesHistoryDBName = "history";

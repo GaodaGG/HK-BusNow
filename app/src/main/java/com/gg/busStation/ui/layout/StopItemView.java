@@ -175,7 +175,7 @@ public class StopItemView extends LinearLayout {
 
             List<ETAView> etaViews = new ArrayList<>();
             for (ETA eta : etas) {
-                long time = BusDataManager.getMinutesRemaining(eta.getEta());
+                long time = BusDataManager.getMinutesRemaining(eta.getTime());
                 ETAView etaView = new ETAView(context, (int) time, eta.getRmk("zh_CN"), Route.coKMB.equals(eta.getCo()) ? "九巴" : "城巴");
                 etaViews.add(etaView);
                 mainHandler.post(() -> timeList.addView(etaView));

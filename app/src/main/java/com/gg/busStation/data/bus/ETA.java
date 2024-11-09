@@ -1,5 +1,7 @@
 package com.gg.busStation.data.bus;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.util.Date;
 
 public class ETA {
@@ -9,7 +11,8 @@ public class ETA {
 
     private int seq;
     private int eta_seq;
-    private Date eta;
+    @SerializedName("eta")
+    private Date time;
 
     private String dest_en;
     private String dest_tc;
@@ -85,12 +88,12 @@ public class ETA {
         this.eta_seq = eta_seq;
     }
 
-    public Date getEta() {
-        return eta;
+    public Date getTime() {
+        return time;
     }
 
-    public void setEta(Date eta) {
-        this.eta = eta;
+    public void setTime(Date time) {
+        this.time = time;
     }
 
     public Date getData_timestamp() {

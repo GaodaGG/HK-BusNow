@@ -3,9 +3,9 @@ package com.gg.busStation.function;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 
 import com.baidu.mapapi.model.LatLng;
+import com.gg.busStation.MainApplication;
 import com.gg.busStation.data.bus.ETA;
 import com.gg.busStation.data.bus.Feature;
 import com.gg.busStation.data.bus.Route;
@@ -27,6 +27,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -143,10 +144,10 @@ public class BusDataManager {
         }
 
         etas.sort((eta1, eta2) -> {
-            if (eta1.getEta() == null || eta2.getEta() == null) {
+            if (eta1.getTime() == null || eta2.getTime() == null) {
                 return 0; // 处理空值（如果有）
             }
-            return eta1.getEta().compareTo(eta2.getEta());
+            return eta1.getTime().compareTo(eta2.getTime());
         });
         return etas;
     }
@@ -249,19 +250,19 @@ public class BusDataManager {
         //对etas根据eta.getRoute()进行filter 去重
         Set<String> seenIds = new HashSet<>();
 
-        etas.stream().filter(eta -> eta.getEta() == null).collect(Collectors.toList());
+        etas.stream().filter(eta -> eta.getTime() == null).collect(Collectors.toList());
         etas.sort((eta1, eta2) -> {
-            if (eta1.getEta() == null || eta2.getEta() == null) {
+            if (eta1.getTime() == null || eta2.getTime() == null) {
                 return 0; // 处理空值（如果有）
             }
 
-            return eta1.getEta().compareTo(eta2.getEta());
+            return eta1.getTime().compareTo(eta2.getTime());
         });
-        etas.forEach(eta -> Log.d("ETA", eta.getRoute() + " " + eta.getEta()));
+        etas.forEach(eta -> Log.d("ETA", eta.getRoute() + " " + eta.getTime()));
         etas.stream()
                 .filter(eta -> seenIds.add(eta.getRoute()))
                 .collect(Collectors.toList());
-        etas.forEach(eta -> Log.d("ETAFilter", eta.getRoute() + " " + eta.getEta()));
+        etas.forEach(eta -> Log.d("ETAFilter", eta.getRoute() + " " + eta.getTime()));
 
         for (ETA eta : etas) {
             Route route = DataBaseManager.findRoute(eta.getCo(), eta.getRoute(), "O", String.valueOf(eta.getService_type()));
@@ -328,19 +329,21 @@ public class BusDataManager {
     }
 
     public static List<ListItemData> routesToListItemData(List<Route> routes) {
+        String language = Locale.getDefault().getLanguage();
+
         List<ListItemData> data = new ArrayList<>();
         for (Route route : routes) {
-            StringBuilder headline = new StringBuilder().append(route.getOrig("zh_CN"))
+            StringBuilder headline = new StringBuilder().append(route.getOrig(language))
                     .append(" -> ")
-                    .append(route.getDest("zh_CN"));
+                    .append(route.getDest(language));
 
             if (headline.length() > 20) {
-                headline = new StringBuilder().append(route.getOrig("zh_CN"))
+                headline = new StringBuilder().append(route.getOrig(language))
                         .append(" ->\n")
-                        .append(route.getDest("zh_CN"));
+                        .append(route.getDest(language));
             }
 
-            String tips = route.getCo().equals(Route.coCTB) ? "(城巴路线)" : "";
+            String tips = route.getCo();
             ListItemData listItemData = new ListItemData(route.getCo(),
                     route.getRoute(),
                     headline.toString(),

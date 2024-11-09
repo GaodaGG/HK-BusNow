@@ -32,6 +32,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 
 public class StopBottomSheetDialog extends BottomSheetDialogFragment {
     public static final String TAG = "BusBottomSheetDialog";
@@ -125,9 +126,10 @@ public class StopBottomSheetDialog extends BottomSheetDialogFragment {
                 }
             }
 
+            String language = Locale.getDefault().getLanguage();
             for (int i = 0; i < mStops.size(); i++) {
                 Stop stop = mStops.get(i);
-                StopItemData stopItemData = new StopItemData(String.valueOf(i + 1), stop.getName("zh_CN"), stopFares[i], route.getBound(), route.getService_type(), route.getCo(), route.getRoute(), stop.getStop());
+                StopItemData stopItemData = new StopItemData(String.valueOf(i + 1), stop.getName(language), stopFares[i], route.getBound(), route.getService_type(), route.getCo(), route.getRoute(), stop.getStop());
                 data.add(stopItemData);
             }
         } catch (IOException e) {

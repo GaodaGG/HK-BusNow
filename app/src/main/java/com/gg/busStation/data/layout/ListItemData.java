@@ -5,9 +5,9 @@ import androidx.databinding.ObservableField;
 import java.util.Objects;
 
 public class ListItemData {
-    public ObservableField<String> stopNumber;
-    public ObservableField<String> headline;
-    public ObservableField<String> context;
+    private ObservableField<String> stopNumber;
+    private ObservableField<String> headline;
+    private ObservableField<String> context;
     public ObservableField<String> tips;
 
     private String co;

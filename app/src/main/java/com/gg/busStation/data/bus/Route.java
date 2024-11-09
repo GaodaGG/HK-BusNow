@@ -1,5 +1,7 @@
 package com.gg.busStation.data.bus;
 
+import java.util.Locale;
+
 public class Route {
     public static String Out = "outbound";
     public static String In = "inbound";
@@ -50,11 +52,11 @@ public class Route {
     }
 
     public String getOrig(String language) {
-        if ("en".equals(language)) {
+        if (new Locale("en").getLanguage().equals(language)) {
             return orig_en;
         }
 
-        if ("zh_HK".equals(language)) {
+        if (new Locale("zh_HK").getLanguage().equals(language)) {
             return orig_tc;
         }
 
@@ -62,11 +64,11 @@ public class Route {
     }
 
     public String getDest(String language) {
-        if ("en".equals(language)) {
+        if (new Locale("en").getLanguage().equals(language)) {
             return dest_en;
         }
 
-        if ("zh_HK".equals(language)) {
+        if (new Locale("zh_HK").getLanguage().equals(language)) {
             return dest_tc;
         }
 

@@ -2,6 +2,8 @@ package com.gg.busStation.data.bus;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.util.Locale;
+
 public class Stop {
     private String stop;
 
@@ -24,11 +26,11 @@ public class Stop {
 
 
     public String getName(String language) {
-        if ("en".equals(language)) {
+        if (new Locale("en").getLanguage().equals(language)) {
             return name_en;
         }
 
-        if ("zh_HK".equals(language)) {
+        if (new Locale("zh_HK").getLanguage().equals(language)) {
             return name_tc;
         }
 
