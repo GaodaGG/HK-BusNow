@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="4dp">
+    android:layout_marginBottom="4dp"
+    tools:parentTag="android.widget.LinearLayout">
 
     <TextView
         android:id="@+id/dialog_eta_time"
@@ -15,7 +17,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="分钟"
+        android:text="@string/time_min"
         android:textSize="14sp"/>
 
     <TextView
@@ -33,4 +35,4 @@
         android:layout_marginStart="3dp"
         android:text="九巴"
         android:textSize="14sp"/>
-</LinearLayout>
+</merge>

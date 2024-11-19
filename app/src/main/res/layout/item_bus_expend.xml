@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
 
@@ -10,12 +11,12 @@
 
     </data>
 
-    <LinearLayout
+    <merge
         android:id="@+id/dialog_item"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:foreground="?attr/selectableItemBackgroundBorderless"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        tools:parentTag="LinearLayout">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/list_item_layout"
@@ -91,8 +92,8 @@
             android:layout_marginStart="43.5dp"
             android:layout_marginBottom="16dp"
             android:minHeight="88dp"
-            android:orientation="vertical"/>
+            android:orientation="vertical" />
 
-    </LinearLayout>
+    </merge>
 
 </layout>

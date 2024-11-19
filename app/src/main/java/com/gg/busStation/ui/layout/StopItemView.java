@@ -6,6 +6,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.res.TypedArray;
 import android.icu.util.Calendar;
 import android.os.Handler;
 import android.os.Looper;
@@ -59,21 +60,23 @@ public class StopItemView extends LinearLayout {
 
     public StopItemView(@NonNull Context context) {
         super(context);
-        init(context);
+        initView(context);
     }
 
     public StopItemView(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
-        init(context);
+        initView(context);
     }
 
     public StopItemView(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        init(context);
+        initView(context);
     }
 
-    private void init(Context context) {
+    private void initView(Context context) {
         binding = ItemBusExpendBinding.inflate(LayoutInflater.from(context), this, true);
+        TypedArray typedArray = context.getTheme().obtainStyledAttributes(new int[]{android.R.attr.selectableItemBackgroundBorderless});
+        setForeground(typedArray.getDrawable(0));
         setOrientation(VERTICAL);
         setLayoutParams(new ViewGroup.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, // 确保宽度为 match_parent
@@ -173,8 +176,10 @@ public class StopItemView extends LinearLayout {
                 return;
             }
 
-            List<ETAView> etaViews = new ArrayList<>();
-            for (ETA eta : etas) {
+            ArrayList<ETAView> etaViews = new ArrayList<>();
+            int size = Math.min(etas.size(), 3);
+            for (int i = 0; i < size; i++) {
+                ETA eta = etas.get(i);
                 long time = BusDataManager.getMinutesRemaining(eta.getTime());
                 ETAView etaView = new ETAView(context, (int) time, eta.getRmk("zh_CN"), Route.coKMB.equals(eta.getCo()) ? "九巴" : "城巴");
                 etaViews.add(etaView);

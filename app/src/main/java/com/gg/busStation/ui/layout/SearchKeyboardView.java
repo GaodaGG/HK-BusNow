@@ -6,22 +6,31 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 
-import androidx.constraintlayout.widget.ConstraintLayout;
-
 import com.gg.busStation.databinding.SearchKeyboardBinding;
 import com.gg.busStation.function.DataBaseManager;
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.card.MaterialCardView;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class SearchKeyboardView extends ConstraintLayout {
+public class SearchKeyboardView extends MaterialCardView {
     private SearchKeyboardBinding binding;
     private OnKeyClickListener onKeyClickListener;
     private String outputText = "";
 
     public SearchKeyboardView(Context context) {
-        super(context);
+        super(context, null, com.google.android.material.R.attr.materialCardViewElevatedStyle);
+        initView(context);
+    }
+
+    public SearchKeyboardView(Context context, AttributeSet attrs) {
+        super(context, attrs, com.google.android.material.R.attr.materialCardViewElevatedStyle);
+        initView(context);
+    }
+
+    public SearchKeyboardView(Context context, AttributeSet attrs, int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
         initView(context);
     }
 
@@ -53,19 +62,8 @@ public class SearchKeyboardView extends ConstraintLayout {
         setButtonStatus(outputText.length() + 1);
     };
 
-    public SearchKeyboardView(Context context, AttributeSet attrs) {
-        super(context, attrs);
-        initView(context);
-    }
-
-    public SearchKeyboardView(Context context, AttributeSet attrs, int defStyleAttr) {
-        super(context, attrs, defStyleAttr);
-        initView(context);
-    }
-
     private void initView(Context context) {
-        binding = SearchKeyboardBinding.inflate(LayoutInflater.from(context), this, true);
-
+        binding = SearchKeyboardBinding.inflate(LayoutInflater.from(context), this);
         setButtonStatus(1);
     }
 
@@ -81,8 +79,8 @@ public class SearchKeyboardView extends ConstraintLayout {
             binding.itemSearchKeyboardScrollview.addView(createKeyView(rightKey));
         }
 
-        for (int i = 0; i < binding.getRoot().getChildCount(); i++) {
-            View child = binding.getRoot().getChildAt(i);
+        for (int i = 0; i < binding.itemSearchKeyboardLayout.getChildCount(); i++) {
+            View child = binding.itemSearchKeyboardLayout.getChildAt(i);
             if (child instanceof MaterialButton button) {
                 button.setOnClickListener(onClickListener);
 

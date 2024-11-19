@@ -23,4 +23,5 @@
     <string name="search_keyboard_backspace">Backspace</string>
     <string name="search_hint">Click keyboard to search</string>
     <string name="error_getdata">Failed to get data</string>
+    <string name="time_min">min</string>
 </resources>

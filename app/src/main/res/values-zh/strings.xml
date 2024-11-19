@@ -23,4 +23,5 @@
     <string name="search_keyboard_backspace">退格</string>
     <string name="search_hint">点击键盘以搜索</string>
     <string name="error_getdata">获取数据失败</string>
+    <string name="time_min">分钟</string>
 </resources>

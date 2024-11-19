@@ -3,18 +3,19 @@ package com.gg.busStation.ui.layout;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Typeface;
-import android.view.View;
+import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.gg.busStation.R;
+import com.gg.busStation.databinding.DialogEtaItemBinding;
 
 @SuppressLint("ViewConstructor")
 public class ETAView extends LinearLayout {
+    private DialogEtaItemBinding binding;
     private int time;
-    private String rmk;
-    private String co;
+    private final String rmk;
+    private final String co;
 
     public ETAView(Context context, int time, String rmk, String co) {
         super(context);
@@ -31,14 +32,11 @@ public class ETAView extends LinearLayout {
     }
 
     private void initView(Context context, int time, String rmk, String co) {
-        View inflate = inflate(context, R.layout.dialog_eta_item, this);
-        TextView mTimeView = inflate.findViewById(R.id.dialog_eta_time);
-        TextView mRmkView = inflate.findViewById(R.id.dialog_eta_rmk);
-        TextView mCoView = inflate.findViewById(R.id.dialog_eta_co);
+        binding = DialogEtaItemBinding.inflate(LayoutInflater.from(context), this);
 
-        mTimeView.setText(String.valueOf(time));
-        mRmkView.setText(rmk);
-        mCoView.setText(co);
+        binding.dialogEtaTime.setText(String.valueOf(time));
+        binding.dialogEtaRmk.setText(rmk);
+        binding.dialogEtaCo.setText(co);
 
         setLayoutParams(new LinearLayout.LayoutParams(
                 LayoutParams.WRAP_CONTENT,
@@ -63,8 +61,8 @@ public class ETAView extends LinearLayout {
         }
 
         if (time > 0) {
-            findViewById(R.id.dialog_eta_time).setVisibility(VISIBLE);
-            ((TextView) findViewById(R.id.dialog_eta_time)).setText(String.valueOf(time));
+            binding.dialogEtaTime.setVisibility(VISIBLE);
+            binding.dialogEtaTime.setText(String.valueOf(time));
             return;
         }
 

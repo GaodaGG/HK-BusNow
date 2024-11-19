@@ -19,7 +19,7 @@
         android:id="@+id/bus_list_view"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@id/searchKeyboardCard"
+        app:layout_constraintBottom_toTopOf="@id/searchKeyboard"
         app:layout_constraintTop_toBottomOf="@id/searchBar"
         tools:listitem="@layout/item_bus" />
 
@@ -36,23 +36,13 @@
         app:layout_constraintStart_toStartOf="@id/bus_list_view"
         app:layout_constraintTop_toTopOf="@id/bus_list_view" />
 
-    <com.google.android.material.card.MaterialCardView
-        style="?attr/materialCardViewElevatedStyle"
-        android:id="@+id/searchKeyboardCard"
+    <com.gg.busStation.ui.layout.SearchKeyboardView
+        android:id="@+id/searchKeyboard"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="98dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
-
-        <com.gg.busStation.ui.layout.SearchKeyboardView
-            android:id="@+id/searchKeyboard"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp" />
-
-    </com.google.android.material.card.MaterialCardView>
+        app:layout_constraintStart_toStartOf="parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
