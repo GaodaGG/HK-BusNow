@@ -183,6 +183,10 @@ public class StopItemView extends LinearLayout {
                 long time = BusDataManager.getMinutesRemaining(eta.getTime());
                 ETAView etaView = new ETAView(context, (int) time, eta.getRmk("zh_CN"), Route.coKMB.equals(eta.getCo()) ? "九巴" : "城巴");
                 etaViews.add(etaView);
+
+                LayoutParams layoutParams = (LayoutParams) etaView.getLayoutParams();
+                layoutParams.bottomMargin = dip2px(context, 4);
+                etaView.setLayoutParams(layoutParams);
                 mainHandler.post(() -> timeList.addView(etaView));
             }
 
@@ -236,7 +240,10 @@ public class StopItemView extends LinearLayout {
         return isOpen;
     }
 
-
+    private int dip2px(Context context, int i) {
+        float scale = context.getResources().getDisplayMetrics().density;
+        return (int) (i * scale + 0.5f);
+    }
 
 
 }
