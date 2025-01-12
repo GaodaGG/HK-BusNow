@@ -50,6 +50,12 @@ public class ETAView extends LinearLayout {
         textView.setText(text);
         textView.setTextSize(20);
         textView.setTypeface(null, Typeface.BOLD);
+
+        setLayoutParams(new LinearLayout.LayoutParams(
+                LayoutParams.WRAP_CONTENT,
+                LayoutParams.WRAP_CONTENT
+        ));
+
         addView(textView);
     }
 
