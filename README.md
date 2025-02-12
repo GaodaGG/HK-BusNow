@@ -15,10 +15,14 @@
 [九巴数据](https://data.gov.hk/sc-data/dataset/hk-td-tis_21-etakmb/)  
 [城巴数据](https://data.gov.hk/sc-data/dataset/ctb-eta-transport-realtime-eta/)
 
-## 应用截图 (正在开发)
+## 应用截图
 <p align = "left">    
   <img src="./app_screenshot1.png" width="300px">
+  <img src="./app_screenshot3.jpg" width="300px">
   <img src="./app_screenshot2.png" width="300px">
+  <img src="./app_screenshot6.jpg" width="300px">
+  <img src="./app_screenshot4.jpg" width="300px">
+  <img src="./app_screenshot5.jpg" width="300px">
 </p>
 
 ## 未来目标 [数据来源](https://data.gov.hk/sc-data/dataset/hk-td-tis_23-routes-fares-geojson)
