@@ -4,10 +4,12 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Toast;
 
@@ -27,9 +29,11 @@ import com.gg.busStation.R;
 import com.gg.busStation.databinding.ActivityMainBinding;
 import com.gg.busStation.function.BusDataManager;
 import com.gg.busStation.function.DataBaseManager;
+import com.gg.busStation.function.Tools;
 import com.gg.busStation.function.internet.HttpClientHelper;
 import com.gg.busStation.function.location.LocationHelper;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.search.SearchBar;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
@@ -38,6 +42,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 public class MainActivity extends AppCompatActivity {
+    private static final String releaseUrl = "https://api.github.com/repos/GaodaGG/HK-BusNow/releases/latest";
     // 权限申请回调
     private final ActivityResultLauncher<String> requestPermission = registerForActivityResult(new ActivityResultContracts.RequestPermission(), result -> {
         if (Boolean.FALSE.equals(result)) {
@@ -46,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
             LocationHelper.getLocation(true);
         }
     });
-
+    private AlertDialog loadingDialog;
     // 数据初始化监听器
     BusDataManager.OnDataInitListener onDataInitListener = new BusDataManager.OnDataInitListener() {
         @Override
@@ -62,9 +67,6 @@ public class MainActivity extends AppCompatActivity {
             });
         }
     };
-
-    private static final String releaseUrl = "https://api.github.com/repos/GaodaGG/HK-BusNow/releases/latest";
-    public AlertDialog loadingDialog;
     private ActivityMainBinding binding;
 
     private static boolean isMIUI() {
@@ -92,13 +94,19 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initView() {
-        binding = ActivityMainBinding.inflate(getLayoutInflater());
-        setContentView(binding.getRoot());
-
         //解决MIUI小白条问题
         if (isMIUI()) {
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
         }
+
+        if (Build.VERSION.SDK_INT == Build.VERSION_CODES.R) {
+            getWindow().setDecorFitsSystemWindows(false);
+            getWindow().setNavigationBarContrastEnforced(false);
+            getWindow().setNavigationBarColor(Color.TRANSPARENT);
+        }
+
+        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
         EdgeToEdge.enable(this);
         setSupportActionBar(binding.toolBar);
@@ -112,6 +120,19 @@ public class MainActivity extends AppCompatActivity {
 
         binding.bottomNavigation.setOnItemSelectedListener(item -> {
             NavigationUI.onNavDestinationSelected(item, navController);
+
+            if (item.getItemId() == R.id.search_fragment && binding.toolBar.getChildCount() == 3) {
+                SearchBar searchBar = new SearchBar(this, null, com.google.android.material.R.attr.materialSearchBarStyle);
+                searchBar.setHint(R.string.search_hint);
+                searchBar.setId(R.id.searchBar);
+
+                int width = binding.toolBar.getMeasuredWidth();
+                binding.toolBar.addView(searchBar);
+                searchBar.getLayoutParams().width = width - binding.toolBar.getChildAt(0).getWidth() * 2 - Tools.dp2px(this, 16);
+                ((ViewGroup.MarginLayoutParams) searchBar.getLayoutParams()).setMargins(Tools.dp2px(this, 32), 0, Tools.dp2px(this, 16), 0);
+            } else if (binding.toolBar.getChildAt(2) instanceof SearchBar) {
+                binding.toolBar.removeViewAt(2);
+            }
             binding.toolBar.setNavigationIcon(null);
 
             return true;
@@ -150,7 +171,7 @@ public class MainActivity extends AppCompatActivity {
         }).start();
     }
 
-    private void checkPermissions() {
+    public void checkPermissions() {
         if ("true".equals(DataBaseManager.getSettings().get("isInit"))) {
             return;
         }

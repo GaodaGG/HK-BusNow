@@ -5,7 +5,6 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 
 import com.baidu.mapapi.model.LatLng;
-import com.gg.busStation.MainApplication;
 import com.gg.busStation.data.bus.ETA;
 import com.gg.busStation.data.bus.Feature;
 import com.gg.busStation.data.bus.Route;
@@ -366,6 +365,12 @@ public class BusDataManager {
         };
     }
 
+    public interface OnDataInitListener {
+        void start();
+
+        void finish();
+    }
+
     private static class KMB {
         public static final String routeUrl = "https://data.etabus.gov.hk/v1/transport/kmb/route/";
         public static final String stopUrl = "https://data.etabus.gov.hk/v1/transport/kmb/stop/";
@@ -503,10 +508,5 @@ public class BusDataManager {
                 }
             }
         }
-    }
-
-    public interface OnDataInitListener {
-        void start();
-        void finish();
     }
 }

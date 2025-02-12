@@ -30,6 +30,7 @@ import com.gg.busStation.data.layout.StopItemData;
 import com.gg.busStation.databinding.ItemBusExpendBinding;
 import com.gg.busStation.function.BusDataManager;
 import com.gg.busStation.function.DataBaseManager;
+import com.gg.busStation.function.Tools;
 import com.google.android.material.motion.MotionUtils;
 
 import java.io.IOException;
@@ -185,7 +186,7 @@ public class StopItemView extends LinearLayout {
                 etaViews.add(etaView);
 
                 LayoutParams layoutParams = (LayoutParams) etaView.getLayoutParams();
-                layoutParams.bottomMargin = dip2px(context, 4);
+                layoutParams.bottomMargin = Tools.dp2px(context, 4);
                 etaView.setLayoutParams(layoutParams);
                 mainHandler.post(() -> timeList.addView(etaView));
             }
@@ -238,11 +239,6 @@ public class StopItemView extends LinearLayout {
 
     public boolean isOpen() {
         return isOpen;
-    }
-
-    private int dip2px(Context context, int i) {
-        float scale = context.getResources().getDisplayMetrics().density;
-        return (int) (i * scale + 0.5f);
     }
 
 

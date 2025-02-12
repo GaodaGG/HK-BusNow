@@ -13,6 +13,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.gg.busStation.R;
 import com.gg.busStation.data.bus.Route;
 import com.gg.busStation.data.layout.ListItemData;
 import com.gg.busStation.data.layout.SearchViewModel;
@@ -21,6 +22,7 @@ import com.gg.busStation.function.BusDataManager;
 import com.gg.busStation.function.DataBaseManager;
 import com.gg.busStation.ui.adapter.MainAdapter;
 import com.google.android.material.divider.MaterialDividerItemDecoration;
+import com.google.android.material.search.SearchBar;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +30,7 @@ import java.util.List;
 public class SearchFragment extends Fragment {
     private FragmentSearchBinding binding;
     private SearchViewModel mViewModel;
+    private SearchBar mSearchBar;
 
     @Nullable
     @Override
@@ -51,14 +54,17 @@ public class SearchFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        String outputText = binding.searchBar.getText().toString();
-        if (!outputText.isEmpty()) {
-            binding.searchKeyboard.setOutputText(outputText);
+        mSearchBar = requireActivity().getWindow().getDecorView().findViewById(R.id.searchBar);
+        if (!mViewModel.outputText.isEmpty()) {
+            binding.searchKeyboard.setOutputText(mViewModel.outputText);
+            mSearchBar.setText(mViewModel.outputText);
         }
-        binding.searchErrorLayout.setVisibility(outputText.isEmpty() ? View.VISIBLE : View.GONE);
+        binding.searchErrorLayout.setVisibility(mViewModel.outputText.isEmpty() ? View.VISIBLE : View.GONE);
 
         binding.searchKeyboard.setOnKeyClickListener(key -> {
-            binding.searchBar.setText(key);
+            mSearchBar.setText(key);
+
+//            binding.searchBar.setText(key);
             setRouteList(key);
         });
     }
@@ -66,13 +72,15 @@ public class SearchFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+
         mViewModel.listItemData = ((MainAdapter) binding.busListView.getAdapter()).getCurrentList();
-        mViewModel.outputText = binding.searchBar.getText().toString();
+        mViewModel.outputText = mSearchBar.getText().toString();
     }
 
     private void initView(List<ListItemData> data) {
         FragmentActivity activity = requireActivity();
 
+//        Drawable background = ((ActionBar) ((AppCompatActivity) activity).getSupportActionBar())..getBackground();
         MainAdapter mainAdapter = new MainAdapter(activity);
         mainAdapter.getCurrentList();
         mainAdapter.submitList(data);
