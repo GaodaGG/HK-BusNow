@@ -59,7 +59,7 @@ public class SearchFragment extends Fragment {
             binding.searchKeyboard.setOutputText(mViewModel.outputText);
             mSearchBar.setText(mViewModel.outputText);
         }
-        binding.searchErrorLayout.setVisibility(mViewModel.outputText.isEmpty() ? View.VISIBLE : View.GONE);
+        binding.searchErrorLayout.setVisibility((mViewModel.outputText.isEmpty() && mSearchBar.getText().length() == 0) ? View.VISIBLE : View.GONE);
 
         binding.searchKeyboard.setOnKeyClickListener(key -> {
             mSearchBar.setText(key);
