@@ -48,7 +48,7 @@ public class HomeFragment extends Fragment {
             binding.mainErrorLayout.setVisibility(View.VISIBLE);
         }
 
-        MainAdapter mainAdapter = new MainAdapter(activity);
+        MainAdapter mainAdapter = new MainAdapter(activity, false);
         mainAdapter.submitList(data);
         LinearLayoutManager manager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
         MaterialDividerItemDecoration divider = new MaterialDividerItemDecoration(requireContext(), LinearLayoutManager.VERTICAL);

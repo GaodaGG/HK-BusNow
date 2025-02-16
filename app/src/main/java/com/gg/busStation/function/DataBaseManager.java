@@ -373,14 +373,17 @@ public class DataBaseManager {
     }
 
     public static void addRoutesHistory(String co, String routeId, String bound, String service_type) {
-        long timestamp = System.currentTimeMillis();
+        long timestamp = 0;
+        if (isPinRoutesHistory(co, routeId, bound, service_type)) {
+            timestamp = System.currentTimeMillis();
+        }
 
         ContentValues contentValues = new ContentValues();
         contentValues.put("co", co);
         contentValues.put("route", routeId);
         contentValues.put("bound", bound);
         contentValues.put("service_type", service_type);
-        contentValues.put("timestamp", timestamp);
+        contentValues.put("timestamp", timestamp != 0 ? null : System.currentTimeMillis());
 
         db.insertWithOnConflict(SQLConstants.routesHistoryDBName, null, contentValues, SQLiteDatabase.CONFLICT_REPLACE);
     }
@@ -409,6 +412,57 @@ public class DataBaseManager {
         cursor.close();
 
         return routes;
+    }
+
+    public static boolean deleteRoutesHistory(String co, String routeId, String bound, String service_type) {
+        int delete = db.delete(SQLConstants.routesHistoryDBName, "co = ? AND route = ? AND bound = ? AND service_type = ?", new String[]{co, routeId, bound, service_type});
+        return delete > 0;
+    }
+
+    public static void pinRoutesHistory(String co, String routeId, String bound, String service_type) {
+        int count = 0;
+        Cursor cursor = db.query(SQLConstants.routesHistoryDBName, null, null, null, null, null, "timestamp DESC");
+
+        if (cursor.getCount() > 0) {
+            cursor.moveToFirst();
+
+            for (int i = 0; i < cursor.getCount(); i++) {
+                long timestamp = cursor.getLong(cursor.getColumnIndexOrThrow("timestamp"));
+                if (timestamp > 9000000000000L) {
+                    count++;
+                }
+                cursor.moveToNext();
+            }
+        }
+        cursor.close();
+
+
+        ContentValues contentValues = new ContentValues();
+        contentValues.put("co", co);
+        contentValues.put("route", routeId);
+        contentValues.put("bound", bound);
+        contentValues.put("service_type", service_type);
+        contentValues.put("timestamp", 9000000000000L + count);
+        db.insertWithOnConflict(SQLConstants.routesHistoryDBName, null, contentValues, SQLiteDatabase.CONFLICT_REPLACE);
+    }
+
+    public static void unpinRoutesHistory(String co, String routeId, String bound, String service_type) {
+        ContentValues contentValues = new ContentValues();
+        contentValues.put("co", co);
+        contentValues.put("route", routeId);
+        contentValues.put("bound", bound);
+        contentValues.put("service_type", service_type);
+        contentValues.put("timestamp", System.currentTimeMillis());
+        db.insertWithOnConflict(SQLConstants.routesHistoryDBName, null, contentValues, SQLiteDatabase.CONFLICT_REPLACE);
+    }
+
+    public static boolean isPinRoutesHistory(String co, String routeId, String bound, String service_type) {
+        String selection = "co = ? AND route = ? AND bound = ? AND service_type = ? AND timestamp >= 9000000000000";
+        String[] selectionArgs = {co, routeId, bound, service_type};
+        Cursor cursor = db.query(SQLConstants.routesHistoryDBName, null, selection, selectionArgs, null, null, null);
+        boolean isPin = cursor.getCount() > 0;
+        cursor.close();
+        return isPin;
     }
 
     private static int naturalOrderCompare(Route routeA, Route routeB) {

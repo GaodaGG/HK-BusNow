@@ -24,4 +24,7 @@
     <string name="search_hint">点击键盘以搜索</string>
     <string name="error_getdata">获取数据失败</string>
     <string name="time_min">分钟</string>
+    <string name="bus_menu_pin">置顶</string>
+    <string name="bus_menu_unpin">取消置顶</string>
+    <string name="bus_menu_delete">删除</string>
 </resources>

@@ -24,4 +24,7 @@
     <string name="search_hint">Click keyboard to search</string>
     <string name="error_getdata">Failed to get data</string>
     <string name="time_min">min</string>
+    <string name="bus_menu_pin">Pin</string>
+    <string name="bus_menu_unpin">Unpin</string>
+    <string name="bus_menu_delete">delete</string>
 </resources>

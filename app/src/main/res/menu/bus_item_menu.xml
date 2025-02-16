@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/bus_menu_pin"
+        android:title="@string/bus_menu_pin" />
+    <item
+        android:id="@+id/bus_menu_unpin"
+        android:title="@string/bus_menu_unpin"
+        android:visible="false"/>
+    <item
+        android:id="@+id/bus_menu_delete"
+        android:title="@string/bus_menu_delete" />
+
+</menu>
