@@ -1,10 +1,12 @@
 package com.gg.busStation.ui.adapter;
 
+import android.content.res.TypedArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.content.res.AppCompatResources;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.FragmentActivity;
@@ -65,8 +67,13 @@ public class MainAdapter extends ListAdapter<ListItemData, MainViewHolder> {
             DataBaseManager.addRoutesHistory(listItemData.getCo(), listItemData.getStopNumber(), listItemData.getBound(), listItemData.getService_type());
         });
 
-        if (!isSearch)
+        if (!isSearch) {
             holder.itemView.findViewById(R.id.more_button).setOnClickListener(view -> showMenu(view, listItemData));
+            //android:foreground="?attr/selectableItemBackgroundBorderless"
+            TypedArray typedArray = mActivity.getTheme().obtainStyledAttributes(R.style.Theme_BusStation, new int[]{com.google.android.material.R.attr.selectableItemBackgroundBorderless});
+            holder.itemView.findViewById(R.id.more_button).setForeground(AppCompatResources.getDrawable(mActivity, typedArray.getResourceId(0, 0)));
+            typedArray.recycle();
+        }
     }
 
 

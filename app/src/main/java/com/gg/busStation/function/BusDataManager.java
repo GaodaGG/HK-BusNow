@@ -342,7 +342,7 @@ public class BusDataManager {
                         .append(route.getDest(language));
             }
 
-            String tips = route.getCo();
+            String tips = route.getCo().replace("+", " / ");
             ListItemData listItemData = new ListItemData(route.getCo(),
                     route.getRoute(),
                     headline.toString(),
