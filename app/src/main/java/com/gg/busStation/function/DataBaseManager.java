@@ -373,17 +373,18 @@ public class DataBaseManager {
     }
 
     public static void addRoutesHistory(String co, String routeId, String bound, String service_type) {
-        long timestamp = 0;
         if (isPinRoutesHistory(co, routeId, bound, service_type)) {
-            timestamp = System.currentTimeMillis();
+            return;
         }
+
+        long timestamp = System.currentTimeMillis();
 
         ContentValues contentValues = new ContentValues();
         contentValues.put("co", co);
         contentValues.put("route", routeId);
         contentValues.put("bound", bound);
         contentValues.put("service_type", service_type);
-        contentValues.put("timestamp", timestamp != 0 ? null : System.currentTimeMillis());
+        contentValues.put("timestamp", timestamp);
 
         db.insertWithOnConflict(SQLConstants.routesHistoryDBName, null, contentValues, SQLiteDatabase.CONFLICT_REPLACE);
     }
@@ -428,7 +429,7 @@ public class DataBaseManager {
 
             for (int i = 0; i < cursor.getCount(); i++) {
                 long timestamp = cursor.getLong(cursor.getColumnIndexOrThrow("timestamp"));
-                if (timestamp > 9000000000000L) {
+                if (timestamp >= 9000000000000L) {
                     count++;
                 }
                 cursor.moveToNext();
