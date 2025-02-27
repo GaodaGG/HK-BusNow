@@ -3,17 +3,17 @@ package com.gg.busStation.ui.adapter;
 
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.gg.busStation.databinding.ItemBusBinding;
+import com.gg.busStation.ui.layout.ListItemView;
 
 public class MainViewHolder extends RecyclerView.ViewHolder{
-    private final ItemBusBinding binding;
+    private final ListItemView view;
 
-    public MainViewHolder(ItemBusBinding binding) {
-        super(binding.getRoot());
-        this.binding = binding;
+    public MainViewHolder(ListItemView view) {
+        super(view);
+        this.view = view;
     }
 
-    public ItemBusBinding getBinding() {
-        return binding;
+    public ListItemView getView() {
+        return view;
     }
 }

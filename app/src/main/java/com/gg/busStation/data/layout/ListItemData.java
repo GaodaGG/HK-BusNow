@@ -72,6 +72,14 @@ public class ListItemData {
         this.co = co;
     }
 
+    public void setTips(String tips) {
+        this.tips = new ObservableField<>(tips);
+    }
+
+    public String getTips() {
+        return tips.get();
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

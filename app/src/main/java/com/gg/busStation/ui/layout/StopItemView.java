@@ -163,7 +163,7 @@ public class StopItemView extends LinearLayout {
         new Thread(() -> {
             List<ETA> etas;
             try {
-                etas = BusDataManager.routeAndStopToETAs(route, stop, Integer.parseInt((String) binding.listItemNumber.getText()));
+                etas = BusDataManager.routeAndStopToETAs(route, stop, Integer.parseInt((String) binding.listItemLayout.getStopNumber()));
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }

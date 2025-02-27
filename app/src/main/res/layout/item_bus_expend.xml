@@ -18,72 +18,13 @@
         android:orientation="vertical"
         tools:parentTag="LinearLayout">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <com.gg.busStation.ui.layout.ListItemView
             android:id="@+id/list_item_layout"
             android:layout_width="match_parent"
-            android:layout_height="88dp">
-
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/materialCardView"
-                style="?attr/materialCardViewElevatedStyle"
-                android:layout_width="55dp"
-                android:layout_height="55dp"
-                android:layout_marginStart="16dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
-
-                <TextView
-                    android:id="@+id/list_item_number"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center"
-                    android:text="@{data.stopNumber, default = 1}"
-                    android:textColor="?attr/colorOnSurface"
-                    android:textSize="22sp" />
-
-            </com.google.android.material.card.MaterialCardView>
-
-            <TextView
-                android:id="@+id/list_item_headline"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginEnd="16dp"
-                android:text="@{data.headline, default = Headline}"
-                android:textColor="?attr/colorOnSurface"
-                android:textSize="16sp"
-                app:layout_constraintBottom_toTopOf="@id/list_item_context"
-                app:layout_constraintEnd_toStartOf="@+id/list_item_more"
-                app:layout_constraintStart_toEndOf="@+id/materialCardView"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_chainStyle="packed" />
-
-
-            <TextView
-                android:id="@+id/list_item_context"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                android:text="@{data.context, default = Supporting}"
-                android:textSize="14sp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="@+id/list_item_headline"
-                app:layout_constraintTop_toBottomOf="@+id/list_item_headline" />
-
-
-            <ImageView
-                android:id="@+id/list_item_more"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="16dp"
-                android:importantForAccessibility="no"
-                android:src="@drawable/more_vert"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
+            android:layout_height="88dp"
+            app:stopNumber="@{data.stopNumber, default = 1}"
+            app:headline="@{data.headline, default = Headline}"
+            app:context="@{data.context, default = Supporting}" />
 
         <LinearLayout
             android:id="@+id/dialog_time_list"
