@@ -12,6 +12,7 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.gg.busStation.R;
 import com.gg.busStation.data.bus.Route;
 import com.gg.busStation.data.layout.ListItemData;
 import com.gg.busStation.databinding.FragmentHomeBinding;
@@ -39,6 +40,13 @@ public class HomeFragment extends Fragment {
         List<Route> routes = DataBaseManager.getRoutesHistory();
         List<ListItemData> data = BusDataManager.routesToListItemData(routes);
         initView(data);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        int bottomHeight = requireActivity().findViewById(R.id.bottom_navigation).getHeight();
+        binding.getRoot().setPadding(0, 0, 0, bottomHeight);
     }
 
     private void initView(List<ListItemData> data) {

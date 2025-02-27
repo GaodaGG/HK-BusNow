@@ -12,6 +12,7 @@ import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 
+import com.gg.busStation.R;
 import com.gg.busStation.databinding.FragmentAboutBinding;
 import com.gg.busStation.databinding.ItemAboutReferencesBinding;
 
@@ -38,6 +39,14 @@ public class AboutFragment extends Fragment {
         });
 
         initReferences();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        int bottomHeight = requireActivity().findViewById(R.id.bottom_navigation).getHeight();
+        binding.getRoot().setPadding(0, 0, 0, bottomHeight);
     }
 
     private void initReferences() {

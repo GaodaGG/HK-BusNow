@@ -76,6 +76,10 @@ public class SearchFragment extends Fragment {
             setRouteList(key);
         });
 
+        int bottomHeight = requireActivity().findViewById(R.id.bottom_navigation).getHeight();
+        ViewGroup.MarginLayoutParams layoutParams = (ViewGroup.MarginLayoutParams) binding.searchKeyboard.getLayoutParams();
+        layoutParams.bottomMargin = bottomHeight + Tools.dp2px(requireContext(), 8);
+        binding.searchKeyboard.setLayoutParams(layoutParams);
     }
 
     @Override
