@@ -20,7 +20,9 @@ import com.gg.busStation.data.layout.SearchViewModel;
 import com.gg.busStation.databinding.FragmentSearchBinding;
 import com.gg.busStation.function.BusDataManager;
 import com.gg.busStation.function.DataBaseManager;
+import com.gg.busStation.function.Tools;
 import com.gg.busStation.ui.adapter.MainAdapter;
+import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.divider.MaterialDividerItemDecoration;
 import com.google.android.material.search.SearchBar;
 
@@ -48,18 +50,24 @@ public class SearchFragment extends Fragment {
         } else {
             initView(mViewModel.listItemData);
         }
+
+
+        initSearchBar();
     }
 
 
     @Override
     public void onStart() {
         super.onStart();
-        mSearchBar = requireActivity().getWindow().getDecorView().findViewById(R.id.searchBar);
+
         if (!mViewModel.outputText.isEmpty()) {
             binding.searchKeyboard.setOutputText(mViewModel.outputText);
             mSearchBar.setText(mViewModel.outputText);
         }
-        binding.searchErrorLayout.setVisibility((mViewModel.outputText.isEmpty() && mSearchBar.getText().length() == 0) ? View.VISIBLE : View.GONE);
+
+        if (mSearchBar != null) {
+            binding.searchErrorLayout.setVisibility((mViewModel.outputText.isEmpty() && mSearchBar.getText().length() == 0) ? View.VISIBLE : View.GONE);
+        }
 
         binding.searchKeyboard.setOnKeyClickListener(key -> {
             mSearchBar.setText(key);
@@ -67,6 +75,7 @@ public class SearchFragment extends Fragment {
 //            binding.searchBar.setText(key);
             setRouteList(key);
         });
+
     }
 
     @Override
@@ -75,6 +84,10 @@ public class SearchFragment extends Fragment {
 
         mViewModel.listItemData = ((MainAdapter) binding.busListView.getAdapter()).getCurrentList();
         mViewModel.outputText = mSearchBar.getText().toString();
+
+        //remove search bar
+        MaterialToolbar toolBar = requireActivity().getWindow().getDecorView().findViewById(R.id.toolBar);
+        toolBar.removeView(mSearchBar);
     }
 
     private void initView(List<ListItemData> data) {
@@ -97,6 +110,17 @@ public class SearchFragment extends Fragment {
             busListView.setHasFixedSize(true);
             busListView.setAdapter(mainAdapter);
         });
+    }
+
+    private void initSearchBar() {
+        mSearchBar = new SearchBar(requireActivity(), null, com.google.android.material.R.attr.materialSearchBarStyle);
+        mSearchBar.setHint(R.string.search_hint);
+
+        MaterialToolbar toolBar = requireActivity().getWindow().getDecorView().findViewById(R.id.toolBar);
+        int width = toolBar.getMeasuredWidth();
+        toolBar.addView(mSearchBar);
+        mSearchBar.getLayoutParams().width = width - toolBar.getChildAt(0).getWidth() * 2 - Tools.dp2px(requireContext(), 16);
+        ((ViewGroup.MarginLayoutParams) mSearchBar.getLayoutParams()).setMargins(Tools.dp2px(requireContext(), 32), 0, Tools.dp2px(requireContext(), 16), 0);
     }
 
     private void setRouteList(String newText) {

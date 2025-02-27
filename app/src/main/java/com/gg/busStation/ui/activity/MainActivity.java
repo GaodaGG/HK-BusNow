@@ -121,20 +121,7 @@ public class MainActivity extends AppCompatActivity {
         binding.bottomNavigation.setOnItemSelectedListener(item -> {
             NavigationUI.onNavDestinationSelected(item, navController);
 
-            if (item.getItemId() == R.id.search_fragment && binding.toolBar.getChildCount() == 3) {
-                SearchBar searchBar = new SearchBar(this, null, com.google.android.material.R.attr.materialSearchBarStyle);
-                searchBar.setHint(R.string.search_hint);
-                searchBar.setId(R.id.searchBar);
-
-                int width = binding.toolBar.getMeasuredWidth();
-                binding.toolBar.addView(searchBar);
-                searchBar.getLayoutParams().width = width - binding.toolBar.getChildAt(0).getWidth() * 2 - Tools.dp2px(this, 16);
-                ((ViewGroup.MarginLayoutParams) searchBar.getLayoutParams()).setMargins(Tools.dp2px(this, 32), 0, Tools.dp2px(this, 16), 0);
-            } else if (binding.toolBar.getChildAt(2) instanceof SearchBar) {
-                binding.toolBar.removeViewAt(2);
-            }
             binding.toolBar.setNavigationIcon(null);
-
             return true;
         });
 
