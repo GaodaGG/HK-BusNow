@@ -5,10 +5,10 @@ import androidx.databinding.ObservableField;
 import java.util.Objects;
 
 public class ListItemData {
-    private ObservableField<String> stopNumber;
-    private ObservableField<String> headline;
-    private ObservableField<String> context;
-    public ObservableField<String> tips;
+    private final ObservableField<String> stopNumber;
+    private final ObservableField<String> headline;
+    private final ObservableField<String> context;
+    private final ObservableField<String> tips;
 
     private String co;
     private String bound;
@@ -29,7 +29,7 @@ public class ListItemData {
     }
 
     public void setStopNumber(String stopNumber) {
-        this.stopNumber = new ObservableField<>(stopNumber);
+        this.stopNumber.set(stopNumber);
     }
 
     public String getHeadline() {
@@ -37,7 +37,7 @@ public class ListItemData {
     }
 
     public void setHeadline(String headline) {
-        this.headline = new ObservableField<>(headline);
+        this.headline.set(headline);
     }
 
     public String getContext() {
@@ -45,7 +45,7 @@ public class ListItemData {
     }
 
     public void setContext(String context) {
-        this.context = new ObservableField<>(context);
+        this.context.set(context);
     }
 
     public String getService_type() {
@@ -73,7 +73,7 @@ public class ListItemData {
     }
 
     public void setTips(String tips) {
-        this.tips = new ObservableField<>(tips);
+        this.tips.set(tips);
     }
 
     public String getTips() {

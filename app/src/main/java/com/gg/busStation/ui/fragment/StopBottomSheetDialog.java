@@ -15,13 +15,13 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.baidu.mapapi.model.LatLng;
-import com.gg.busStation.data.layout.StopItemData;
-import com.gg.busStation.function.DataBaseManager;
-import com.gg.busStation.function.BusDataManager;
 import com.gg.busStation.data.bus.Route;
 import com.gg.busStation.data.bus.Stop;
 import com.gg.busStation.data.layout.ListItemData;
+import com.gg.busStation.data.layout.StopItemData;
 import com.gg.busStation.databinding.DialogBusBinding;
+import com.gg.busStation.function.BusDataManager;
+import com.gg.busStation.function.DataBaseManager;
 import com.gg.busStation.function.location.LocationHelper;
 import com.gg.busStation.ui.adapter.StopListAdapter;
 import com.gg.busStation.ui.layout.StopItemView;
@@ -71,7 +71,8 @@ public class StopBottomSheetDialog extends BottomSheetDialogFragment {
                 nearestStopIndex = findNearestStopIndex(mStops, location);
             }
 
-            StopListAdapter stopListAdapter = new StopListAdapter(data);
+            StopListAdapter stopListAdapter = new StopListAdapter(requireActivity());
+            stopListAdapter.submitList(data);
             LinearLayoutManager manager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
             MaterialDividerItemDecoration divider = new MaterialDividerItemDecoration(requireContext(), LinearLayoutManager.VERTICAL);
 

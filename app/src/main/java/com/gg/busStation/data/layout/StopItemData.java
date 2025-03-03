@@ -5,10 +5,13 @@ import androidx.databinding.ObservableField;
 
 import com.gg.busStation.ui.layout.ETAView;
 
+import java.util.Arrays;
+import java.util.Objects;
+
 public class StopItemData{
-    public ObservableField<String> stopNumber;
-    public ObservableField<String> headline;
-    public ObservableField<String> context;
+    private final ObservableField<String> stopNumber;
+    private final ObservableField<String> headline;
+    private final ObservableField<String> context;
 
     private String co;
     private String routeId;
@@ -36,7 +39,7 @@ public class StopItemData{
     }
 
     public void setStopNumber(String stopNumber) {
-        this.stopNumber = new ObservableField<>(stopNumber);
+        this.stopNumber.set(stopNumber);
     }
 
     public String getHeadline() {
@@ -44,7 +47,7 @@ public class StopItemData{
     }
 
     public void setHeadline(String headline) {
-        this.headline = new ObservableField<>(headline);
+        this.headline.set(headline);
     }
 
     public String getContext() {
@@ -52,7 +55,7 @@ public class StopItemData{
     }
 
     public void setContext(String context) {
-        this.context = new ObservableField<>(context);
+        this.context.set(context);
     }
 
     public String getService_type() {
@@ -101,5 +104,18 @@ public class StopItemData{
 
     public void setEtas(ETAView[] etas) {
         this.etas = etas;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        StopItemData that = (StopItemData) o;
+        return Objects.equals(stopNumber, that.stopNumber) && Objects.equals(headline, that.headline) && Objects.equals(context, that.context) && Objects.equals(co, that.co) && Objects.equals(routeId, that.routeId) && Objects.equals(stopId, that.stopId) && Objects.equals(bound, that.bound) && Objects.equals(service_type, that.service_type) && Objects.deepEquals(etas, that.etas) && Objects.equals(isOpen, that.isOpen);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(stopNumber, headline, context, co, routeId, stopId, bound, service_type, Arrays.hashCode(etas), isOpen);
     }
 }

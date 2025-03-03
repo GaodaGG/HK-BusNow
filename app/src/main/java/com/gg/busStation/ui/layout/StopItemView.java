@@ -26,6 +26,7 @@ import com.gg.busStation.R;
 import com.gg.busStation.data.bus.ETA;
 import com.gg.busStation.data.bus.Route;
 import com.gg.busStation.data.bus.Stop;
+import com.gg.busStation.data.layout.ListItemData;
 import com.gg.busStation.data.layout.StopItemData;
 import com.gg.busStation.databinding.ItemBusExpendBinding;
 import com.gg.busStation.function.BusDataManager;
@@ -91,8 +92,9 @@ public class StopItemView extends LinearLayout {
         });
     }
 
-    public void bindData(StopItemData data) {
+    public void setData(StopItemData data) {
         binding.setData(data);
+        binding.listItemLayout.setData(new ListItemData(data.getCo(), data.getStopNumber(), data.getHeadline(), data.getContext(), "O", "1", ""));
         binding.executePendingBindings();
         this.isOpen = data.isOpen.get();  // 绑定初始状态
 
@@ -121,7 +123,7 @@ public class StopItemView extends LinearLayout {
             }
 
             for (ETAView eta : etas) {
-                ((ViewGroup) eta.getParent()).removeView(eta);
+                if (eta.getParent() != null) ((ViewGroup) eta.getParent()).removeView(eta);
                 binding.dialogTimeList.addView(eta);
 
                 //注册广播更新时间
@@ -163,7 +165,7 @@ public class StopItemView extends LinearLayout {
         new Thread(() -> {
             List<ETA> etas;
             try {
-                etas = BusDataManager.routeAndStopToETAs(route, stop, Integer.parseInt((String) binding.listItemLayout.getStopNumber()));
+                etas = BusDataManager.routeAndStopToETAs(route, stop, Integer.parseInt(binding.listItemLayout.getStopNumber()));
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
@@ -242,4 +244,15 @@ public class StopItemView extends LinearLayout {
     }
 
 
+    public void setContext(String context) {
+        binding.getData().setContext(context);
+    }
+
+    public void setStopNumber(String stopNumber) {
+        binding.getData().setStopNumber(stopNumber);
+    }
+
+    public void setHeadline(String headline) {
+        binding.getData().setHeadline(headline);
+    }
 }

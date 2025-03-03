@@ -99,7 +99,6 @@ public class SearchFragment extends Fragment {
 
 //        Drawable background = ((ActionBar) ((AppCompatActivity) activity).getSupportActionBar())..getBackground();
         MainAdapter mainAdapter = new MainAdapter(activity, true);
-        mainAdapter.getCurrentList();
         mainAdapter.submitList(data);
         LinearLayoutManager manager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
         MaterialDividerItemDecoration divider = new MaterialDividerItemDecoration(requireContext(), LinearLayoutManager.VERTICAL);

@@ -8,7 +8,6 @@
         <variable
             name="data"
             type="com.gg.busStation.data.layout.StopItemData" />
-
     </data>
 
     <merge

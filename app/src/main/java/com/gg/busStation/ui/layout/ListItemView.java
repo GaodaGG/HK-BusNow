@@ -17,6 +17,7 @@ import com.gg.busStation.function.Tools;
 
 public class ListItemView extends ConstraintLayout {
     private ItemBusBinding binding;
+    private ListItemData mData;
 
     public ListItemView(@NonNull Context context) {
         super(context);
@@ -34,6 +35,11 @@ public class ListItemView extends ConstraintLayout {
     }
 
     private void initView(Context context, AttributeSet attrs) {
+        if (isInEditMode()) {
+            LayoutInflater.from(context).inflate(R.layout.item_bus, this, true);
+            return;
+        }
+
         binding = ItemBusBinding.inflate(LayoutInflater.from(context), this, true);
         ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, // 确保宽度为 match_parent
@@ -41,8 +47,8 @@ public class ListItemView extends ConstraintLayout {
         );
         layoutParams.height = Tools.dp2px(context, 88);
         setLayoutParams(layoutParams);
-        setData(new ListItemData("KMB", "1", "HendLine", "Context", "O", "1", "KMB"));
-
+        mData = new ListItemData("KMB", "1", "HendLine", "Context", "O", "1", "KMB");
+        setData(mData);
         if (attrs != null) {
             TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.ListItemView);
             setHeadline(typedArray.getString(R.styleable.ListItemView_headline));
@@ -56,26 +62,27 @@ public class ListItemView extends ConstraintLayout {
     }
 
     public String getStopNumber() {
-        return binding.getData().getStopNumber();
+        return mData.getStopNumber();
+    }
+
+    public void setStopNumber(String stopNumber) {
+        mData.setStopNumber(stopNumber);
     }
 
     public void setData(ListItemData data) {
         binding.setData(data);
+        mData = data;
     }
 
     public void setTips(String tips) {
-        binding.getData().setTips(tips);
+        mData.setTips(tips);
     }
 
     public void setContext(String context) {
-        binding.getData().setContext(context);
-    }
-
-    public void setStopNumber(String stopNumber) {
-        binding.getData().setStopNumber(stopNumber);
+        mData.setContext(context);
     }
 
     public void setHeadline(String headline) {
-        binding.getData().setHeadline(headline);
+        mData.setHeadline(headline);
     }
 }

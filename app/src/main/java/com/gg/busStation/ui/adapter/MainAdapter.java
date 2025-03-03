@@ -23,7 +23,7 @@ import com.gg.busStation.ui.layout.ListItemView;
 
 import java.util.List;
 
-public class MainAdapter extends ListAdapter<ListItemData, MainViewHolder> {
+public class MainAdapter extends ListAdapter<ListItemData, MainAdapter.ViewHolder> {
     private static final DiffUtil.ItemCallback<ListItemData> DIFF_CALLBACK = new DiffUtil.ItemCallback<>() {
         @Override
         public boolean areItemsTheSame(@NonNull ListItemData oldItem, @NonNull ListItemData newItem) {
@@ -45,27 +45,22 @@ public class MainAdapter extends ListAdapter<ListItemData, MainViewHolder> {
         super(DIFF_CALLBACK);
         this.mActivity = context;
         this.isSearch = isSearch;
-
-
     }
 
     @NonNull
     @Override
-    public MainViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-//        LayoutInflater inflater = LayoutInflater.from(mActivity);
-//        ItemBusBinding binding = DataBindingUtil.inflate(inflater, R.layout.item_bus, parent, false);
-
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         TypedArray typedArray = mActivity.getTheme().obtainStyledAttributes(new int[]{android.R.attr.selectableItemBackgroundBorderless});
         Drawable itemForeground = typedArray.getDrawable(0);
         typedArray.recycle();
 
         ListItemView listItemView = new ListItemView(mActivity);
         listItemView.setForeground(itemForeground);
-        return new MainViewHolder(listItemView);
+        return new ViewHolder(listItemView);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull MainViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         ListItemData listItemData = getItem(position);
         holder.getView().setData(listItemData);
 
@@ -129,5 +124,18 @@ public class MainAdapter extends ListAdapter<ListItemData, MainViewHolder> {
         List<Route> routes = DataBaseManager.getRoutesHistory();
         List<ListItemData> data = BusDataManager.routesToListItemData(routes);
         submitList(data);
+    }
+
+    public static class ViewHolder extends RecyclerView.ViewHolder {
+        private final ListItemView view;
+
+        public ViewHolder(ListItemView view) {
+            super(view);
+            this.view = view;
+        }
+
+        public ListItemView getView() {
+            return view;
+        }
     }
 }
