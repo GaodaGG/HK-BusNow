@@ -1,10 +1,13 @@
 package com.gg.busStation.data.layout;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import androidx.databinding.ObservableField;
 
 import java.util.Objects;
 
-public class ListItemData {
+public class ListItemData implements Parcelable {
     private final ObservableField<String> stopNumber;
     private final ObservableField<String> headline;
     private final ObservableField<String> context;
@@ -23,6 +26,44 @@ public class ListItemData {
         this.bound = bound;
         this.service_type = service_type;
     }
+
+    protected ListItemData(Parcel in) {
+        stopNumber = new ObservableField<>(in.readString());
+        headline = new ObservableField<>(in.readString());
+        context = new ObservableField<>(in.readString());
+        tips = new ObservableField<>(in.readString());
+        co = in.readString();
+        bound = in.readString();
+        service_type = in.readString();
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(stopNumber.get());
+        dest.writeString(headline.get());
+        dest.writeString(context.get());
+        dest.writeString(tips.get());
+        dest.writeString(co);
+        dest.writeString(bound);
+        dest.writeString(service_type);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    public static final Creator<ListItemData> CREATOR = new Creator<ListItemData>() {
+        @Override
+        public ListItemData createFromParcel(Parcel in) {
+            return new ListItemData(in);
+        }
+
+        @Override
+        public ListItemData[] newArray(int size) {
+            return new ListItemData[size];
+        }
+    };
 
     public String getStopNumber() {
         return stopNumber.get();

@@ -40,6 +40,8 @@ public class StopBottomSheetDialog extends BottomSheetDialogFragment {
     private ListItemData mData;
     private List<Stop> mStops;
 
+    public StopBottomSheetDialog() {}
+
     public StopBottomSheetDialog(ListItemData listItemData) {
         mData = listItemData;
     }
@@ -47,13 +49,22 @@ public class StopBottomSheetDialog extends BottomSheetDialogFragment {
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
+        if (savedInstanceState != null && mData == null) {
+            mData = savedInstanceState.getParcelable("data");
+        }
+
         Dialog dialog = super.onCreateDialog(savedInstanceState);
         binding = DialogBusBinding.inflate(getLayoutInflater());
         binding.setData(mData);
         dialog.setContentView(binding.getRoot());
-
         initView();
         return dialog;
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelable("data", mData);
     }
 
     public void initView() {
