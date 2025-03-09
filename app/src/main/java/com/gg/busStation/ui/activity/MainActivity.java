@@ -4,7 +4,6 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -31,6 +30,7 @@ import com.gg.busStation.function.DataBaseManager;
 import com.gg.busStation.function.internet.HttpClientHelper;
 import com.gg.busStation.function.location.LocationHelper;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.elevation.SurfaceColors;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
@@ -39,7 +39,10 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 public class MainActivity extends AppCompatActivity {
+    private ActivityMainBinding binding;
     private static final String releaseUrl = "https://api.github.com/repos/GaodaGG/HK-BusNow/releases/latest";
+    private AlertDialog loadingDialog;
+
     // 权限申请回调
     private final ActivityResultLauncher<String> requestPermission = registerForActivityResult(new ActivityResultContracts.RequestPermission(), result -> {
         if (Boolean.FALSE.equals(result)) {
@@ -48,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
             LocationHelper.getLocation(true);
         }
     });
-    private AlertDialog loadingDialog;
+
     // 数据初始化监听器
     BusDataManager.OnDataInitListener onDataInitListener = new BusDataManager.OnDataInitListener() {
         @Override
@@ -64,21 +67,6 @@ public class MainActivity extends AppCompatActivity {
             });
         }
     };
-    private ActivityMainBinding binding;
-
-    private static boolean isMIUI() {
-        String miuiName;
-        try {
-            @SuppressLint("PrivateApi") Class<?> clazz = Class.forName("android.os.SystemProperties");
-            Method get = clazz.getMethod("get", String.class);
-            miuiName = (String) get.invoke(clazz, "ro.miui.ui.version.name");
-        } catch (ClassNotFoundException | NoSuchMethodException | IllegalAccessException |
-                 InvocationTargetException e) {
-            return false;
-        }
-
-        return miuiName != null;
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,21 +79,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initView() {
-        //解决MIUI小白条问题
-        if (isMIUI()) {
-            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
-        }
-
-        if (Build.VERSION.SDK_INT == Build.VERSION_CODES.R) {
-            getWindow().setDecorFitsSystemWindows(false);
-            getWindow().setNavigationBarContrastEnforced(false);
-            getWindow().setNavigationBarColor(Color.TRANSPARENT);
-        }
-
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
         EdgeToEdge.enable(this);
+
+        getWindow().setNavigationBarColor(SurfaceColors.SURFACE_2.getColor(this));
         setSupportActionBar(binding.toolBar);
 
         WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
@@ -211,8 +190,7 @@ public class MainActivity extends AppCompatActivity {
                 .setTitle(getString(R.string.dialog_update_title) + " " + version)
                 .setMessage(getString(R.string.dialog_update_message) + "\n" + updateContent)
                 .setNeutralButton(R.string.dialog_update_never, (dialogInterface, i) -> DataBaseManager.updateSetting("dontUpdate", "true"))
-                .setNegativeButton(R.string.dialog_update_no, (dialogInterface, i) -> {
-                })
+                .setNegativeButton(R.string.dialog_update_no, null)
                 .setPositiveButton(R.string.dialog_update_yes, (dialogInterface, i) -> {
                     Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(downloadUrl));
                     startActivity(intent);
