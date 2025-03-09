@@ -103,8 +103,11 @@ public class SearchFragment extends Fragment {
         LinearLayoutManager manager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
         MaterialDividerItemDecoration divider = new MaterialDividerItemDecoration(requireContext(), LinearLayoutManager.VERTICAL);
 
+        int inset = Tools.dp2px(requireContext(), 16);
         manager.setInitialPrefetchItemCount(10);
         divider.setLastItemDecorated(false);
+        divider.setDividerInsetStart(inset);
+        divider.setDividerInsetEnd(inset);
 
         activity.runOnUiThread(() -> {
             RecyclerView busListView = binding.busListView;

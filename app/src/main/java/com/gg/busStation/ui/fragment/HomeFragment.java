@@ -18,6 +18,7 @@ import com.gg.busStation.data.layout.ListItemData;
 import com.gg.busStation.databinding.FragmentHomeBinding;
 import com.gg.busStation.function.BusDataManager;
 import com.gg.busStation.function.DataBaseManager;
+import com.gg.busStation.function.Tools;
 import com.gg.busStation.ui.adapter.MainAdapter;
 import com.google.android.material.divider.MaterialDividerItemDecoration;
 
@@ -61,8 +62,11 @@ public class HomeFragment extends Fragment {
         LinearLayoutManager manager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
         MaterialDividerItemDecoration divider = new MaterialDividerItemDecoration(requireContext(), LinearLayoutManager.VERTICAL);
 
+        int inset = Tools.dp2px(requireContext(), 16);
         manager.setInitialPrefetchItemCount(10);
         divider.setLastItemDecorated(false);
+        divider.setDividerInsetStart(inset);
+        divider.setDividerInsetEnd(inset);
 
         activity.runOnUiThread(() -> {
             RecyclerView busListView = binding.busListView;
