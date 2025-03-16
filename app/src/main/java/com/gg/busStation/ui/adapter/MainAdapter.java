@@ -90,7 +90,11 @@ public class MainAdapter extends ListAdapter<ListItemData, MainAdapter.ViewHolde
         PopupMenu popupMenu = new PopupMenu(mActivity, moreButtion);
         popupMenu.inflate(R.menu.bus_item_menu);
 
-        if (DataBaseManager.isPinRoutesHistory(listItemData.getCo(), listItemData.getStopNumber(), listItemData.getBound(), listItemData.getService_type())) {
+        String co = listItemData.getCo();
+        String stopNumber = listItemData.getStopNumber();
+        String bound = listItemData.getBound();
+        String serviceType = listItemData.getService_type();
+        if (DataBaseManager.isPinRoutesHistory(co, stopNumber, bound, serviceType)) {
             popupMenu.getMenu().findItem(R.id.bus_menu_pin).setVisible(false);
             popupMenu.getMenu().findItem(R.id.bus_menu_unpin).setVisible(true);
         }
@@ -98,17 +102,17 @@ public class MainAdapter extends ListAdapter<ListItemData, MainAdapter.ViewHolde
         popupMenu.setOnMenuItemClickListener(item -> {
             int itemId = item.getItemId();
             if (itemId == R.id.bus_menu_pin) {
-                DataBaseManager.pinRoutesHistory(listItemData.getCo(), listItemData.getStopNumber(), listItemData.getBound(), listItemData.getService_type());
+                DataBaseManager.pinRoutesHistory(co, stopNumber, bound, serviceType);
 
                 refreshList();
                 return true;
             } else if (itemId == R.id.bus_menu_unpin) {
-                DataBaseManager.unpinRoutesHistory(listItemData.getCo(), listItemData.getStopNumber(), listItemData.getBound(), listItemData.getService_type());
+                DataBaseManager.unpinRoutesHistory(co, stopNumber, bound, serviceType);
 
                 refreshList();
                 return true;
             } else if (itemId == R.id.bus_menu_delete) {
-                DataBaseManager.deleteRoutesHistory(listItemData.getCo(), listItemData.getStopNumber(), listItemData.getBound(), listItemData.getService_type());
+                DataBaseManager.deleteRoutesHistory(co, stopNumber, bound, serviceType);
 
                 refreshList();
                 return true;

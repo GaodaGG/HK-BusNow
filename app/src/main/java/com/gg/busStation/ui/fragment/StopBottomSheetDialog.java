@@ -40,7 +40,8 @@ public class StopBottomSheetDialog extends BottomSheetDialogFragment {
     private ListItemData mData;
     private List<Stop> mStops;
 
-    public StopBottomSheetDialog() {}
+    public StopBottomSheetDialog() {
+    }
 
     public StopBottomSheetDialog(ListItemData listItemData) {
         mData = listItemData;
@@ -97,6 +98,8 @@ public class StopBottomSheetDialog extends BottomSheetDialogFragment {
                 dialogList.addItemDecoration(divider);
                 dialogList.setItemAnimator(null);
                 dialogList.setAdapter(stopListAdapter);
+
+                binding.dialogHeadline.requestFocus();
 
                 //跳转到最近的巴士站,并隐藏loading
                 ((LinearLayoutManager) dialogList.getLayoutManager()).scrollToPositionWithOffset(finalNearestStopIndex, 0);

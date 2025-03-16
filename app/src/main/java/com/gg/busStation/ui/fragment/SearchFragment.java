@@ -126,7 +126,7 @@ public class SearchFragment extends Fragment {
         int width = toolBar.getMeasuredWidth();
         toolBar.addView(mSearchBar);
         mSearchBar.getLayoutParams().width = width - toolBar.getChildAt(0).getWidth() * 2 - Tools.dp2px(requireContext(), 16);
-        ((ViewGroup.MarginLayoutParams) mSearchBar.getLayoutParams()).setMargins(Tools.dp2px(requireContext(), 32), 0, Tools.dp2px(requireContext(), 16), 0);
+        ((ViewGroup.MarginLayoutParams) mSearchBar.getLayoutParams()).setMargins(Tools.dp2px(requireContext(), 32), 0, 0, 0);
     }
 
     private void setRouteList(String newText) {

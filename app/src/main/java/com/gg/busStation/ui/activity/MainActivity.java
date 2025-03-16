@@ -1,12 +1,15 @@
 package com.gg.busStation.ui.activity;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.WindowManager;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -28,11 +31,13 @@ import com.gg.busStation.function.DataBaseManager;
 import com.gg.busStation.function.internet.HttpClientHelper;
 import com.gg.busStation.function.location.LocationHelper;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
-import com.google.android.material.elevation.SurfaceColors;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
     private ActivityMainBinding binding;
@@ -74,18 +79,38 @@ public class MainActivity extends AppCompatActivity {
         new Thread(this::checkAppUpdate).start();
     }
 
+    private static boolean isMIUI() {
+        String miuiName;
+        try {
+            @SuppressLint("PrivateApi") Class<?> clazz = Class.forName("android.os.SystemProperties");
+            Method get = clazz.getMethod("get", String.class);
+            miuiName = (String) get.invoke(clazz, "ro.miui.ui.version.name");
+        } catch (ClassNotFoundException | NoSuchMethodException | IllegalAccessException |
+                 InvocationTargetException e) {
+            return false;
+        }
+
+        return miuiName != null && !miuiName.isEmpty();
+    }
+
     private void initView() {
+        EdgeToEdge.enable(this);
+
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        EdgeToEdge.enable(this);
+        if (isMIUI()) {
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
+            getWindow().setNavigationBarColor(Color.TRANSPARENT);
+        }
 
-        getWindow().setNavigationBarColor(SurfaceColors.SURFACE_2.getColor(this));
+//        getWindow().setNavigationBarColor(SurfaceColors.SURFACE_2.getColor(this));
+
         setSupportActionBar(binding.toolBar);
 
         WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
         NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment_content_main);
-        NavController navController = navHostFragment.getNavController();
+        NavController navController = Objects.requireNonNull(navHostFragment).getNavController();
         AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(navController.getGraph()).build();
 
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);

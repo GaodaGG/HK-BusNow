@@ -26,5 +26,5 @@
     <string name="time_min">min</string>
     <string name="bus_menu_pin">Pin</string>
     <string name="bus_menu_unpin">Unpin</string>
-    <string name="bus_menu_delete">delete</string>
+    <string name="bus_menu_delete">Delete</string>
 </resources>
