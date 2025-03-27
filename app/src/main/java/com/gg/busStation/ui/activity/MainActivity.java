@@ -1,14 +1,15 @@
 package com.gg.busStation.ui.activity;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.transition.Transition;
 import android.util.Log;
+import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Toast;
 
@@ -16,6 +17,7 @@ import androidx.activity.EdgeToEdge;
 import androidx.activity.OnBackPressedCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.WindowCompat;
@@ -23,20 +25,22 @@ import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
+import androidx.preference.PreferenceManager;
 
 import com.gg.busStation.R;
 import com.gg.busStation.databinding.ActivityMainBinding;
 import com.gg.busStation.function.BusDataManager;
 import com.gg.busStation.function.DataBaseManager;
+import com.gg.busStation.function.Tools;
 import com.gg.busStation.function.internet.HttpClientHelper;
 import com.gg.busStation.function.location.LocationHelper;
+import com.google.android.material.color.DynamicColors;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.transition.platform.MaterialSharedAxis;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
@@ -75,31 +79,40 @@ public class MainActivity extends AppCompatActivity {
         getWindow().getDecorView();
 
         super.onCreate(savedInstanceState);
+
+        setTransition();
+
         initView();
-        new Thread(this::checkAppUpdate).start();
+        if (savedInstanceState != null) {
+            binding.bottomNavigation.setSelectedItemId(savedInstanceState.getInt("bottomNavigation"));
+        } else {
+            new Thread(() -> checkAppUpdate(false)).start();
+        }
     }
 
-    private static boolean isMIUI() {
-        String miuiName;
-        try {
-            @SuppressLint("PrivateApi") Class<?> clazz = Class.forName("android.os.SystemProperties");
-            Method get = clazz.getMethod("get", String.class);
-            miuiName = (String) get.invoke(clazz, "ro.miui.ui.version.name");
-        } catch (ClassNotFoundException | NoSuchMethodException | IllegalAccessException |
-                 InvocationTargetException e) {
-            return false;
-        }
-
-        return miuiName != null && !miuiName.isEmpty();
+    private void setTransition() {
+        Transition enter = new MaterialSharedAxis(MaterialSharedAxis.X, false).excludeTarget(R.id.toolBar, true);
+        Transition exit = new MaterialSharedAxis(MaterialSharedAxis.X, true).excludeTarget(R.id.toolBar, true);
+        Window window = getWindow();
+        window.setEnterTransition(enter);
+        window.setExitTransition(exit);
+        window.setAllowEnterTransitionOverlap(true);
+        window.setAllowReturnTransitionOverlap(true);
     }
 
     private void initView() {
         EdgeToEdge.enable(this);
 
+        //动态颜色
+        boolean colorSetting = PreferenceManager.getDefaultSharedPreferences(this).getBoolean("settings_system_theme", false);
+        if (colorSetting) {
+            DynamicColors.applyToActivityIfAvailable(this);
+        }
+
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        if (isMIUI()) {
+        if (Tools.isMIUI()) {
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
             getWindow().setNavigationBarColor(Color.TRANSPARENT);
         }
@@ -147,12 +160,18 @@ public class MainActivity extends AppCompatActivity {
 
         new Thread(() -> {
             try {
-                BusDataManager.initData(onDataInitListener);
+                BusDataManager.initData(onDataInitListener, false);
             } catch (IOException e) {
                 runOnUiThread(() -> Toast.makeText(this, R.string.error_getdata, Toast.LENGTH_SHORT).show());
             }
 //                BusDataManager.getNearRoutes(100);
         }).start();
+    }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        outState.putInt("bottomNavigation", binding.bottomNavigation.getSelectedItemId());
+        super.onSaveInstanceState(outState);
     }
 
     public void checkPermissions() {
@@ -176,10 +195,12 @@ public class MainActivity extends AppCompatActivity {
         DataBaseManager.updateSetting("isInit", "true");
     }
 
-    private void checkAppUpdate() {
-        String dontUpdate = DataBaseManager.getSettings().get("dontUpdate");
-        if ("true".equals(dontUpdate)) {
-            return;
+    public boolean checkAppUpdate(boolean checkNow) {
+        if (!checkNow) {
+            String dontUpdate = DataBaseManager.getSettings().get("dontUpdate");
+            if ("true".equals(dontUpdate)) {
+                return false;
+            }
         }
 
         String data;
@@ -188,13 +209,13 @@ public class MainActivity extends AppCompatActivity {
             data = HttpClientHelper.getData(releaseUrl);
             oldVersion = getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
         } catch (IOException | PackageManager.NameNotFoundException e) {
-            return;
+            return false;
         }
 
         JsonObject jsonObject = JsonParser.parseString(data).getAsJsonObject();
         String version = jsonObject.get("tag_name").getAsString();
         if (oldVersion.equals(version.substring(1))) {
-            return;
+            return false;
         }
 
         String abi = Build.SUPPORTED_ABIS[0];
@@ -217,5 +238,6 @@ public class MainActivity extends AppCompatActivity {
                     startActivity(intent);
                 });
         runOnUiThread(dialog::show);
+        return true;
     }
 }

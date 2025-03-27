@@ -27,4 +27,29 @@
     <string name="bus_menu_pin">Pin</string>
     <string name="bus_menu_unpin">Unpin</string>
     <string name="bus_menu_delete">Delete</string>
+    <string name="settings_dark_allways_on">Always on</string>
+    <string name="settings_dark_allways_off">Always off</string>
+    <string name="settings_dark_follow">Follow system</string>
+    <string name="settings_title_dark_theme">Dark theme</string>
+    <string name="settings_title_system_theme_color">System theme color</string>
+    <string name="settings_title_update_cycle">Update cycle</string>
+    <string name="settings_summary_update_cycle">Bus data update interval</string>
+    <string name="settings_group_general">General</string>
+    <string name="settings_group_theme">Theme</string>
+
+    <string name="settings_update_cycle_3days">3 days</string>
+    <string name="settings_update_cycle_1week">1 week</string>
+    <string name="settings_update_cycle_15days">15 days</string>
+    <string name="settings_update_cycle_30days">30 days</string>
+    <string name="settings_update_cycle_never">Never</string>
+    <string name="settings_title">Settings</string>
+    <string name="settings_update_data_now">Update data now</string>
+    <string name="settings_update_data_now_summary">Update bus data now</string>
+    <string name="update_success">Update success</string>
+    <string name="settings_group_data">Data</string>
+    <string name="settings_update_app_cycle_summary">Enable or disable automatic detection of new app versions</string>
+    <string name="settings_update_app_cycle">Auto-Check for Updates</string>
+    <string name="settings_update_app_now">Check update now</string>
+    <string name="settings_update_app_now_summary">Update app now</string>
+    <string name="update_app_already">You\'re already up to date</string>
 </resources>

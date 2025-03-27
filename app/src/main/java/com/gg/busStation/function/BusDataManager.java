@@ -40,14 +40,16 @@ public class BusDataManager {
     private BusDataManager() {
     }
 
-    public static void initData(OnDataInitListener onDataInitListener) throws IOException {
+    public static void initData(OnDataInitListener onDataInitListener, boolean updateNow) throws IOException {
         //判断是否需要更新数据
-        Map<String, String> settings = DataBaseManager.getSettings();
-        String oldLastUpdateTime = settings.get("lastUpdateTime");
-        long lastUpdateTime = Long.parseLong(oldLastUpdateTime);
+        if (!updateNow) {
+            Map<String, String> settings = DataBaseManager.getSettings();
+            String oldLastUpdateTime = settings.get("lastUpdateTime");
+            long lastUpdateTime = Long.parseLong(oldLastUpdateTime);
 
-        if (System.currentTimeMillis() <= lastUpdateTime + Long.parseLong(settings.get("updateTime")) && "true".equals(settings.get("isInit"))) {
-            return;
+            if ((System.currentTimeMillis() <= lastUpdateTime + Long.parseLong(settings.get("updateTime")) && "true".equals(settings.get("isInit"))) || "0".equals(settings.get("updateTime"))) {
+                return;
+            }
         }
 
         onDataInitListener.start();
@@ -342,7 +344,7 @@ public class BusDataManager {
                         .append(route.getDest(language));
             }
 
-            String tips = route.getCo().replace("+", " / ");
+            String tips = Route.getLocalizedCoName(route.getCo(), language).replace("+", " / ");
             ListItemData listItemData = new ListItemData(route.getCo(),
                     route.getRoute(),
                     headline.toString(),
@@ -365,6 +367,7 @@ public class BusDataManager {
         };
     }
 
+    //    TODO 错误处理
     public interface OnDataInitListener {
         void start();
 

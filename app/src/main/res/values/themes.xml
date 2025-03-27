@@ -3,6 +3,7 @@
     <style name="Base.Theme.BusStation" parent="Theme.Material3.DayNight.NoActionBar">
 <!--        <item name="android:windowTranslucentStatus">true</item>-->
 <!--        <item name="android:windowTranslucentNavigation">true</item>-->
+        <item  name="android:windowActivityTransitions">true</item>
     </style>
 
     <style name="Theme.BusStation" parent="Base.Theme.BusStation"/>

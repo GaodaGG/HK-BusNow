@@ -20,6 +20,7 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
+        android:windowSoftInputMode="adjustPan|stateHidden"
         android:supportsRtl="true"
         android:theme="@style/Theme.BusStation">
 
@@ -27,8 +28,6 @@
             android:name=".ui.activity.MainActivity"
             android:exported="true"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.BusStation"
-            android:windowSoftInputMode="adjustPan|stateHidden"
             tools:ignore="DiscouragedApi,LockedOrientationActivity">
 
             <intent-filter>
@@ -37,6 +36,9 @@
             </intent-filter>
 
         </activity>
+
+        <activity android:name=".ui.activity.AboutActivity"
+            android:label="@string/about_title"/>
 
         <service
             android:name="com.baidu.location.f"

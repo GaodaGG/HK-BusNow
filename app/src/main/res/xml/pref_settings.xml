@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory android:title="@string/settings_group_theme">
+        <com.gg.busStation.ui.layout.preference.MaterialSwitchPreference
+            android:defaultValue="false"
+            android:key="settings_system_theme"
+            android:title="@string/settings_title_system_theme_color" />
+
+        <com.gg.busStation.ui.layout.preference.MenuPreference
+            android:defaultValue="auto"
+            android:entries="@array/darkThemeEntries"
+            android:entryValues="@array/darkThemeValues"
+            android:key="settings_dark_theme"
+            android:title="@string/settings_title_dark_theme" />
+
+<!--        TODO 语言切换-->
+        <com.gg.busStation.ui.layout.preference.MenuPreference
+            android:defaultValue="auto"
+            android:key="settings_language"
+            android:title="Application language"/>
+
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/settings_group_data">
+        <com.gg.busStation.ui.layout.preference.MenuPreference
+            android:defaultValue="7"
+            android:entries="@array/updateCycleEntries"
+            android:entryValues="@array/updateCycleValues"
+            android:key="settings_update_data_cycle"
+            android:summary="@string/settings_summary_update_cycle"
+            android:title="@string/settings_title_update_cycle" />
+
+        <Preference
+            android:key="settings_update_data_now"
+            android:summary="@string/settings_update_data_now_summary"
+            android:title="@string/settings_update_data_now" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/settings_group_general">
+        <com.gg.busStation.ui.layout.preference.MaterialSwitchPreference
+            android:defaultValue="true"
+            android:key="settings_update_app"
+            android:summary="@string/settings_update_app_cycle_summary"
+            android:title="@string/settings_update_app_cycle" />
+
+        <Preference
+            android:key="settings_update_app_now"
+            android:title="@string/settings_update_app_now"
+            android:summary="@string/settings_update_app_now_summary"/>
+
+        <Preference
+            android:key="settings_about"
+            android:title="@string/about_title" />
+    </PreferenceCategory>
+</PreferenceScreen>

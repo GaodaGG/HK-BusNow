@@ -106,6 +106,7 @@ dependencies {
     //OKHttp: https://github.com/square/okhttp
     implementation libs.okhttp
 
+    implementation libs.preference.ktx
     implementation libs.appcompat
     // Material design: https://material.io
     implementation libs.material

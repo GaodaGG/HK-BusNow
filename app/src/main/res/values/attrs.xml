@@ -1,9 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <declare-styleable name="ListItemView">
-        <attr name="headline" format="string"/>
-        <attr name="context" format="string"/>
-        <attr name="stopNumber" format="string"/>
-        <attr name="tips" format="string"/>
+        <attr name="headline" format="string" />
+        <attr name="context" format="string" />
+        <attr name="stopNumber" format="string" />
+        <attr name="tips" format="string" />
     </declare-styleable>
+
+    <string-array name="updateCycleEntries">
+        <item>@string/settings_update_cycle_3days</item>
+        <item>@string/settings_update_cycle_1week</item>
+        <item>@string/settings_update_cycle_15days</item>
+        <item>@string/settings_update_cycle_30days</item>
+        <item>@string/settings_update_cycle_never</item>
+    </string-array>
+
+    <string-array name="updateCycleValues">
+        <item>3</item>
+        <item>7</item>
+        <item>15</item>
+        <item>30</item>
+        <item>0</item>
+    </string-array>
+
+    <string-array name="darkThemeEntries">
+        <item>@string/settings_dark_allways_on</item>
+        <item>@string/settings_dark_allways_off</item>
+        <item>@string/settings_dark_follow</item>
+    </string-array>
+
+    <string-array name="darkThemeValues">
+        <item>on</item>
+        <item>off</item>
+        <item>auto</item>
+    </string-array>
 </resources>

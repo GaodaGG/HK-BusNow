@@ -1,5 +1,6 @@
 package com.gg.busStation.data.bus;
 
+import java.util.HashMap;
 import java.util.Locale;
 
 public class Route {
@@ -84,7 +85,7 @@ public class Route {
     }
 
     public String getBound() {
-        if("O".equals(bound) || Out.equals(bound)) {
+        if ("O".equals(bound) || Out.equals(bound)) {
             return Out;
         }
 
@@ -133,5 +134,22 @@ public class Route {
 
     public void setCo(String co) {
         this.co = co;
+    }
+
+    public static String getLocalizedCoName(String co, String language) {
+        HashMap<String, String> zhMap = new HashMap<>();
+        zhMap.put("KMB", "九巴");
+        zhMap.put("CTB", "城巴");
+        zhMap.put("KMB+CTB", "九巴+城巴");
+
+        if (new Locale("en").getLanguage().equals(language)) {
+            return co;
+        }
+
+        if (new Locale("zh_HK").getLanguage().equals(language)) {
+            return zhMap.get(co);
+        }
+
+        return zhMap.get(co);
     }
 }

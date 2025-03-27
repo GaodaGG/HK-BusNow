@@ -10,7 +10,7 @@
         android:icon="@drawable/menu_search_normal"
         android:title="@string/search_title"/>
     <item
-        android:id="@+id/about_fragment"
-        android:icon="@drawable/menu_person"
-        android:title="@string/about_title"/>
+        android:id="@+id/settings_fragment"
+        android:icon="@drawable/menu_settings"
+        android:title="@string/settings_title"/>
 </menu>
