@@ -4,6 +4,7 @@ package com.gg.busStation.ui.activity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.transition.Transition;
 import android.view.Window;
@@ -59,6 +60,10 @@ public class AboutActivity extends AppCompatActivity {
         if (Tools.isMIUI()) {
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
             getWindow().setNavigationBarColor(Color.TRANSPARENT);
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            getWindow().setNavigationBarContrastEnforced(false);
         }
 
         setSupportActionBar(binding.toolBar);

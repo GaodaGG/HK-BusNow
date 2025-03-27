@@ -76,6 +76,7 @@ public class SearchFragment extends Fragment {
             setRouteList(key);
         });
 
+        //TODO 应用重载时，键盘位置不对
         int bottomHeight = requireActivity().findViewById(R.id.bottom_navigation).getHeight();
         ViewGroup.MarginLayoutParams layoutParams = (ViewGroup.MarginLayoutParams) binding.searchKeyboard.getLayoutParams();
         layoutParams.bottomMargin = bottomHeight + Tools.dp2px(requireContext(), 8);
@@ -125,6 +126,7 @@ public class SearchFragment extends Fragment {
         MaterialToolbar toolBar = requireActivity().getWindow().getDecorView().findViewById(R.id.toolBar);
         int width = toolBar.getMeasuredWidth();
         toolBar.addView(mSearchBar);
+        //TODO 应用重载时，搜索栏宽度不对
         mSearchBar.getLayoutParams().width = width - toolBar.getChildAt(0).getWidth() * 2 - Tools.dp2px(requireContext(), 16);
         ((ViewGroup.MarginLayoutParams) mSearchBar.getLayoutParams()).setMargins(Tools.dp2px(requireContext(), 32), 0, 0, 0);
     }

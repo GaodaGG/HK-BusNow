@@ -36,6 +36,7 @@ import com.gg.busStation.function.internet.HttpClientHelper;
 import com.gg.busStation.function.location.LocationHelper;
 import com.google.android.material.color.DynamicColors;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.elevation.SurfaceColors;
 import com.google.android.material.transition.platform.MaterialSharedAxis;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -117,7 +118,9 @@ public class MainActivity extends AppCompatActivity {
             getWindow().setNavigationBarColor(Color.TRANSPARENT);
         }
 
-//        getWindow().setNavigationBarColor(SurfaceColors.SURFACE_2.getColor(this));
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            getWindow().setNavigationBarContrastEnforced(false);
+        }
 
         setSupportActionBar(binding.toolBar);
 
