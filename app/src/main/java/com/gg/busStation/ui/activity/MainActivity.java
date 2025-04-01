@@ -3,14 +3,12 @@ package com.gg.busStation.ui.activity;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.transition.Transition;
 import android.util.Log;
 import android.view.Window;
-import android.view.WindowManager;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -31,12 +29,10 @@ import com.gg.busStation.R;
 import com.gg.busStation.databinding.ActivityMainBinding;
 import com.gg.busStation.function.BusDataManager;
 import com.gg.busStation.function.DataBaseManager;
-import com.gg.busStation.function.Tools;
 import com.gg.busStation.function.internet.HttpClientHelper;
 import com.gg.busStation.function.location.LocationHelper;
 import com.google.android.material.color.DynamicColors;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
-import com.google.android.material.elevation.SurfaceColors;
 import com.google.android.material.transition.platform.MaterialSharedAxis;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -112,11 +108,6 @@ public class MainActivity extends AppCompatActivity {
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-
-        if (Tools.isMIUI()) {
-            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
-            getWindow().setNavigationBarColor(Color.TRANSPARENT);
-        }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             getWindow().setNavigationBarContrastEnforced(false);

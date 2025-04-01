@@ -35,7 +35,7 @@ import java.util.stream.Collectors;
 public class BusDataManager {
     private static final String govJsonUrl = "https://static.data.gov.hk/td/routes-fares-geojson/JSON_BUS.json";
     private static final String faresJsonUrl = "https://static.data.gov.hk/td/pt-headway-tc/fare_attributes.txt";
-    private static Map<Integer, String> routeIdToName = new HashMap<>();
+    private static final Map<Integer, String> routeIdToName = new HashMap<>();
 
     private BusDataManager() {
     }
@@ -45,7 +45,7 @@ public class BusDataManager {
         if (!updateNow) {
             Map<String, String> settings = DataBaseManager.getSettings();
             String oldLastUpdateTime = settings.get("lastUpdateTime");
-            long lastUpdateTime = Long.parseLong(oldLastUpdateTime);
+            long lastUpdateTime = Long.parseLong(oldLastUpdateTime == null ? "0" : oldLastUpdateTime);
 
             if ((System.currentTimeMillis() <= lastUpdateTime + Long.parseLong(settings.get("updateTime")) && "true".equals(settings.get("isInit"))) || "0".equals(settings.get("updateTime"))) {
                 return;

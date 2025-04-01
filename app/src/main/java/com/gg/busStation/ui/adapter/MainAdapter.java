@@ -86,6 +86,7 @@ public class MainAdapter extends ListAdapter<ListItemData, MainAdapter.ViewHolde
         ((RecyclerView) mActivity.findViewById(R.id.bus_list_view)).scrollToPosition(0);
     }
 
+    //TODO 删除最后一个item1后通知fragment显示提示
     private void showMenu(View moreButtion, ListItemData listItemData) {
         PopupMenu popupMenu = new PopupMenu(mActivity, moreButtion);
         popupMenu.inflate(R.menu.bus_item_menu);
