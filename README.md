@@ -9,25 +9,20 @@
 - 支持查询九巴、城巴到站时间
 
 ## 开发初衷
-官方应用的广告严重影响了使用体验，因此 **HK BusNow** 的开发目标是为用户提供一个无广告、纯粹的巴士到站时间查询工具
+- 官方应用的广告严重影响了使用体验，因此 **HK BusNow** 的开发目标是为用户提供一个无广告、纯粹的巴士到站时间查询工具
+- **HK BusNow** 也是本人对Android开发的一个**学习 + 练习项目**。我在此项目学习到 MD3设计规范，自定义控件等
 
 ## 数据来源 [開放數據平台](https://data.gov.hk/)
 [九巴数据](https://data.gov.hk/sc-data/dataset/hk-td-tis_21-etakmb/)  
-[城巴数据](https://data.gov.hk/sc-data/dataset/ctb-eta-transport-realtime-eta/)
+[城巴数据](https://data.gov.hk/sc-data/dataset/ctb-eta-transport-realtime-eta/)  
+[公共交通路线及收费资料 (GeoJSON)](https://data.gov.hk/sc-data/dataset/hk-td-tis_23-routes-fares-geojson)
 
 ## 应用截图
-<p align = "left">    
-  <img src="./Image/app_screenshot1.png" width="300px">
-  <img src="./Image/app_screenshot3.jpg" width="300px">
-  <img src="./Image/app_screenshot2.png" width="300px">
-  <img src="./Image/app_screenshot6.jpg" width="300px">
-  <img src="./Image/app_screenshot4.jpg" width="300px">
-  <img src="./Image/app_screenshot5.jpg" width="300px">
-</p>
 
-## 贡献
-[数据来源 (data.gov.hk)](https://data.gov.hk/sc-data/dataset/hk-td-tis_23-routes-fares-geojson)
-
+|                                         |                                         |                                         |
+|:---------------------------------------:|:---------------------------------------:|:---------------------------------------:|
+| <img src="./Image/app_screenshot3.png"> | <img src="./Image/app_screenshot1.png"> | <img src="./Image/app_screenshot2.png"> |
+| <img src="./Image/app_screenshot4.png"> | <img src="./Image/app_screenshot6.png"> | <img src="./Image/app_screenshot5.png"> |
 
 ## 未来目标 
 - 城巴路线存入本地
