@@ -8,10 +8,12 @@ import okhttp3.Callback;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+import okhttp3.ResponseBody;
 
 public class HttpClientHelper {
     private HttpClientHelper() {
     }
+
     public static void getDataAsync(String url, Callback callback) {
         OkHttpClient client = new OkHttpClient();
 
@@ -23,7 +25,7 @@ public class HttpClientHelper {
         call.enqueue(callback);
     }
 
-    public static String getData(String url) throws IOException {
+    public static ResponseBody getBody(String url) throws IOException {
         OkHttpClient client = new OkHttpClient();
 
         Request request = new Request.Builder()
@@ -31,19 +33,24 @@ public class HttpClientHelper {
                 .build();
 
         Response response = client.newCall(request).execute();
+        if (response.body() == null) {
+            throw new IOException("Response body is null");
+        }
 
-        return response.body().string();
+        return response.body();
+    }
+
+    public static String getData(String url) throws IOException {
+        ResponseBody body = getBody(url);
+
+        return body.string();
     }
 
     public static InputStream getDataStream(String url) throws IOException {
-        OkHttpClient client = new OkHttpClient();
+        ResponseBody body = getBody(url);
 
-        Request request = new Request.Builder()
-                .url(url)
-                .build();
+        body.contentLength();
 
-        Response response = client.newCall(request).execute();
-
-        return response.body().byteStream();
+        return body.byteStream();
     }
 }

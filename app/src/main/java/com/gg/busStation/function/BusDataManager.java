@@ -40,7 +40,7 @@ public class BusDataManager {
     private BusDataManager() {
     }
 
-    public static void initData(OnDataInitListener onDataInitListener, boolean updateNow) throws IOException {
+    public static void initData(OnDataInitListener onDataInitListener, boolean updateNow) {
         //判断是否需要更新数据
         if (!updateNow) {
             Map<String, String> settings = DataBaseManager.getSettings();
@@ -54,12 +54,16 @@ public class BusDataManager {
 
         onDataInitListener.start();
 
-        List<Route> routeList = initRoutes();
-        List<Stop> stopList = initStops();
-        Map<String, String> fareMap = initFares();
-        DataBaseManager.initData(routeList, stopList, fareMap);
-
-        onDataInitListener.finish();
+        try {
+            List<Route> routeList = initRoutes();
+            List<Stop> stopList = initStops();
+            Map<String, String> fareMap = initFares();
+            DataBaseManager.initData(routeList, stopList, fareMap);
+            onDataInitListener.finish(true);
+        } catch (IOException e) {
+            e.printStackTrace();
+            onDataInitListener.finish(false);
+        }
     }
 
     private static List<Route> initRoutes() throws IOException {
@@ -367,11 +371,10 @@ public class BusDataManager {
         };
     }
 
-    //    TODO 错误处理
     public interface OnDataInitListener {
         void start();
 
-        void finish();
+        void finish(boolean status);
     }
 
     private static class KMB {

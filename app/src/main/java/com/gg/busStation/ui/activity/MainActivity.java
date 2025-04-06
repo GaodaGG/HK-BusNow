@@ -62,10 +62,11 @@ public class MainActivity extends AppCompatActivity {
         }
 
         @Override
-        public void finish() {
+        public void finish(boolean status) {
             runOnUiThread(() -> {
                 loadingDialog.dismiss();
                 checkPermissions();
+                Toast.makeText(MainActivity.this, R.string.error_getdata, Toast.LENGTH_SHORT).show();
             });
         }
     };
@@ -152,14 +153,7 @@ public class MainActivity extends AppCompatActivity {
                 .setCancelable(false)
                 .create();
 
-        new Thread(() -> {
-            try {
-                BusDataManager.initData(onDataInitListener, false);
-            } catch (IOException e) {
-                runOnUiThread(() -> Toast.makeText(this, R.string.error_getdata, Toast.LENGTH_SHORT).show());
-            }
-//                BusDataManager.getNearRoutes(100);
-        }).start();
+        new Thread(() -> BusDataManager.initData(onDataInitListener, false)).start();
     }
 
     @Override

@@ -21,8 +21,6 @@ import com.gg.busStation.ui.layout.preference.MaterialSwitchPreference;
 import com.gg.busStation.ui.layout.preference.MenuPreference;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
-import java.io.IOException;
-
 public class SettingsFragment extends PreferenceFragmentCompat {
     private AlertDialog loadingDialog;
 
@@ -164,10 +162,10 @@ public class SettingsFragment extends PreferenceFragmentCompat {
             }
 
             @Override
-            public void finish() {
+            public void finish(boolean status) {
                 requireActivity().runOnUiThread(() -> {
                     loadingDialog.dismiss();
-                    Toast.makeText(requireActivity(), R.string.update_success, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(requireActivity(), status ? R.string.update_success : R.string.error_getdata, Toast.LENGTH_SHORT).show();
                 });
             }
         };
@@ -179,13 +177,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                     .setCancelable(false)
                     .create();
 
-            new Thread(() -> {
-                try {
-                    BusDataManager.initData(onDataInitListener, true);
-                } catch (IOException e) {
-                    requireActivity().runOnUiThread(() -> Toast.makeText(requireActivity(), R.string.error_getdata, Toast.LENGTH_SHORT).show());
-                }
-            }).start();
+            new Thread(() -> BusDataManager.initData(onDataInitListener, true)).start();
             return true;
         });
     }
