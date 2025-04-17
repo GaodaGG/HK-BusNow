@@ -86,7 +86,6 @@ public class MainAdapter extends ListAdapter<ListItemData, MainAdapter.ViewHolde
         ((RecyclerView) mActivity.findViewById(R.id.bus_list_view)).scrollToPosition(0);
     }
 
-    //TODO 删除最后一个item1后通知fragment显示提示
     private void showMenu(View moreButtion, ListItemData listItemData) {
         PopupMenu popupMenu = new PopupMenu(mActivity, moreButtion);
         popupMenu.inflate(R.menu.bus_item_menu);
@@ -129,6 +128,12 @@ public class MainAdapter extends ListAdapter<ListItemData, MainAdapter.ViewHolde
         List<Route> routes = DataBaseManager.getRoutesHistory();
         List<ListItemData> data = BusDataManager.routesToListItemData(routes);
         submitList(data);
+
+        if (data.isEmpty()) {
+            mActivity.findViewById(R.id.main_error_layout).setVisibility(View.VISIBLE);
+        } else {
+            mActivity.findViewById(R.id.main_error_layout).setVisibility(View.GONE);
+        }
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {

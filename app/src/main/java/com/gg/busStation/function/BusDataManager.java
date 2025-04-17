@@ -28,6 +28,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -44,10 +45,9 @@ public class BusDataManager {
         //判断是否需要更新数据
         if (!updateNow) {
             Map<String, String> settings = DataBaseManager.getSettings();
-            String oldLastUpdateTime = settings.get("lastUpdateTime");
-            long lastUpdateTime = Long.parseLong(oldLastUpdateTime == null ? "0" : oldLastUpdateTime);
+            long lastUpdateTime = Long.parseLong(Objects.requireNonNullElse(settings.get("lastUpdateTime"), "0"));
 
-            if ((System.currentTimeMillis() <= lastUpdateTime + Long.parseLong(settings.get("updateTime")) && "true".equals(settings.get("isInit"))) || "0".equals(settings.get("updateTime"))) {
+            if ((System.currentTimeMillis() <= lastUpdateTime + Long.parseLong(Objects.requireNonNullElse(settings.get("updateTime"), "0")) && "true".equals(settings.get("isInit"))) || "0".equals(settings.get("updateTime"))) {
                 return;
             }
         }
@@ -61,7 +61,6 @@ public class BusDataManager {
             DataBaseManager.initData(routeList, stopList, fareMap);
             onDataInitListener.finish(true);
         } catch (IOException e) {
-            e.printStackTrace();
             onDataInitListener.finish(false);
         }
     }

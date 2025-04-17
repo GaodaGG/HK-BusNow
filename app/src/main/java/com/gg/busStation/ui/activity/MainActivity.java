@@ -66,7 +66,9 @@ public class MainActivity extends AppCompatActivity {
             runOnUiThread(() -> {
                 loadingDialog.dismiss();
                 checkPermissions();
-                Toast.makeText(MainActivity.this, R.string.error_getdata, Toast.LENGTH_SHORT).show();
+                if (!status) {
+                    Toast.makeText(MainActivity.this, R.string.error_getdata, Toast.LENGTH_SHORT).show();
+                }
             });
         }
     };
