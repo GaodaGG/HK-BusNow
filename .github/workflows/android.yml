@@ -1,0 +1,80 @@
+name: Android CI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+env:
+  TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+  TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up JDK 17
+      uses: actions/setup-java@v3
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+
+    - name: Grant execute permission for gradlew
+      run: chmod +x gradlew
+
+    - name: Cache Gradle dependencies
+      uses: actions/cache@v3
+      with:
+        path: |
+          ~/.gradle/caches
+          ~/.gradle/wrapper
+        key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+        restore-keys: |
+          ${{ runner.os }}-gradle-
+
+    - name: Setup Android Keystore
+      if: contains(github.event.head_commit.message, '[release]')
+      run: |
+        echo "${{ secrets.CI_KEYSTORE_BASE64 }}" | base64 -d > ${{ runner.temp }}/release.keystore
+        echo "CI_KEYSTORE_PATH=${{ runner.temp }}/release.keystore" >> $GITHUB_ENV
+
+    - name: Build APKs
+      run: ./gradlew assembleDebug
+
+    - name: Upload Debug APK
+      uses: actions/upload-artifact@v4
+      with:
+        name: debug-apk
+        path: app/build/outputs/apk/debug/*.apk
+        retention-days: 7
+
+    # - name: Upload Release APK
+    #   uses: actions/upload-artifact@v4
+    #   with:
+    #     name: release-apk
+    #     path: app/build/outputs/apk/release/*.apk
+    #     retention-days: 7
+
+    # Telegram 通知
+    - name: Send Telegram Notification
+      uses: appleboy/telegram-action@master
+      if: always()
+      with:
+        to: ${{ env.TELEGRAM_CHAT_ID }}
+        token: ${{ env.TELEGRAM_BOT_TOKEN }}
+        message: |
+          📲 Android CI 构建结果
+          ──────────────────
+          ▫️ 仓库: ${{ github.repository }}
+          ▫️ 分支: ${{ github.ref_name }}
+          ▫️ 提交: ${{ github.sha }}
+          ▫️ 状态: ${{ job.status }}
+          ▫️ 工作流: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        files: |
+          app/build/outputs/apk/debug/*.apk
+        parse_mode: HTML

@@ -60,7 +60,7 @@ android {
         config {
             keyAlias keystoreProperties['keyAlias']
             keyPassword keystoreProperties['keyPassword']
-            storeFile file(keystoreProperties['storeFile'])
+            storeFile file(System.getenv("CI_KEYSTORE_PATH") ?: keystoreProperties['storeFile'])
             storePassword keystoreProperties['storePassword']
 
 //            v1SigningEnabled true
