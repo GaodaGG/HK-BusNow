@@ -49,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
     // 权限申请回调
     private final ActivityResultLauncher<String> requestPermission = registerForActivityResult(new ActivityResultContracts.RequestPermission(), result -> {
         if (Boolean.FALSE.equals(result)) {
-            Toast.makeText(this, "权限授权失败，请手动给予", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.dialog_permission_failed_message, Toast.LENGTH_SHORT).show();
         } else {
             LocationHelper.getLocation(true);
         }
@@ -177,7 +177,7 @@ public class MainActivity extends AppCompatActivity {
 
         new MaterialAlertDialogBuilder(this)
                 .setTitle(R.string.dialog_permission_title)
-                .setMessage(R.string.dialog_permission_message)
+                .setMessage(R.string.dialog_permission_location_message)
                 .setNegativeButton(R.string.dialog_permission_decline, (dialog, which) -> {
                 })
                 .setPositiveButton(R.string.dialog_permission_accept, (dialog, which) -> requestPermission.launch(Manifest.permission.ACCESS_FINE_LOCATION))

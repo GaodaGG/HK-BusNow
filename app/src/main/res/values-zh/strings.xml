@@ -10,7 +10,8 @@
     <string name="searchbar_hint">搜索路线</string>
     <string name="main_history_hint">搜索路线并点击，此处将存放历史记录</string>
     <string name="dialog_permission_title">权限申请</string>
-    <string name="dialog_permission_message">该软件需要定位权限以便快速跳转最近的巴士站</string>
+    <string name="dialog_permission_location_message">该软件需要定位权限以便快速跳转最近的巴士站</string>
+    <string name="dialog_permission_notification_message">该软件需要通知权限以便发送上车等提醒</string>
     <string name="dialog_permission_decline">拒绝</string>
     <string name="dialog_permission_accept">同意</string>
     <string name="about_use_title">引用</string>
@@ -51,4 +52,7 @@
     <string name="settings_update_app_now">检查应用更新</string>
     <string name="settings_update_app_now_summary">立即检查是否有新版本</string>
     <string name="update_app_already">当前已是最新版本</string>
+    <string name="stop_menu_arrival">上车提醒</string>
+    <string name="notification_channel_site_reminder">上车提醒</string>
+    <string name="dialog_permission_failed_message">权限授权失败，请手动给予</string>
 </resources>

@@ -10,7 +10,7 @@
     <string name="searchbar_hint">Search for a route</string>
     <string name="main_history_hint">Search and Click a route to save it here</string>
     <string name="dialog_permission_title">Permission request</string>
-    <string name="dialog_permission_message">This app requires location permissions to quickly jump to the nearest bus stop.</string>
+    <string name="dialog_permission_location_message">This app requires location permissions to quickly jump to the nearest bus stop.</string>
     <string name="dialog_permission_decline">Decline</string>
     <string name="dialog_permission_accept">Accept</string>
     <string name="about_use_title">References</string>
@@ -52,4 +52,8 @@
     <string name="settings_update_app_now">Check update now</string>
     <string name="settings_update_app_now_summary">Update app now</string>
     <string name="update_app_already">You\'re already up to date</string>
+    <string name="stop_menu_arrival">Arrival Remind</string>
+    <string name="dialog_permission_notification_message">This app requires notification permissions to send reminders such as boarding the car.</string>
+    <string name="notification_channel_site_reminder">Site Remind</string>
+    <string name="dialog_permission_failed_message">Authorization failed, please grant it manually.</string>
 </resources>
