@@ -38,7 +38,6 @@ jobs:
           ${{ runner.os }}-gradle-
 
     - name: Setup Android Keystore
-      if: contains(github.event.head_commit.message, '[release]')
       run: |
         echo "${{ secrets.CI_KEYSTORE_BASE64 }}" | base64 -d > ${{ runner.temp }}/release.keystore
         echo "CI_KEYSTORE_PATH=${{ runner.temp }}/release.keystore" >> $GITHUB_ENV
