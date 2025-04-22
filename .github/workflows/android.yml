@@ -74,6 +74,6 @@ jobs:
           ▫️ 提交: ${{ github.sha }}
           ▫️ 状态: ${{ job.status }}
           ▫️ 工作流: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
-        message_file: |
+        document: |
           app/build/outputs/apk/debug/*.apk
         format: HTML
