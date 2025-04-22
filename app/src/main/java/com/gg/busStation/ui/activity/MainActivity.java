@@ -34,6 +34,7 @@ import com.gg.busStation.function.location.LocationHelper;
 import com.google.android.material.color.DynamicColors;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.transition.platform.MaterialSharedAxis;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
@@ -203,8 +204,13 @@ public class MainActivity extends AppCompatActivity {
         }
 
         JsonObject jsonObject = JsonParser.parseString(data).getAsJsonObject();
-        String version = jsonObject.get("tag_name").getAsString();
-        if (oldVersion.equals(version.substring(1))) {
+        JsonElement tagName = jsonObject.get("tag_name");
+        if (tagName == null) {
+            return false;
+        }
+
+        String version = tagName.getAsString();
+        if (oldVersion != null && oldVersion.equals(version.substring(1))) {
             return false;
         }
 

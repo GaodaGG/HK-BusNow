@@ -37,16 +37,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
-import java.util.Objects;
 
 public class StopBottomSheetDialog extends BottomSheetDialogFragment {
     public static final String TAG = "BusBottomSheetDialog";
     private DialogBusBinding binding;
     private ListItemData mData;
     private List<Stop> mStops;
-
-    public StopBottomSheetDialog() {
-    }
 
     public StopBottomSheetDialog(ListItemData listItemData) {
         mData = listItemData;
