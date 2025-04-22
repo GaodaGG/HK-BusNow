@@ -9,12 +9,12 @@ keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
 
 android {
     namespace 'com.gg.busStation'
-    compileSdk 34
+    compileSdk 35
 
     defaultConfig {
         applicationId "com.gg.busStation"
         minSdk 28
-        targetSdk 34
+        targetSdk 35
         versionCode Integer.parseInt(new Date().format('yyyyMMdd'))
         versionName "1.1.0"
 
@@ -23,20 +23,7 @@ android {
 
     splits {
         abi {
-            def isReleaseBuild = false
-
-            gradle.startParameter.taskNames.find {
-                // Enable split for release builds in different build flavors
-                // (assemblePaidRelease, assembleFreeRelease, etc.).
-                if (it ==~ /:app:assemble.*Release/) {
-                    isReleaseBuild = true
-                    return true // break
-                }
-
-                return false // continue
-            }
-
-            enable isReleaseBuild
+            enable true
             reset()
             include 'arm64-v8a', 'armeabi-v7a', 'x86', 'x86_64'
             universalApk true
