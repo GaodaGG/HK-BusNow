@@ -5,8 +5,11 @@ import android.app.UiModeManager;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.preference.Preference;
@@ -14,7 +17,6 @@ import androidx.preference.PreferenceFragmentCompat;
 
 import com.gg.busStation.R;
 import com.gg.busStation.function.BusDataManager;
-import com.gg.busStation.function.DataBaseManager;
 import com.gg.busStation.ui.activity.AboutActivity;
 import com.gg.busStation.ui.activity.MainActivity;
 import com.gg.busStation.ui.layout.preference.MaterialSwitchPreference;
@@ -28,6 +30,12 @@ public class SettingsFragment extends PreferenceFragmentCompat {
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
         addPreferencesFromResource(R.xml.pref_settings);
         initPreferences();
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        view.setPadding(view.getPaddingLeft(), view.getPaddingTop(), view.getPaddingRight(), requireActivity().findViewById(R.id.bottom_navigation).getHeight());
     }
 
     private void initPreferences() {
@@ -61,10 +69,10 @@ public class SettingsFragment extends PreferenceFragmentCompat {
             return;
         }
 
-        settingsCheckUpdate.setOnPreferenceChangeListener((preference, newValue) -> {
-            DataBaseManager.updateSetting("dontUpdate", String.valueOf(!(boolean) newValue));
-            return true;
-        });
+//        settingsCheckUpdate.setOnPreferenceChangeListener((preference, newValue) -> {
+//            DataBaseManager.updateSetting("dontUpdate", String.valueOf(!(boolean) newValue));
+//            return true;
+//        });
     }
 
     private void updateAppNowPreference() {
@@ -89,14 +97,14 @@ public class SettingsFragment extends PreferenceFragmentCompat {
             return;
         }
 
-        settingsUpdateCycle.setOnPreferenceChangeListener((preference, newValue) -> {
-            String updateTime = (String) newValue;
-
-            updateTime = String.valueOf(1000 * 60 * 60 * 24 * Integer.parseInt(updateTime));
-            DataBaseManager.updateSetting("updateTime", updateTime);
-
-            return true;
-        });
+//        settingsUpdateCycle.setOnPreferenceChangeListener((preference, newValue) -> {
+//            String updateTime = (String) newValue;
+//
+//            updateTime = String.valueOf(1000 * 60 * 60 * 24 * Integer.parseInt(updateTime));
+//            DataBaseManager.updateSetting("updateTime", updateTime);
+//
+//            return true;
+//        });
     }
 
     private void themeColorPreference() {
@@ -177,7 +185,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                     .setCancelable(false)
                     .create();
 
-            new Thread(() -> BusDataManager.initData(onDataInitListener, true)).start();
+            new Thread(() -> BusDataManager.initData(requireContext(), onDataInitListener, true)).start();
             return true;
         });
     }

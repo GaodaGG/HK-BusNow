@@ -1,5 +1,6 @@
 package com.gg.busStation.ui.fragment;
 
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,13 +15,15 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.gg.busStation.R;
-import com.gg.busStation.data.bus.Route;
+import com.gg.busStation.data.bus.Feature;
 import com.gg.busStation.data.layout.ListItemData;
 import com.gg.busStation.data.layout.SearchViewModel;
 import com.gg.busStation.databinding.FragmentSearchBinding;
 import com.gg.busStation.function.BusDataManager;
-import com.gg.busStation.function.DataBaseManager;
 import com.gg.busStation.function.Tools;
+import com.gg.busStation.function.database.DataBaseHelper;
+import com.gg.busStation.function.database.dao.FeatureDAOImpl;
+import com.gg.busStation.function.database.dao.RouteDAOImpl;
 import com.gg.busStation.ui.adapter.MainAdapter;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.divider.MaterialDividerItemDecoration;
@@ -133,12 +136,15 @@ public class SearchFragment extends Fragment {
 
     private void setRouteList(String newText) {
         new Thread(() -> {
-            List<Route> routes = newText.isEmpty() ? new ArrayList<>() : DataBaseManager.getRoutes(newText);
+            SQLiteDatabase database = DataBaseHelper.getInstance(requireContext()).getDatabase();
+//            List<RouteA> routes = newText.isEmpty() ? new ArrayList<>() : DataBaseManager.getRoutes(newText);
+            List<Feature> features = new FeatureDAOImpl(database).fuzzySearchFeature(newText);
             requireActivity().runOnUiThread(() -> binding.searchErrorLayout.setVisibility(newText.isEmpty() ? View.VISIBLE : View.GONE));
 
             MainAdapter adapter = (MainAdapter) binding.busListView.getAdapter();
             if (adapter != null) {
-                adapter.submitList(BusDataManager.routesToListItemData(routes));
+                // TODO 直接在数据库进行操作
+                adapter.submitList(BusDataManager.featuresToListItemData(features, new RouteDAOImpl(database)));
             }
         }).start();
     }

@@ -7,7 +7,7 @@ import android.os.Build;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.preference.PreferenceManager;
 
-import com.gg.busStation.function.DataBaseManager;
+import com.gg.busStation.function.database.DataBaseHelper;
 import com.gg.busStation.function.location.LocationHelper;
 
 public class MainApplication extends Application {
@@ -50,7 +50,8 @@ public class MainApplication extends Application {
     }
 
     private void initData() {
-        DataBaseManager.initDB(this);
+        DataBaseHelper.getInstance(this);
+//        DataBaseManager.initDB(this);
         LocationHelper.init(this);
     }
 }

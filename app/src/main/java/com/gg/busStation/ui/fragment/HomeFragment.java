@@ -1,5 +1,6 @@
 package com.gg.busStation.ui.fragment;
 
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,8 +18,12 @@ import com.gg.busStation.data.bus.Route;
 import com.gg.busStation.data.layout.ListItemData;
 import com.gg.busStation.databinding.FragmentHomeBinding;
 import com.gg.busStation.function.BusDataManager;
-import com.gg.busStation.function.DataBaseManager;
 import com.gg.busStation.function.Tools;
+import com.gg.busStation.function.database.DataBaseHelper;
+import com.gg.busStation.function.database.dao.FeatureDAO;
+import com.gg.busStation.function.database.dao.FeatureDAOImpl;
+import com.gg.busStation.function.database.dao.HistoryDAO;
+import com.gg.busStation.function.database.dao.HistoryDAOImpl;
 import com.gg.busStation.ui.adapter.MainAdapter;
 import com.google.android.material.divider.MaterialDividerItemDecoration;
 
@@ -38,8 +43,13 @@ public class HomeFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        List<Route> routes = DataBaseManager.getRoutesHistory();
-        List<ListItemData> data = BusDataManager.routesToListItemData(routes);
+//        List<RouteA> routes = DataBaseManager.getRoutesHistory();
+//        List<ListItemData> data = BusDataManager.routesToListItemData(routes);
+        SQLiteDatabase database = DataBaseHelper.getInstance(requireContext()).getDatabase();
+        HistoryDAO historyDAO = new HistoryDAOImpl(database);
+        FeatureDAO featureDAO = new FeatureDAOImpl(database);
+        List<Route> allHistory = historyDAO.getAllHistory();
+        List<ListItemData> data = BusDataManager.routesToListItemData(allHistory, featureDAO);
         initView(data);
     }
 

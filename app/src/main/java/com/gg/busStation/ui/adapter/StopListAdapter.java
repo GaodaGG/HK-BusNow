@@ -16,6 +16,7 @@ import com.gg.busStation.R;
 import com.gg.busStation.data.layout.StopItemData;
 import com.gg.busStation.function.NotificationHelper;
 import com.gg.busStation.ui.layout.StopItemView;
+import java.util.Objects;
 
 public class StopListAdapter extends ListAdapter<StopItemData, StopListAdapter.ViewHolder> {
     private static final DiffUtil.ItemCallback<StopItemData> DIFF_CALLBACK = new DiffUtil.ItemCallback<>() {
@@ -23,8 +24,7 @@ public class StopListAdapter extends ListAdapter<StopItemData, StopListAdapter.V
         public boolean areItemsTheSame(@NonNull StopItemData oldItem, @NonNull StopItemData newItem) {
             return oldItem.getStopNumber().equals(newItem.getStopNumber()) &&
                     oldItem.getCo().equals(newItem.getCo()) &&
-                    oldItem.getBound().equals(newItem.getBound()) &&
-                    oldItem.getService_type().equals(newItem.getService_type());
+                    Objects.equals(oldItem.getBound(), newItem.getBound());
         }
 
         @Override

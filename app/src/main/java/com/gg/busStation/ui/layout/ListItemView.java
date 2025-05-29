@@ -47,7 +47,7 @@ public class ListItemView extends ConstraintLayout {
         );
         layoutParams.height = Tools.dp2px(context, 88);
         setLayoutParams(layoutParams);
-        mData = new ListItemData("KMB", "1", "HendLine", "Context", "O", "1", "KMB");
+        mData = new ListItemData(0, "KMB", "1", "HendLine", "Context", 1, "1", "KMB");
         setData(mData);
         if (attrs != null) {
             TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.ListItemView);

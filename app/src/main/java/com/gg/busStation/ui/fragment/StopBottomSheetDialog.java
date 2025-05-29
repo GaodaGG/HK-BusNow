@@ -1,13 +1,11 @@
 package com.gg.busStation.ui.fragment;
 
-import static com.gg.busStation.function.BusDataManager.findNearestStopIndex;
-
 import android.Manifest;
 import android.app.Dialog;
 import android.content.pm.PackageManager;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -23,18 +21,22 @@ import com.gg.busStation.data.bus.Stop;
 import com.gg.busStation.data.layout.ListItemData;
 import com.gg.busStation.data.layout.StopItemData;
 import com.gg.busStation.databinding.DialogBusBinding;
-import com.gg.busStation.function.BusDataManager;
-import com.gg.busStation.function.DataBaseManager;
 import com.gg.busStation.function.Tools;
+import com.gg.busStation.function.database.DataBaseHelper;
+import com.gg.busStation.function.database.dao.FareDAOImpl;
+import com.gg.busStation.function.database.dao.RouteDAO;
+import com.gg.busStation.function.database.dao.RouteDAOImpl;
+import com.gg.busStation.function.database.dao.StopDAO;
+import com.gg.busStation.function.database.dao.StopDAOImpl;
+import com.gg.busStation.function.feature.FareManager;
+import com.gg.busStation.function.feature.FeatureManager;
 import com.gg.busStation.function.location.LocationHelper;
 import com.gg.busStation.ui.adapter.StopListAdapter;
 import com.gg.busStation.ui.layout.StopItemView;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.google.android.material.divider.MaterialDividerItemDecoration;
 
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
@@ -42,7 +44,7 @@ public class StopBottomSheetDialog extends BottomSheetDialogFragment {
     public static final String TAG = "BusBottomSheetDialog";
     private DialogBusBinding binding;
     private ListItemData mData;
-    private List<Stop> mStops;
+    private final List<Stop> mStops = new ArrayList<>();
 
     public StopBottomSheetDialog(ListItemData listItemData) {
         mData = listItemData;
@@ -83,17 +85,18 @@ public class StopBottomSheetDialog extends BottomSheetDialogFragment {
 
     public void initView() {
         new Thread(() -> {
-            List<StopItemData> data = new ArrayList<>();
-            Route route = DataBaseManager.findRoute(mData.getCo(), mData.getStopNumber(), mData.getBound(), mData.getService_type());
+            SQLiteDatabase database = DataBaseHelper.getInstance(requireContext()).getDatabase();
+            RouteDAO routeDAO = new RouteDAOImpl(database);
+            List<Route> routes = routeDAO.getRoutes(mData.getRouteId(), mData.getRouteSeq());
 
-            initData(route, data);
+            List<StopItemData> data = initData(routes, mData.getCo(), database);
 
             int nearestStopIndex = 0;
 
             if (!isAdded()) return;
             LatLng location = LocationHelper.getLocation(false);
             if (requireActivity().checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                nearestStopIndex = findNearestStopIndex(mStops, location);
+                nearestStopIndex = FeatureManager.findNearestStopIndex(mStops, location);
             }
 
             StopListAdapter stopListAdapter = new StopListAdapter(requireActivity());
@@ -127,51 +130,52 @@ public class StopBottomSheetDialog extends BottomSheetDialogFragment {
         }).start();
     }
 
-    private void initData(Route route, List<StopItemData> data) {
-        try {
-            mStops = BusDataManager.routeToStops(route);
+//    private void initData(RouteA route, List<StopItemData> data) {
+//        try {
+//            mStops = BusDataManager.routeToStops(route);
+//
+//            //获取车费
+//            String[] stopFares = getFares(route);
+//
+//            String language = Locale.getDefault().getLanguage();
+//            for (int i = 0; i < mStops.size(); i++) {
+//                Stop stop = mStops.get(i);
+//                StopItemData stopItemData = new StopItemData(String.valueOf(i + 1), stop.getName(language), stopFares[i], route.getBound(), route.getService_type(), route.getCo(), route.getRoute(), String.valueOf(stop.id()));
+//                data.add(stopItemData);
+//            }
+//        } catch (IOException e) {
+//            Log.e(TAG, "initView: ", e);
+//        }
+//    }
 
-            //获取车费
-            String[] stopFares = getFares(route);
+    private List<StopItemData> initData(List<Route> routes, String companyCode, SQLiteDatabase db) {
+        List<StopItemData> data = new ArrayList<>();
+        StopDAO stopDAO = new StopDAOImpl(db);
 
-            String language = Locale.getDefault().getLanguage();
-            for (int i = 0; i < mStops.size(); i++) {
-                Stop stop = mStops.get(i);
-                StopItemData stopItemData = new StopItemData(String.valueOf(i + 1), stop.getName(language), stopFares[i], route.getBound(), route.getService_type(), route.getCo(), route.getRoute(), stop.getStop());
-                data.add(stopItemData);
-            }
-        } catch (IOException e) {
-            Log.e(TAG, "initView: ", e);
+        routes.forEach(route -> {
+            Stop stop = stopDAO.getStop(route.stopId());
+            mStops.add(stop);
+        });
+
+        String language = Locale.getDefault().getLanguage();
+        Route route = routes.get(0);
+
+        FareManager fareManager = new FareManager(db);
+        String[] stopFares = fareManager.getFares(route, new FareDAOImpl(db), mStops.size());
+
+        for (int i = 0; i < mStops.size(); i++) {
+            Stop stop = mStops.get(i);
+            StopItemData stopItemData = new StopItemData(String.valueOf(i + 1),
+                    stop.getName(language),
+                    stopFares[i],
+                    route.routeSeq(),
+                    companyCode,
+                    route.id(),
+                    i);
+            data.add(stopItemData);
         }
-    }
 
-    private String[] getFares(Route route) {
-        String[] stopFares = new String[mStops.size()];
-        String fare = DataBaseManager.findFare(route.getRoute(), route.getBound());
-        if (fare == null) {
-            return new String[0];
-        }
-
-        String[] fares = fare.split(";");
-        for (String s : fares) {
-            String[] fareData = s.split(",");
-            String[] pickStopRange = fareData[0].split("-");
-            int start = Integer.parseInt(pickStopRange[0]);
-            int end = Integer.parseInt(pickStopRange[1]);
-            if (end > mStops.size()) {
-                Arrays.fill(stopFares, "");
-                break;
-            }
-
-            for (int i = start; i <= end; i++) {
-                if (i - 1 >= mStops.size()) {
-                    stopFares[mStops.size() - 1] = "";
-                    break;
-                }
-                stopFares[i - 1] = fareData[1] + " HKD";
-            }
-        }
-        return stopFares;
+        return data;
     }
 
     @Override

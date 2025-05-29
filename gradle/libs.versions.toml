@@ -1,11 +1,12 @@
 [versions]
-agp = "8.3.2"
+agp = "8.9.2"
 baidumapsdk_location = "9.6.4"
 baidumapsdk_util = "7.6.2"
 baidumapsdk_base = "7.6.2.1"
 gson = "2.11.0"
 junit = "4.13.2"
 junitVersion = "1.2.1"
+lombok = "1.18.28"
 espressoCore = "3.6.1"
 appcompat = "1.7.0"
 material = "1.12.0"
@@ -20,6 +21,7 @@ baidumapsdk_util = { module = "com.baidu.lbsyun:BaiduMapSDK_Util", version.ref =
 baidumapsdk_base = { module = "com.baidu.lbsyun:base", version.ref = "baidumapsdk_base" }
 gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
+lombok = { module = "org.projectlombok:lombok", version.ref = "lombok" }
 ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
 appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }

@@ -84,6 +84,9 @@ android {
 }
 
 dependencies {
+    // lombok: https://projectlombok.org/
+    compileOnly libs.lombok
+    annotationProcessor libs.lombok
     // Baidumap: https://lbsyun.baidu.com
 //    implementation libs.baidumapsdk.base
     implementation libs.baidumapsdk.util

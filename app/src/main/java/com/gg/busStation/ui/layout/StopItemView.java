@@ -11,6 +11,7 @@ import android.icu.util.Calendar;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,17 +25,16 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.gg.busStation.R;
 import com.gg.busStation.data.bus.ETA;
-import com.gg.busStation.data.bus.Route;
-import com.gg.busStation.data.bus.Stop;
 import com.gg.busStation.data.layout.ListItemData;
 import com.gg.busStation.data.layout.StopItemData;
 import com.gg.busStation.databinding.ItemBusExpendBinding;
 import com.gg.busStation.function.BusDataManager;
-import com.gg.busStation.function.DataBaseManager;
 import com.gg.busStation.function.Tools;
+import com.gg.busStation.function.database.DataBaseHelper;
+import com.gg.busStation.function.feature.CompanyManager;
+import com.gg.busStation.function.feature.co.Company;
 import com.google.android.material.motion.MotionUtils;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -94,7 +94,7 @@ public class StopItemView extends LinearLayout {
 
     public void setData(StopItemData data) {
         binding.setData(data);
-        binding.listItemLayout.setData(new ListItemData(data.getCo(), data.getStopNumber(), data.getHeadline(), data.getContext(), "O", "1", ""));
+        binding.listItemLayout.setData(new ListItemData(0, data.getCo(), data.getStopNumber(), data.getHeadline(), data.getContext(), 1, "1", ""));
         binding.executePendingBindings();
         this.isOpen = data.isOpen.get();  // 绑定初始状态
 
@@ -157,18 +157,14 @@ public class StopItemView extends LinearLayout {
         Handler mainHandler = new Handler(Looper.getMainLooper());
 
         StopItemData data = binding.getData();
-        Route route = DataBaseManager.findRoute(data.getCo(), data.getRouteId(), data.getBound(), data.getService_type());
-        Stop stop = DataBaseManager.findStop(data.getStopId());
 
         LinearLayout timeList = view.findViewById(R.id.dialog_time_list);
 
         new Thread(() -> {
-            List<ETA> etas;
-            try {
-                etas = BusDataManager.routeAndStopToETAs(route, stop, Integer.parseInt(binding.listItemLayout.getStopNumber()));
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+            Company company = CompanyManager.getCompanyInstance(data.getCo());
+            List<ETA> etas = company.getETA(data.getRouteId(), data.getBound(), data.getStopSeq(), DataBaseHelper.getInstance(context).getDatabase());
+            Log.d("StopItemView", company.getClass().getName());
+            Log.d("StopItemView", "getETA: " + etas.toString());
 
             mainHandler.post(timeList::removeAllViews);
 
@@ -184,7 +180,8 @@ public class StopItemView extends LinearLayout {
             for (int i = 0; i < size; i++) {
                 ETA eta = etas.get(i);
                 long time = BusDataManager.getMinutesRemaining(eta.getTime());
-                ETAView etaView = new ETAView(context, (int) time, eta.getRmk("zh_CN"), Route.coKMB.equals(eta.getCo()) ? "九巴" : "城巴");
+//                ETAView etaView = new ETAView(context, (int) time, eta.getRmk("zh_CN"), RouteA.coKMB.equals(eta.getCo()) ? "九巴" : "城巴");
+                ETAView etaView = new ETAView(context, (int) time, eta.getRmk("zh_CN"), CompanyManager.getCompanyByCode(eta.getCo()).getName("zh_CN"));
                 etaViews.add(etaView);
 
                 LayoutParams layoutParams = (LayoutParams) etaView.getLayoutParams();

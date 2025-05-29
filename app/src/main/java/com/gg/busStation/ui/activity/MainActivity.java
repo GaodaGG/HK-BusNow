@@ -28,7 +28,7 @@ import androidx.preference.PreferenceManager;
 import com.gg.busStation.R;
 import com.gg.busStation.databinding.ActivityMainBinding;
 import com.gg.busStation.function.BusDataManager;
-import com.gg.busStation.function.DataBaseManager;
+import com.gg.busStation.function.SettingsManager;
 import com.gg.busStation.function.internet.HttpClientHelper;
 import com.gg.busStation.function.location.LocationHelper;
 import com.google.android.material.color.DynamicColors;
@@ -59,7 +59,8 @@ public class MainActivity extends AppCompatActivity {
     BusDataManager.OnDataInitListener onDataInitListener = new BusDataManager.OnDataInitListener() {
         @Override
         public void start() {
-            runOnUiThread(loadingDialog::show);
+            runOnUiThread(() -> loadingDialog.show());
+            Log.d("DataInit", "Thread " + Thread.currentThread().getName() + " started");
         }
 
         @Override
@@ -156,7 +157,7 @@ public class MainActivity extends AppCompatActivity {
                 .setCancelable(false)
                 .create();
 
-        new Thread(() -> BusDataManager.initData(onDataInitListener, false)).start();
+        new Thread(() -> BusDataManager.initData(this, onDataInitListener, false)).start();
     }
 
     @Override
@@ -166,7 +167,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void checkPermissions() {
-        if ("true".equals(DataBaseManager.getSettings().get("isInit"))) {
+        SettingsManager settingsManager = SettingsManager.getInstance(this);
+        if (settingsManager.isInit()) {
             return;
         }
 
@@ -182,16 +184,12 @@ public class MainActivity extends AppCompatActivity {
                 })
                 .setPositiveButton(R.string.dialog_permission_accept, (dialog, which) -> requestPermission.launch(Manifest.permission.ACCESS_FINE_LOCATION))
                 .show();
-
-        DataBaseManager.updateSetting("isInit", "true");
     }
 
     public boolean checkAppUpdate(boolean checkNow) {
-        if (!checkNow) {
-            String dontUpdate = DataBaseManager.getSettings().get("dontUpdate");
-            if ("true".equals(dontUpdate)) {
-                return false;
-            }
+        SettingsManager settingsManager = SettingsManager.getInstance(this);
+        if (!checkNow && !settingsManager.isAutoUpdateApp()) {
+            return false;
         }
 
         String data;
@@ -227,7 +225,7 @@ public class MainActivity extends AppCompatActivity {
         MaterialAlertDialogBuilder dialog = new MaterialAlertDialogBuilder(this)
                 .setTitle(getString(R.string.dialog_update_title) + " " + version)
                 .setMessage(getString(R.string.dialog_update_message) + "\n" + updateContent)
-                .setNeutralButton(R.string.dialog_update_never, (dialogInterface, i) -> DataBaseManager.updateSetting("dontUpdate", "true"))
+                .setNeutralButton(R.string.dialog_update_never, (dialogInterface, i) -> settingsManager.setUpdateApp(false))
                 .setNegativeButton(R.string.dialog_update_no, null)
                 .setPositiveButton(R.string.dialog_update_yes, (dialogInterface, i) -> {
                     Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(downloadUrl));

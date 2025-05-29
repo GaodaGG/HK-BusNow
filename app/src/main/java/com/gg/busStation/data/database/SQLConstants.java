@@ -5,51 +5,92 @@ public class SQLConstants {
     }
 
     public static final String routeDBName = "routes";
+    public static final String featureDBName = "features";
+    public static final String companyDBName = "company";
     public static final String stopDBName = "stops";
-    public static final String routesHistoryDBName = "history";
+    public static final String historyDBName = "history";
     public static final String fareDBName = "fares";
-    public static final String settingsDBName = "userSettings";
+    public static final String settingsDBName = "settings";
 
-    public static final String createRouteDBCommand = "CREATE TABLE IF NOT EXISTS " + routeDBName + " (" +
-            "co TEXT CHECK (co IN ('KMB', 'CTB', 'KMB+CTB')) NOT NULL," +
-            "route TEXT NOT NULL," +
-            "bound TEXT CHECK (bound IN ('outbound', 'inbound')) NOT NULL," +
-            "service_type TEXT NOT NULL," +
-            "orig_en TEXT NOT NULL," +
-            "orig_tc TEXT NOT NULL," +
-            "orig_sc TEXT NOT NULL," +
-            "dest_en TEXT NOT NULL," +
-            "dest_tc TEXT NOT NULL," +
-            "dest_sc TEXT NOT NULL" +
+    public static final String createRouteDBCommand = "CREATE TABLE IF NOT EXISTS " + SQLConstants.routeDBName + " (" +
+            "routeId INTEGER NOT NULL," +
+            "routeSeq INTEGER CHECK (routeSeq IN (1, 2))," + // 1 == outbound, 2 == inbound
+            "stopSeq INTEGER," +
+            "stopPickDrop INTEGER," +
+            "stopId INTEGER," +
+            "FOREIGN KEY (routeId) REFERENCES " + featureDBName + "(routeId)" +
+            "FOREIGN KEY (stopId) REFERENCES " + stopDBName + "(id)" +
+            "PRIMARY KEY (routeId, routeSeq, stopSeq)" +
+            ");";
+
+    public static final String createFeatureDBCommand = "CREATE TABLE IF NOT EXISTS " + featureDBName + " (" +
+            "routeId INTEGER PRIMARY KEY," +
+            "routeNameC TEXT ," +
+            "routeNameS TEXT ," +
+            "routeNameE TEXT ," +
+            "routeType INTEGER," +
+            "serviceMode CHAR(2)," +
+            "specialType INTEGER," +
+            "companyCode TEXT ," +
+            "journeyTime INTEGER," +
+            "locStartNameC TEXT ," +
+            "locStartNameS TEXT ," +
+            "locStartNameE TEXT ," +
+            "locEndNameC TEXT ," +
+            "locEndNameS TEXT ," +
+            "locEndNameE TEXT ," +
+            "fullFare REAL," +
+            "FOREIGN KEY (companyCode) REFERENCES " + companyDBName + "(code)" +
+            ");";
+
+    public static final String createCompanyDBCommand = "CREATE TABLE IF NOT EXISTS " + companyDBName + " (" +
+            "code TEXT PRIMARY KEY," +
+            "nameC TEXT," +
+            "nameS TEXT," +
+            "nameE TEXT" +
             ");";
 
     public static final String createStopDBCommand = "CREATE TABLE IF NOT EXISTS " + stopDBName + " (" +
-            "stop TEXT NOT NULL," +
-            "name_en TEXT NOT NULL," +
-            "name_tc TEXT NOT NULL," +
-            "name_sc TEXT NOT NULL," +
+            "id INTEGER PRIMARY KEY," +
+            "nameC TEXT," +
+            "nameS TEXT," +
+            "nameE TEXT," +
             "lat REAL NOT NULL," +
             "long REAL NOT NULL" +
             ");";
 
-    public static final String createRoutesHistoryDBCommand = "CREATE TABLE IF NOT EXISTS " + routesHistoryDBName + " (" +
-            "co TEXT CHECK (co IN ('KMB', 'CTB', 'KMB+CTB')) NOT NULL," +
-            "route TEXT NOT NULL," +
-            "bound TEXT CHECK (bound IN ('outbound', 'inbound')) NOT NULL," +
-            "service_type TEXT NOT NULL," +
-            "timestamp INTEGER NOT NULL, " +
-            "UNIQUE(route, bound, service_type)" +
-            ");";
-
-    public static final String createSettingsDBCommand = "CREATE TABLE IF NOT EXISTS " + settingsDBName + " (" +
-            "key TEXT NOT NULL," +
-            "value TEXT NOT NULL" +
+    public static final String createHistoryDBCommand = "CREATE TABLE IF NOT EXISTS " + historyDBName + " (" +
+            "routeId INTEGER," +
+            "routeSeq INTEGER NOT NULL," +
+            "pinnedIndex INTEGER, " +
+            "timestamp INTEGER, " +
+            "FOREIGN KEY (routeId) REFERENCES " + routeDBName + "(routeId)" +
+            "PRIMARY KEY (routeId, routeSeq)" +
             ");";
 
     public static final String createFareDBCommand = "CREATE TABLE IF NOT EXISTS " + fareDBName + " (" +
-            "route TEXT NOT NULL," +
-            "bound TEXT CHECK (bound IN ('outbound', 'inbound')) NOT NULL," +
-            "service_type TEXT," +
-            "fare TEXT NOT NULL" +
+            "routeId INTEGER NOT NULL, " +
+            "routeSeq INTEGER CHECK (routeSeq IN (1, 2)), " +
+            "fare TEXT, " +
+            "FOREIGN KEY (routeId) REFERENCES " + featureDBName + "(routeId), " +
+            "PRIMARY KEY (routeId, routeSeq)" +
             ");";
+
+    public static final String createSettingsDBCommand = "CREATE TABLE IF NOT EXISTS " + settingsDBName + " (" +
+            "key TEXT PRIMARY KEY," +
+            "value TEXT" +
+            ");";
+
+
+    @lombok.Getter
+    @lombok.Setter
+    public static class TableInfo {
+        private String name;
+        private String createCommand;
+
+        public TableInfo(String name, String createCommand) {
+            this.name = name;
+            this.createCommand = createCommand;
+        }
+    }
 }

@@ -1,6 +1,7 @@
 package com.gg.busStation.ui.adapter;
 
 import android.content.res.TypedArray;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.drawable.Drawable;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,7 +18,11 @@ import com.gg.busStation.R;
 import com.gg.busStation.data.bus.Route;
 import com.gg.busStation.data.layout.ListItemData;
 import com.gg.busStation.function.BusDataManager;
-import com.gg.busStation.function.DataBaseManager;
+import com.gg.busStation.function.database.DataBaseHelper;
+import com.gg.busStation.function.database.dao.FeatureDAO;
+import com.gg.busStation.function.database.dao.FeatureDAOImpl;
+import com.gg.busStation.function.database.dao.HistoryDAO;
+import com.gg.busStation.function.database.dao.HistoryDAOImpl;
 import com.gg.busStation.ui.fragment.StopBottomSheetDialog;
 import com.gg.busStation.ui.layout.ListItemView;
 
@@ -29,7 +34,7 @@ public class MainAdapter extends ListAdapter<ListItemData, MainAdapter.ViewHolde
         public boolean areItemsTheSame(@NonNull ListItemData oldItem, @NonNull ListItemData newItem) {
             return oldItem.getStopNumber().equals(newItem.getStopNumber()) &&
                     oldItem.getCo().equals(newItem.getCo()) &&
-                    oldItem.getBound().equals(newItem.getBound()) &&
+                    oldItem.getRouteSeq() == newItem.getRouteSeq() &&
                     oldItem.getService_type().equals(newItem.getService_type());
         }
 
@@ -66,7 +71,10 @@ public class MainAdapter extends ListAdapter<ListItemData, MainAdapter.ViewHolde
 
         holder.itemView.setOnClickListener(view -> {
             new StopBottomSheetDialog(listItemData).show(mActivity.getSupportFragmentManager(), StopBottomSheetDialog.TAG);
-            DataBaseManager.addRoutesHistory(listItemData.getCo(), listItemData.getStopNumber(), listItemData.getBound(), listItemData.getService_type());
+//            DataBaseManager.addRoutesHistory(listItemData.getCo(), listItemData.getStopNumber(), listItemData.getBound(), listItemData.getService_type());
+            DataBaseHelper dbHelper = DataBaseHelper.getInstance(mActivity);
+            HistoryDAO historyDAO = new HistoryDAOImpl(dbHelper.getDatabase());
+            historyDAO.insert(listItemData.getRouteId(), listItemData.getRouteSeq(), false);
         });
 
         if (!isSearch) {
@@ -90,11 +98,13 @@ public class MainAdapter extends ListAdapter<ListItemData, MainAdapter.ViewHolde
         PopupMenu popupMenu = new PopupMenu(mActivity, moreButtion);
         popupMenu.inflate(R.menu.bus_item_menu);
 
-        String co = listItemData.getCo();
-        String stopNumber = listItemData.getStopNumber();
-        String bound = listItemData.getBound();
-        String serviceType = listItemData.getService_type();
-        if (DataBaseManager.isPinRoutesHistory(co, stopNumber, bound, serviceType)) {
+        int routeId = listItemData.getRouteId();
+        int routeSeq = listItemData.getRouteSeq();
+
+        SQLiteDatabase database = DataBaseHelper.getInstance(mActivity).getDatabase();
+        HistoryDAO historyDAO = new HistoryDAOImpl(database);
+
+        if (historyDAO.getPinnedIndex(routeId, routeSeq) != 0) {
             popupMenu.getMenu().findItem(R.id.bus_menu_pin).setVisible(false);
             popupMenu.getMenu().findItem(R.id.bus_menu_unpin).setVisible(true);
         }
@@ -102,17 +112,17 @@ public class MainAdapter extends ListAdapter<ListItemData, MainAdapter.ViewHolde
         popupMenu.setOnMenuItemClickListener(item -> {
             int itemId = item.getItemId();
             if (itemId == R.id.bus_menu_pin) {
-                DataBaseManager.pinRoutesHistory(co, stopNumber, bound, serviceType);
+                historyDAO.pinHistory(routeId, routeSeq);
 
                 refreshList();
                 return true;
             } else if (itemId == R.id.bus_menu_unpin) {
-                DataBaseManager.unpinRoutesHistory(co, stopNumber, bound, serviceType);
+                historyDAO.unpinHistory(routeId, routeSeq);
 
                 refreshList();
                 return true;
             } else if (itemId == R.id.bus_menu_delete) {
-                DataBaseManager.deleteRoutesHistory(co, stopNumber, bound, serviceType);
+                historyDAO.delete(routeId, routeSeq);
 
                 refreshList();
                 return true;
@@ -125,8 +135,11 @@ public class MainAdapter extends ListAdapter<ListItemData, MainAdapter.ViewHolde
     }
 
     public void refreshList() {
-        List<Route> routes = DataBaseManager.getRoutesHistory();
-        List<ListItemData> data = BusDataManager.routesToListItemData(routes);
+        SQLiteDatabase database = DataBaseHelper.getInstance(mActivity).getDatabase();
+        HistoryDAO historyDAO = new HistoryDAOImpl(database);
+        FeatureDAO featureDAO = new FeatureDAOImpl(database);
+        List<Route> allHistory = historyDAO.getAllHistory();
+        List<ListItemData> data = BusDataManager.routesToListItemData(allHistory, featureDAO);
         submitList(data);
 
         if (data.isEmpty()) {
@@ -136,6 +149,7 @@ public class MainAdapter extends ListAdapter<ListItemData, MainAdapter.ViewHolde
         }
     }
 
+    @lombok.Getter
     public static class ViewHolder extends RecyclerView.ViewHolder {
         private final ListItemView view;
 
@@ -144,8 +158,5 @@ public class MainAdapter extends ListAdapter<ListItemData, MainAdapter.ViewHolde
             this.view = view;
         }
 
-        public ListItemView getView() {
-            return view;
-        }
     }
 }

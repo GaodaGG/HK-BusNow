@@ -7,15 +7,20 @@ import android.view.LayoutInflater;
 import android.view.View;
 
 import com.gg.busStation.databinding.SearchKeyboardBinding;
-import com.gg.busStation.function.DataBaseManager;
+import com.gg.busStation.function.database.DataBaseHelper;
+import com.gg.busStation.function.database.dao.FeatureDAO;
+import com.gg.busStation.function.database.dao.FeatureDAOImpl;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.card.MaterialCardView;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
+import lombok.Setter;
+
 public class SearchKeyboardView extends MaterialCardView {
     private SearchKeyboardBinding binding;
+    @Setter
     private OnKeyClickListener onKeyClickListener;
     private String outputText = "";
 
@@ -59,17 +64,24 @@ public class SearchKeyboardView extends MaterialCardView {
                 break;
         }
 
-        setButtonStatus(outputText.length() + 1);
+        setButtonStatus(outputText, outputText.length() + 1);
+//        List<String> routeNthCharacters = DataBaseManager.getRouteNthCharacters(outputText, outputText.length() + 1);
     };
 
     private void initView(Context context) {
         binding = SearchKeyboardBinding.inflate(LayoutInflater.from(context), this);
-        setButtonStatus(1);
+
+        setButtonStatus(outputText, 1);
     }
 
-    private void setButtonStatus(int index) {
-        List<String> routeNthCharacters = DataBaseManager.getRouteNthCharacters(outputText, index);
+    private void setButtonStatus(String outputText, int index) {
+        DataBaseHelper dataBaseHelper = DataBaseHelper.getInstance(getContext());
+        FeatureDAO featureDAO = new FeatureDAOImpl(dataBaseHelper.getDatabase());
+        List<String> featureNthCharacters = featureDAO.getFeatureNthCharacters(outputText, index);
+        setButtonStatus(featureNthCharacters);
+    }
 
+    private void setButtonStatus(List<String> routeNthCharacters) {
         List<String> rightKeys = routeNthCharacters.stream()
                 .filter(s -> s.matches("^[a-zA-Z]+$"))
                 .collect(Collectors.toList());
@@ -100,11 +112,8 @@ public class SearchKeyboardView extends MaterialCardView {
 
     public void setOutputText(String outputText) {
         this.outputText = outputText;
-        setButtonStatus(outputText.length() + 1);
-    }
 
-    public void setOnKeyClickListener(OnKeyClickListener onKeyClickListener) {
-        this.onKeyClickListener = onKeyClickListener;
+        setButtonStatus(outputText, outputText.length() + 1);
     }
 
     public interface OnKeyClickListener {
