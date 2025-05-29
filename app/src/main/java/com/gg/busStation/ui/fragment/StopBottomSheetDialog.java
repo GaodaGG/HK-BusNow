@@ -28,6 +28,7 @@ import com.gg.busStation.function.database.dao.RouteDAO;
 import com.gg.busStation.function.database.dao.RouteDAOImpl;
 import com.gg.busStation.function.database.dao.StopDAO;
 import com.gg.busStation.function.database.dao.StopDAOImpl;
+import com.gg.busStation.function.feature.CompanyManager;
 import com.gg.busStation.function.feature.FareManager;
 import com.gg.busStation.function.feature.FeatureManager;
 import com.gg.busStation.function.location.LocationHelper;
@@ -118,11 +119,26 @@ public class StopBottomSheetDialog extends BottomSheetDialogFragment {
                 binding.dialogHeadline.requestFocus();
 
                 //跳转到最近的巴士站,并隐藏loading
-                ((LinearLayoutManager) dialogList.getLayoutManager()).scrollToPositionWithOffset(finalNearestStopIndex, 0);
+                LinearLayoutManager layoutManager = (LinearLayoutManager) dialogList.getLayoutManager();
+                if (layoutManager == null) {
+                    return;
+                }
+
+                layoutManager.scrollToPositionWithOffset(finalNearestStopIndex, 0);
                 dialogList.post(() -> {
                     binding.dialogLoading.setVisibility(View.GONE);
                     RecyclerView.ViewHolder holder = dialogList.findViewHolderForAdapterPosition(finalNearestStopIndex);
-                    if (holder == null) return;
+
+                    // 检查是否存在对应的公司代码类
+                    try {
+                        Class.forName("com.gg.busStation.function.feature.co." + getCompanyCode(mData.getCo()));
+                    } catch (ClassNotFoundException e) {
+                        return;
+                    }
+
+                    if (holder == null) {
+                        return;
+                    }
                     StopItemView view = (StopItemView) holder.itemView;
                     view.post(view::performClick);
                 });
@@ -130,23 +146,16 @@ public class StopBottomSheetDialog extends BottomSheetDialogFragment {
         }).start();
     }
 
-//    private void initData(RouteA route, List<StopItemData> data) {
-//        try {
-//            mStops = BusDataManager.routeToStops(route);
-//
-//            //获取车费
-//            String[] stopFares = getFares(route);
-//
-//            String language = Locale.getDefault().getLanguage();
-//            for (int i = 0; i < mStops.size(); i++) {
-//                Stop stop = mStops.get(i);
-//                StopItemData stopItemData = new StopItemData(String.valueOf(i + 1), stop.getName(language), stopFares[i], route.getBound(), route.getService_type(), route.getCo(), route.getRoute(), String.valueOf(stop.id()));
-//                data.add(stopItemData);
-//            }
-//        } catch (IOException e) {
-//            Log.e(TAG, "initView: ", e);
-//        }
-//    }
+    private String getCompanyCode(String companyCode) {
+        if (companyCode.equals(CompanyManager.CompanyEnum.KMB_CTB.getCode())) {
+            companyCode = "KMBCTB";
+        } else if (companyCode.equals(CompanyManager.CompanyEnum.LWB_CTB.getCode())) {
+            companyCode = "LWBCTB";
+        } else if (companyCode.equals(CompanyManager.CompanyEnum.KMB_NWFB.getCode())) {
+            companyCode = "KMBNWFB";
+        }
+        return companyCode;
+    }
 
     private List<StopItemData> initData(List<Route> routes, String companyCode, SQLiteDatabase db) {
         List<StopItemData> data = new ArrayList<>();
