@@ -25,6 +25,5 @@
 | <img src="./Image/app_screenshot4.png"> | <img src="./Image/app_screenshot6.png"> | <img src="./Image/app_screenshot5.png"> |
 
 ## 未来目标 
-- 城巴路线存入本地
 - 降低运存占用
-- 支持更多公司
+- 支持更多公司到站时间
