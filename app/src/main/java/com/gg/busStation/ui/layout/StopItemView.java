@@ -162,6 +162,13 @@ public class StopItemView extends LinearLayout {
 
         new Thread(() -> {
             Company company = CompanyManager.getCompanyInstance(data.getCo());
+            if (company == null) {
+                TextView textView = new TextView(context);
+                textView.setText("暂未适配该公司到站时间\n目前仅供查看路线");
+                mainHandler.post(() -> timeList.addView(textView));
+                return;
+            }
+
             List<ETA> etas = company.getETA(data.getRouteId(), data.getBound(), data.getStopSeq(), DataBaseHelper.getInstance(context).getDatabase());
             Log.d("StopItemView", company.getClass().getName());
             Log.d("StopItemView", "getETA: " + etas.toString());

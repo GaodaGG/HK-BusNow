@@ -28,7 +28,12 @@ public class CompanyManager {
         }
 
         String className = PACKAGE + company;
-        return (Company) Class.forName(className).newInstance();
+
+        try {
+            return (Company) Class.forName(className).newInstance();
+        } catch (ClassNotFoundException e) {
+            return null;
+        }
     }
 
     public static CompanyEnum getCompanyByCode(String code) {

@@ -28,7 +28,6 @@ import com.gg.busStation.function.database.dao.RouteDAO;
 import com.gg.busStation.function.database.dao.RouteDAOImpl;
 import com.gg.busStation.function.database.dao.StopDAO;
 import com.gg.busStation.function.database.dao.StopDAOImpl;
-import com.gg.busStation.function.feature.CompanyManager;
 import com.gg.busStation.function.feature.FareManager;
 import com.gg.busStation.function.feature.FeatureManager;
 import com.gg.busStation.function.location.LocationHelper;
@@ -129,13 +128,6 @@ public class StopBottomSheetDialog extends BottomSheetDialogFragment {
                     binding.dialogLoading.setVisibility(View.GONE);
                     RecyclerView.ViewHolder holder = dialogList.findViewHolderForAdapterPosition(finalNearestStopIndex);
 
-                    // 检查是否存在对应的公司代码类
-                    try {
-                        Class.forName("com.gg.busStation.function.feature.co." + getCompanyCode(mData.getCo()));
-                    } catch (ClassNotFoundException e) {
-                        return;
-                    }
-
                     if (holder == null) {
                         return;
                     }
@@ -144,17 +136,6 @@ public class StopBottomSheetDialog extends BottomSheetDialogFragment {
                 });
             });
         }).start();
-    }
-
-    private String getCompanyCode(String companyCode) {
-        if (companyCode.equals(CompanyManager.CompanyEnum.KMB_CTB.getCode())) {
-            companyCode = "KMBCTB";
-        } else if (companyCode.equals(CompanyManager.CompanyEnum.LWB_CTB.getCode())) {
-            companyCode = "LWBCTB";
-        } else if (companyCode.equals(CompanyManager.CompanyEnum.KMB_NWFB.getCode())) {
-            companyCode = "KMBNWFB";
-        }
-        return companyCode;
     }
 
     private List<StopItemData> initData(List<Route> routes, String companyCode, SQLiteDatabase db) {
