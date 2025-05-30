@@ -14,22 +14,21 @@ import com.baidu.mapapi.utils.DistanceUtil;
 
 public class LocationHelper {
     private static LocationClient mLocationClient;
-    private static LocationClientOption mLocationClientOption;
     private static final String apiKey = "D4GLNJOTDV8d2JooN0EMm3qdHLLr7pao";
-    
+
     private static Context mContext;
 
     private LocationHelper() {
     }
 
-    public static void init(Context context){
+    public static void init(Context context) {
         mContext = context;
-        
+
         LocationClient.setKey(apiKey);
         SDKInitializer.setApiKey(apiKey);
         LocationClient.setAgreePrivacy(true);
         Context applicationContext = context.getApplicationContext();
-        SDKInitializer.setAgreePrivacy(applicationContext,true);
+        SDKInitializer.setAgreePrivacy(applicationContext, true);
 
         SDKInitializer.initialize(applicationContext);
         try {
@@ -37,21 +36,20 @@ public class LocationHelper {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        mLocationClientOption = new LocationClientOption();
+        LocationClientOption mLocationClientOption = new LocationClientOption();
 
-        mLocationClientOption.setLocationMode(LocationClientOption.LocationMode.Fuzzy_Locating);
+//        mLocationClientOption.setLocationMode(LocationClientOption.LocationMode.Fuzzy_Locating);
         mLocationClientOption.setScanSpan(0);
-
+        mLocationClientOption.setOpenGnss(true);
+        mLocationClientOption.setCoorType("bd09ll");
         mLocationClient.setLocOption(mLocationClientOption);
-
         mLocationClient.registerLocationListener(new LocationListener());
-
         mLocationClient.start();
     }
 
     public static LatLng coordinateConvert(LatLng latLng) {
         CoordinateConverter coord = new CoordinateConverter()
-                .from(CoordinateConverter.CoordType.GPS)
+                .from(CoordinateConverter.CoordType.COMMON)
                 .coord(latLng);
 
         return coord.convert();
@@ -72,7 +70,7 @@ public class LocationHelper {
         return getLastLocation();
     }
 
-    public static double distance(LatLng latLngA, LatLng latLngB){
+    public static double distance(LatLng latLngA, LatLng latLngB) {
         return DistanceUtil.getDistance(latLngA, latLngB);
     }
 

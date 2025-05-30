@@ -3,9 +3,15 @@ package com.gg.busStation.function.location;
 import com.baidu.location.BDAbstractLocationListener;
 import com.baidu.location.BDLocation;
 
+import lombok.Getter;
+
+
 public class LocationListener extends BDAbstractLocationListener {
+    @Getter
     private static double lastLatitude;
+    @Getter
     private static double lastLongitude;
+    @Getter
     private static long lastUpdateTime;
 
     @Override
@@ -14,17 +20,5 @@ public class LocationListener extends BDAbstractLocationListener {
         lastLongitude = bdLocation.getLongitude();
 
         lastUpdateTime = System.currentTimeMillis();
-    }
-
-    public static long getLastUpdateTime() {
-        return lastUpdateTime;
-    }
-
-    public static double getLastLatitude() {
-        return lastLatitude;
-    }
-
-    public static double getLastLongitude() {
-        return lastLongitude;
     }
 }

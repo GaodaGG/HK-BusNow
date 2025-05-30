@@ -26,8 +26,8 @@ public class FeatureManager {
     public static final int outbound = 1;
     public static final int inbound = 2;
 
-    public static String Out = "outbound";
-    public static String In = "inbound";
+    public static final String Out = "outbound";
+    public static final String In = "inbound";
 
     private final FeatureDAO featureDAO;
     private final StopDAO stopDAO;
@@ -50,8 +50,9 @@ public class FeatureManager {
         for (int i = 0; i < stops.size(); i++) {
             Stop stop = stops.get(i);
             LatLng stopLocation = new LatLng(stop.lat(), stop.lon());
+            LatLng latLng = LocationHelper.coordinateConvert(stopLocation);
 
-            double distance = LocationHelper.distance(location, stopLocation);
+            double distance = LocationHelper.distance(location, latLng);
 
             if (distance < minDistance) {
                 minDistance = distance;
@@ -119,6 +120,7 @@ public class FeatureManager {
                 feature.getProperties().getFullFare()
         );
     }
+
     private Stop convertToStop(CloudFeature feature) {
         CloudFeature.Properties props = feature.getProperties();
         CloudFeature.Geometry geometry = feature.getGeometry();
@@ -127,8 +129,8 @@ public class FeatureManager {
                 props.getStopNameE(),
                 props.getStopNameC(),
                 props.getStopNameS(),
-                geometry.getCoordinates()[0],
-                geometry.getCoordinates()[1]
+                geometry.getCoordinates()[1],
+                geometry.getCoordinates()[0]
         );
     }
 
