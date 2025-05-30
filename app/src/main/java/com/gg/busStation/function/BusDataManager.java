@@ -43,8 +43,6 @@ public class BusDataManager {
         initData(context);
 
         onDataInitListener.finish(true);
-        settingsManager.setLastUpdateTime(System.currentTimeMillis());
-        settingsManager.setInit(true);
     }
 
     private static void initData(Context context) {
@@ -60,22 +58,6 @@ public class BusDataManager {
                 List<CloudFeature> features = featureManager.fetchAllFeatures();
                 featureManager.saveFeatures(features);
                 fareManager.saveFares();
-
-//                Map<String, String> fares = FareManager.saveFares(DataBaseHelper.getInstance(context).getDatabase());
-//                if (!fares.isEmpty()) {
-//                    ContentValues contentValues = new ContentValues();
-//                    fares.forEach((key, value) -> {
-//                        String[] split = key.split("_");
-//                        String route = split[0];
-//                        String bound = split[1];
-//                        contentValues.put("route", route);
-//                        contentValues.put("bound", bound);
-//                        contentValues.put("service_type", "1");
-//                        contentValues.put("fare", value);
-//                        db.insert(SQLConstants.fareDBName, null, contentValues);
-//                        contentValues.clear();
-//                    });
-//                }
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }

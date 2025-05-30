@@ -59,8 +59,7 @@ public class MainActivity extends AppCompatActivity {
     BusDataManager.OnDataInitListener onDataInitListener = new BusDataManager.OnDataInitListener() {
         @Override
         public void start() {
-            runOnUiThread(() -> loadingDialog.show());
-            Log.d("DataInit", "Thread " + Thread.currentThread().getName() + " started");
+            runOnUiThread(loadingDialog::show);
         }
 
         @Override
@@ -68,6 +67,11 @@ public class MainActivity extends AppCompatActivity {
             runOnUiThread(() -> {
                 loadingDialog.dismiss();
                 checkPermissions();
+
+                SettingsManager settingsManager = SettingsManager.getInstance(MainActivity.this);
+                settingsManager.setLastUpdateTime(System.currentTimeMillis());
+                settingsManager.setInit(true);
+
                 if (!status) {
                     Toast.makeText(MainActivity.this, R.string.error_getdata, Toast.LENGTH_SHORT).show();
                 }
@@ -156,7 +160,11 @@ public class MainActivity extends AppCompatActivity {
                 .setView(R.layout.dialog_loading)
                 .setCancelable(false)
                 .create();
+    }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
         new Thread(() -> BusDataManager.initData(this, onDataInitListener, false)).start();
     }
 
