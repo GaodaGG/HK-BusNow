@@ -137,7 +137,6 @@ public class SearchFragment extends Fragment {
     private void setRouteList(String newText) {
         new Thread(() -> {
             SQLiteDatabase database = DataBaseHelper.getInstance(requireContext()).getDatabase();
-//            List<RouteA> routes = newText.isEmpty() ? new ArrayList<>() : DataBaseManager.getRoutes(newText);
             List<Feature> features = new FeatureDAOImpl(database).fuzzySearchFeature(newText);
             requireActivity().runOnUiThread(() -> binding.searchErrorLayout.setVisibility(newText.isEmpty() ? View.VISIBLE : View.GONE));
 
