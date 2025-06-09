@@ -3,6 +3,7 @@ package com.gg.busStation.function.feature.co;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.gg.busStation.data.bus.ETA;
+import com.gg.busStation.function.feature.FeatureManager;
 
 import java.util.Collections;
 import java.util.Comparator;
@@ -28,6 +29,7 @@ public class KMBCTB implements Company{
 
     @Override
     public String getStopId(String routeName, int routeSeq, int stopSeq) {
-        return kmb.getStopId(routeName, routeSeq, stopSeq) + "," + ctb.getStopId(routeName, routeSeq, stopSeq);
+        int ctbRouteSeq = (routeSeq == FeatureManager.inbound ? FeatureManager.outbound : FeatureManager.inbound);
+        return kmb.getStopId(routeName, routeSeq, stopSeq) + "," + ctb.getStopId(routeName, ctbRouteSeq, stopSeq);
     }
 }

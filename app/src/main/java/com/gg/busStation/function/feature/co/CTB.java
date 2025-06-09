@@ -46,7 +46,7 @@ public class CTB implements Company {
     @SneakyThrows
     @Override
     public String getStopId(String routeName, int routeSeq, int stopSeq) {
-        String stopUrl = routeToStopUrl + routeName + "/" + (routeSeq == FeatureManager.inbound ? FeatureManager.Out : FeatureManager.In);
+        String stopUrl = routeToStopUrl + routeName + "/" + (routeSeq == FeatureManager.inbound ? FeatureManager.In : FeatureManager.Out);
         String stopData = HttpClientHelper.getData(stopUrl);
         JsonArray jsonElements = JsonToBean.extractJsonArray(stopData);
 
