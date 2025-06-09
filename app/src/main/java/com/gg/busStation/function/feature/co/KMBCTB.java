@@ -15,8 +15,10 @@ public class KMBCTB implements Company{
 
     @Override
     public List<ETA> getETA(int routeId, int routeSeq, int stopSeq, SQLiteDatabase db) {
+        int ctbRouteSeq = (routeSeq == FeatureManager.inbound ? FeatureManager.outbound : FeatureManager.inbound);
+
         List<ETA> kmbEtas = kmb.getETA(routeId, routeSeq, stopSeq, db);
-        List<ETA> ctbEtas = ctb.getETA(routeId, routeSeq, stopSeq, db);
+        List<ETA> ctbEtas = ctb.getETA(routeId, ctbRouteSeq, stopSeq, db);
 
         if (kmbEtas.isEmpty() && ctbEtas.isEmpty()) {
             return Collections.emptyList();
