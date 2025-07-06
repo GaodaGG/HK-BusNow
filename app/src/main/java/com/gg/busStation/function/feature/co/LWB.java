@@ -6,6 +6,7 @@ import com.gg.busStation.data.bus.ETA;
 
 import java.util.List;
 
+@SuppressWarnings("unused")
 public class LWB implements Company {
     KMB kmb = new KMB();
 

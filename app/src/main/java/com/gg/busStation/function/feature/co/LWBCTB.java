@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+@SuppressWarnings("unused")
 public class LWBCTB implements Company {
     private final LWB lwb = new LWB();
     private final CTB ctb = new CTB();

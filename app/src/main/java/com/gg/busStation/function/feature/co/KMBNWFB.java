@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+@SuppressWarnings("unused")
 public class KMBNWFB implements Company{
     KMB kmb = new KMB();
     NWFB nwfb = new NWFB();

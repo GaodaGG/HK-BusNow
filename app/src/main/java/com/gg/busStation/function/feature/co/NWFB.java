@@ -6,6 +6,7 @@ import com.gg.busStation.data.bus.ETA;
 
 import java.util.List;
 
+@SuppressWarnings("unused")
 public class NWFB implements Company {
     CTB ctb = new CTB();
 

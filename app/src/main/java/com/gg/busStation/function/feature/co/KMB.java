@@ -16,6 +16,7 @@ import java.util.List;
 
 import lombok.SneakyThrows;
 
+@SuppressWarnings("unused")
 public class KMB implements Company {
     public static final String routeAndStopToETAUrl = "https://data.etabus.gov.hk/v1/transport/kmb/eta/";
     public static final String routeToStopUrl = "https://data.etabus.gov.hk/v1/transport/kmb/route-stop/";

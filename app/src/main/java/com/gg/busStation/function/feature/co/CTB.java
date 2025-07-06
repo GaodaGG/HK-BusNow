@@ -16,6 +16,7 @@ import java.util.List;
 
 import lombok.SneakyThrows;
 
+@SuppressWarnings("unused")
 public class CTB implements Company {
     public static final String routeToStopUrl = "https://rt.data.gov.hk/v2/transport/citybus/route-stop/ctb/";
     public static final String routeAndStopToETAUrl = "https://rt.data.gov.hk/v2/transport/citybus/eta/ctb/";
