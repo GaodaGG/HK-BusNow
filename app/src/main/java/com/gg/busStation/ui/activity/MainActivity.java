@@ -6,24 +6,20 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.transition.Transition;
 import android.util.Log;
-import android.view.Window;
 import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
 import androidx.activity.OnBackPressedCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.WindowCompat;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
-import androidx.preference.PreferenceManager;
+import androidx.viewbinding.ViewBinding;
 
 import com.gg.busStation.R;
 import com.gg.busStation.databinding.ActivityMainBinding;
@@ -31,9 +27,7 @@ import com.gg.busStation.function.BusDataManager;
 import com.gg.busStation.function.SettingsManager;
 import com.gg.busStation.function.internet.HttpClientHelper;
 import com.gg.busStation.function.location.LocationHelper;
-import com.google.android.material.color.DynamicColors;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
-import com.google.android.material.transition.platform.MaterialSharedAxis;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -41,7 +35,7 @@ import com.google.gson.JsonParser;
 import java.io.IOException;
 import java.util.Objects;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends BaseActivity {
     private ActivityMainBinding binding;
     private static final String releaseUrl = "https://api.github.com/repos/GaodaGG/HK-BusNow/releases/latest";
     private AlertDialog loadingDialog;
@@ -86,7 +80,7 @@ public class MainActivity extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
 
-        setTransition();
+        setTransition(false);
 
         initView();
         if (savedInstanceState != null) {
@@ -96,32 +90,15 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void setTransition() {
-        Transition enter = new MaterialSharedAxis(MaterialSharedAxis.X, false).excludeTarget(R.id.toolBar, true);
-        Transition exit = new MaterialSharedAxis(MaterialSharedAxis.X, true).excludeTarget(R.id.toolBar, true);
-        Window window = getWindow();
-        window.setEnterTransition(enter);
-        window.setExitTransition(exit);
-        window.setAllowEnterTransitionOverlap(true);
-        window.setAllowReturnTransitionOverlap(true);
+    @Override
+    ViewBinding getBinding() {
+        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        return binding;
     }
 
-    private void initView() {
-        EdgeToEdge.enable(this);
-
-        //动态颜色
-        boolean colorSetting = PreferenceManager.getDefaultSharedPreferences(this).getBoolean("settings_system_theme", false);
-        if (colorSetting) {
-            DynamicColors.applyToActivityIfAvailable(this);
-        }
-
-        binding = ActivityMainBinding.inflate(getLayoutInflater());
-        setContentView(binding.getRoot());
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            getWindow().setNavigationBarContrastEnforced(false);
-        }
-
+    @Override
+    protected void initView() {
+        super.initView();
         setSupportActionBar(binding.toolBar);
 
         WindowCompat.setDecorFitsSystemWindows(getWindow(), false);

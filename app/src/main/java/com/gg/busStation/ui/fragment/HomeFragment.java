@@ -43,8 +43,6 @@ public class HomeFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-//        List<RouteA> routes = DataBaseManager.getRoutesHistory();
-//        List<ListItemData> data = BusDataManager.routesToListItemData(routes);
         SQLiteDatabase database = DataBaseHelper.getInstance(requireContext()).getDatabase();
         HistoryDAO historyDAO = new HistoryDAOImpl(database);
         FeatureDAO featureDAO = new FeatureDAOImpl(database);
