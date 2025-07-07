@@ -67,7 +67,7 @@ public class SearchFragment extends Fragment {
         }
 
         if (mSearchBar != null) {
-            binding.searchErrorLayout.setVisibility((mViewModel.outputText.isEmpty() && mSearchBar.getText().isEmpty()) ? View.VISIBLE : View.GONE);
+            binding.searchErrorLayout.setVisibility((mViewModel.outputText.isEmpty() && mSearchBar.getText().length() == 0) ? View.VISIBLE : View.GONE);
         }
 
         binding.searchKeyboard.setOnKeyClickListener(key -> {
@@ -76,18 +76,13 @@ public class SearchFragment extends Fragment {
             setRouteList(key);
         });
 
-        //TODO 应用重载时，键盘位置不对
-        int bottomHeight = requireActivity().findViewById(R.id.bottom_navigation).getHeight();
-        ViewGroup.MarginLayoutParams layoutParams = (ViewGroup.MarginLayoutParams) binding.searchKeyboard.getLayoutParams();
-        layoutParams.bottomMargin = bottomHeight + Tools.dp2px(requireContext(), 8);
-        binding.searchKeyboard.setLayoutParams(layoutParams);
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-
-        mSearchBar.setVisibility(View.GONE);
+        View bottomBar = requireActivity().findViewById(R.id.bottom_navigation);
+        bottomBar.post(() -> {
+            int bottomHeight = bottomBar.getHeight();
+            ViewGroup.MarginLayoutParams layoutParams = (ViewGroup.MarginLayoutParams) binding.searchKeyboard.getLayoutParams();
+            layoutParams.bottomMargin = bottomHeight + Tools.dp2px(requireContext(), 8);
+            binding.searchKeyboard.setLayoutParams(layoutParams);
+        });
     }
 
     @Override
@@ -99,6 +94,7 @@ public class SearchFragment extends Fragment {
         }
 
         mViewModel.outputText = mSearchBar.getText().toString();
+        mSearchBar.setVisibility(View.GONE);
     }
 
     private void initView(List<ListItemData> data) {
