@@ -36,8 +36,8 @@ import java.io.IOException;
 import java.util.Objects;
 
 public class MainActivity extends BaseActivity {
-    private ActivityMainBinding binding;
     private static final String releaseUrl = "https://api.github.com/repos/GaodaGG/HK-BusNow/releases/latest";
+    private ActivityMainBinding binding;
     private AlertDialog loadingDialog;
 
     // 权限申请回调
