@@ -80,7 +80,7 @@ public class MainAdapter extends ListAdapter<ListItemData, MainAdapter.ViewHolde
         if (!isSearch) {
             holder.itemView.findViewById(R.id.more_button).setOnClickListener(view -> showMenu(view, listItemData));
             //android:foreground="?attr/selectableItemBackgroundBorderless"
-            TypedArray typedArray = mActivity.getTheme().obtainStyledAttributes(R.style.Theme_BusStation, new int[]{com.google.android.material.R.attr.selectableItemBackgroundBorderless});
+            TypedArray typedArray = mActivity.getTheme().obtainStyledAttributes(R.style.Theme_BusStation, new int[]{android.R.attr.selectableItemBackgroundBorderless});
             holder.itemView.findViewById(R.id.more_button).setForeground(AppCompatResources.getDrawable(mActivity, typedArray.getResourceId(0, 0)));
             typedArray.recycle();
         }

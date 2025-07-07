@@ -36,7 +36,7 @@ public class AboutActivity extends BaseActivity {
         super.initView();
         setSupportActionBar(binding.toolBar);
 
-        binding.toolBar.setNavigationIcon(com.google.android.material.R.drawable.abc_ic_ab_back_material);
+        binding.toolBar.setNavigationIcon(com.google.android.material.R.drawable.ic_arrow_back_black_24);
         binding.toolBar.setNavigationOnClickListener(v -> supportFinishAfterTransition());
 
         binding.authorLayout.setOnClickListener(v -> {

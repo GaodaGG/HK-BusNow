@@ -16,6 +16,7 @@ import com.gg.busStation.R;
 import com.gg.busStation.data.layout.StopItemData;
 import com.gg.busStation.function.NotificationHelper;
 import com.gg.busStation.ui.layout.StopItemView;
+
 import java.util.Objects;
 
 public class StopListAdapter extends ListAdapter<StopItemData, StopListAdapter.ViewHolder> {
@@ -54,7 +55,8 @@ public class StopListAdapter extends ListAdapter<StopItemData, StopListAdapter.V
         ((StopItemView) holder.itemView).setData(stopItemData);
 
         holder.stopItemView.findViewById(R.id.more_button).setOnClickListener(this::showMenu);
-        TypedArray typedArray = mActivity.getTheme().obtainStyledAttributes(R.style.Theme_BusStation, new int[]{com.google.android.material.R.attr.selectableItemBackgroundBorderless});
+//        TypedArray typedArray = mActivity.getTheme().obtainStyledAttributes(R.style.Theme_BusStation, new int[]{com.google.android.material.R.attr.selectableItemBackgroundBorderless});
+        TypedArray typedArray = mActivity.getTheme().obtainStyledAttributes(R.style.Theme_BusStation, new int[]{android.R.attr.selectableItemBackgroundBorderless});
         holder.stopItemView.findViewById(R.id.more_button).setForeground(AppCompatResources.getDrawable(mActivity, typedArray.getResourceId(0, 0)));
         typedArray.recycle();
     }
