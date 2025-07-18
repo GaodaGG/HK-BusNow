@@ -29,7 +29,7 @@ public class FareDAOImpl implements FareDAO {
     @Override
     public void insert(int routeId, int routeSeq, String fare) {
         ContentValues values = fareToConvert(routeId, routeSeq, fare);
-        db.insert(SQLConstants.fareDBName, null, values);
+        db.insertWithOnConflict(SQLConstants.fareDBName, null, values, SQLiteDatabase.CONFLICT_REPLACE);
     }
 
     @Override

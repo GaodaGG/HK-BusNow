@@ -16,6 +16,7 @@ import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 
 import com.gg.busStation.R;
+import com.gg.busStation.databinding.DialogLoadingBinding;
 import com.gg.busStation.function.BusDataManager;
 import com.gg.busStation.ui.activity.AboutActivity;
 import com.gg.busStation.ui.activity.MainActivity;
@@ -25,6 +26,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 public class SettingsFragment extends PreferenceFragmentCompat {
     private AlertDialog loadingDialog;
+    private DialogLoadingBinding dialogBinding;
 
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
@@ -170,6 +172,17 @@ public class SettingsFragment extends PreferenceFragmentCompat {
             }
 
             @Override
+            public void progress(int now, int max, String tip){
+                requireActivity().runOnUiThread(() -> {
+                    dialogBinding.updateIndicator.setMax(max);
+                    dialogBinding.updateIndicator.setMin(0);
+                    dialogBinding.updateIndicator.setProgress(now, true);
+                    dialogBinding.updateProgress.setText(now + " / " + max);
+                    dialogBinding.updateTips.setText(tip);
+                });
+            }
+
+            @Override
             public void finish(boolean status) {
                 requireActivity().runOnUiThread(() -> {
                     loadingDialog.dismiss();
@@ -179,9 +192,10 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         };
 
         settingsUpdateNow.setOnPreferenceClickListener(preference -> {
+            dialogBinding = DialogLoadingBinding.inflate(getLayoutInflater());
             loadingDialog = new MaterialAlertDialogBuilder(requireActivity())
                     .setTitle(R.string.dialog_loading)
-                    .setView(R.layout.dialog_loading)
+                    .setView(dialogBinding.getRoot())
                     .setCancelable(false)
                     .create();
 

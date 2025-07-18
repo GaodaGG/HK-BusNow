@@ -23,6 +23,7 @@ import androidx.viewbinding.ViewBinding;
 
 import com.gg.busStation.R;
 import com.gg.busStation.databinding.ActivityMainBinding;
+import com.gg.busStation.databinding.DialogLoadingBinding;
 import com.gg.busStation.function.BusDataManager;
 import com.gg.busStation.function.SettingsManager;
 import com.gg.busStation.function.internet.HttpClientHelper;
@@ -38,6 +39,7 @@ import java.util.Objects;
 public class MainActivity extends BaseActivity {
     private static final String releaseUrl = "https://api.github.com/repos/GaodaGG/HK-BusNow/releases/latest";
     private ActivityMainBinding binding;
+    private DialogLoadingBinding dialogBinding;
     private AlertDialog loadingDialog;
 
     // 权限申请回调
@@ -54,6 +56,17 @@ public class MainActivity extends BaseActivity {
         @Override
         public void start() {
             runOnUiThread(loadingDialog::show);
+        }
+
+        @Override
+        public void progress(int now, int max, String tip){
+            runOnUiThread(() -> {
+                dialogBinding.updateIndicator.setMax(max);
+                dialogBinding.updateIndicator.setMin(0);
+                dialogBinding.updateIndicator.setProgress(now, true);
+                dialogBinding.updateProgress.setText(now + " / " + max);
+                dialogBinding.updateTips.setText(tip);
+            });
         }
 
         @Override
@@ -132,9 +145,10 @@ public class MainActivity extends BaseActivity {
             }
         });
 
+        dialogBinding = DialogLoadingBinding.inflate(getLayoutInflater());
         loadingDialog = new MaterialAlertDialogBuilder(this)
                 .setTitle(R.string.dialog_loading)
-                .setView(R.layout.dialog_loading)
+                .setView(dialogBinding.getRoot())
                 .setCancelable(false)
                 .create();
     }

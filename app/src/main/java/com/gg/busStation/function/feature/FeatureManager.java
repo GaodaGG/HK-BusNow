@@ -22,7 +22,8 @@ import java.io.InputStream;
 import java.util.List;
 
 public class FeatureManager {
-    private static final String dataJsonUrl = "https://static.data.gov.hk/td/routes-fares-geojson/JSON_BUS.json";
+    private static final String busDataUrl = "https://static.data.gov.hk/td/routes-fares-geojson/JSON_BUS.json";
+    private static final String gmbDataUrl = "https://static.data.gov.hk/td/routes-fares-geojson/JSON_GMB.json";
     public static final int outbound = 1;
     public static final int inbound = 2;
 
@@ -68,11 +69,15 @@ public class FeatureManager {
     }
 
     public List<CloudFeature> fetchAllFeatures() throws IOException {
-        InputStream data = HttpClientHelper.getDataStream(dataJsonUrl);
-        List<CloudFeature> features = JsonToBean.parseFeaturesFromStream(data);
-        data.close();
+        InputStream busData = HttpClientHelper.getDataStream(busDataUrl);
+        InputStream gmbData = HttpClientHelper.getDataStream(gmbDataUrl);
+        List<CloudFeature> busFeatures = JsonToBean.parseFeaturesFromStream(busData);
+        List<CloudFeature> gmbFeatures = JsonToBean.parseFeaturesFromStream(gmbData);
+        busData.close();
+        gmbData.close();
 
-        return features;
+        busFeatures.addAll(gmbFeatures);
+        return busFeatures;
     }
 
     public void saveFeatures(List<CloudFeature> features) {
@@ -84,7 +89,9 @@ public class FeatureManager {
     }
 
     private void saveRouteToDB(CloudFeature feature) {
-        routeDAO.insert(convertToRoute(feature));
+        if (!routeDAO.exists(feature.getProperties().getRouteId(), feature.getProperties().getRouteSeq())) {
+            routeDAO.insert(convertToRoute(feature));
+        }
     }
 
     private void saveFeatureToDB(CloudFeature feature) {

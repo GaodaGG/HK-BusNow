@@ -40,12 +40,12 @@ public class BusDataManager {
 
         onDataInitListener.start();
 
-        initData(context);
+        initData(context, onDataInitListener);
 
         onDataInitListener.finish(true);
     }
 
-    private static void initData(Context context) {
+    private static void initData(Context context, OnDataInitListener listener) {
         DataBaseHelper dataBaseHelper = DataBaseHelper.getInstance(context);
 
         CompanyManager companyManager = new CompanyManager(dataBaseHelper.getDatabase());
@@ -53,11 +53,20 @@ public class BusDataManager {
         FareManager fareManager = new FareManager(dataBaseHelper.getDatabase());
 
         dataBaseHelper.executeTransaction(db -> {
+            int max = 3;
             try {
                 companyManager.saveCompanys();
+
+                listener.progress(0, max, "正在从网络获取巴士数据");
                 List<CloudFeature> features = featureManager.fetchAllFeatures();
+
+                listener.progress(1, max, "正在导入巴士数据");
                 featureManager.saveFeatures(features);
+
+                listener.progress(2, max, "正在从网络获取车费数据");
                 fareManager.saveFares();
+
+                listener.progress(max, max, "Done!");
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
@@ -143,6 +152,8 @@ public class BusDataManager {
 
     public interface OnDataInitListener {
         void start();
+
+        void progress(int now, int max, String tip);
 
         void finish(boolean status);
     }

@@ -26,6 +26,19 @@ public class RouteDAOImpl implements RouteDAO {
     }
 
     @Override
+    public boolean exists(int routeId, int routeSeq) {
+        Cursor cursor = db.query(SQLConstants.routeDBName,
+                new String[]{"routeId", "routeSeq"},
+                "routeId = ? AND routeSeq = ?",
+                new String[]{String.valueOf(routeId), String.valueOf(routeSeq)},
+                null, null, null);
+
+        boolean exists = cursor.moveToFirst();
+        cursor.close();
+        return exists;
+    }
+
+    @Override
     public List<Route> getRoutes(int routeId, int routeSeq) {
         Cursor cursor = db.query(SQLConstants.routeDBName, null, "routeId = ? AND routeSeq = ?",
                 new String[]{String.valueOf(routeId), String.valueOf(routeSeq)}, null, null, "stopSeq ASC");
