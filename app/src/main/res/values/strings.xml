@@ -1,59 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- App basic info -->
     <string name="app_name">HK BusNow</string>
-    <string name="home_title">Home</string>
-    <string name="search_title">Search</string>
-    <string name="about_title">About</string>
     <string name="author_name">Coder</string>
     <string name="author_account" translatable="false">\@GaodaGG</string>
     <string name="about_developers">Developers</string>
-    <string name="dialog_loading">"Updating data"</string>
+    <string name="about_title">About</string>
+    <string name="about_use_title">References</string>
+
+    <!-- Navigation -->
+    <string name="home_title">Home</string>
+    <string name="search_title">Search</string>
+    <string name="settings_title">Settings</string>
+
+    <!-- Search functionality -->
     <string name="searchbar_hint">Search for a route</string>
     <string name="main_history_hint">Search and Click a route to save it here</string>
+    <string name="search_keyboard_delete">Delete</string>
+    <string name="search_keyboard_backspace">Backspace</string>
+    <string name="search_hint">Click keyboard to search</string>
+
+    <!-- Bus related -->
+    <string name="time_min">min</string>
+    <string name="bus_menu_pin">Pin</string>
+    <string name="bus_menu_unpin">Unpin</string>
+    <string name="bus_menu_delete">Delete</string>
+    <string name="stop_menu_arrival">Arrival Remind</string>
+
+    <!-- Dialog messages -->
+    <string name="dialog_loading">Updating data</string>
     <string name="dialog_permission_title">Permission request</string>
     <string name="dialog_permission_location_message">This app requires location permissions to quickly jump to the nearest bus stop.</string>
+    <string name="dialog_permission_notification_message">This app requires notification permissions to send reminders such as boarding the car.</string>
     <string name="dialog_permission_decline">Decline</string>
     <string name="dialog_permission_accept">Accept</string>
-    <string name="about_use_title">References</string>
+    <string name="dialog_permission_failed_message">Authorization failed, please grant it manually.</string>
     <string name="dialog_update_title">New Version</string>
     <string name="dialog_update_message">New version available, do you want to update?</string>
     <string name="dialog_update_never">Never</string>
     <string name="dialog_update_yes">Yes</string>
     <string name="dialog_update_no">No</string>
-    <string name="search_keyboard_delete">Delete</string>
-    <string name="search_keyboard_backspace">Backspace</string>
-    <string name="search_hint">Click keyboard to search</string>
-    <string name="error_getdata">Failed to get data</string>
-    <string name="time_min">min</string>
-    <string name="bus_menu_pin">Pin</string>
-    <string name="bus_menu_unpin">Unpin</string>
-    <string name="bus_menu_delete">Delete</string>
+
+    <!-- Settings groups -->
+    <string name="settings_group_general">General</string>
+    <string name="settings_group_theme">Theme</string>
+    <string name="settings_group_data">Data</string>
+
+    <!-- Theme settings -->
+    <string name="settings_title_dark_theme">Dark theme</string>
+    <string name="settings_title_system_theme_color">System theme color</string>
     <string name="settings_dark_allways_on">Always on</string>
     <string name="settings_dark_allways_off">Always off</string>
     <string name="settings_dark_follow">Follow system</string>
-    <string name="settings_title_dark_theme">Dark theme</string>
-    <string name="settings_title_system_theme_color">System theme color</string>
+
+    <!-- Data update settings -->
     <string name="settings_title_update_cycle">Update cycle</string>
     <string name="settings_summary_update_cycle">Bus data update interval</string>
-    <string name="settings_group_general">General</string>
-    <string name="settings_group_theme">Theme</string>
-
     <string name="settings_update_cycle_3days">3 days</string>
     <string name="settings_update_cycle_1week">1 week</string>
     <string name="settings_update_cycle_15days">15 days</string>
     <string name="settings_update_cycle_30days">30 days</string>
     <string name="settings_update_cycle_never">Never</string>
-    <string name="settings_title">Settings</string>
     <string name="settings_update_data_now">Update data now</string>
     <string name="settings_update_data_now_summary">Update bus data now</string>
-    <string name="update_success">Update success</string>
-    <string name="settings_group_data">Data</string>
-    <string name="settings_update_app_cycle_summary">Enable or disable automatic detection of new app versions</string>
+
+    <!-- App update settings -->
     <string name="settings_update_app_cycle">Auto-Check for Updates</string>
+    <string name="settings_update_app_cycle_summary">Enable or disable automatic detection of new app versions</string>
     <string name="settings_update_app_now">Check update now</string>
     <string name="settings_update_app_now_summary">Update app now</string>
+
+    <!-- Data initialization strings -->
+    <string name="data_init_fetching_bus_data">Fetching bus data from network</string>
+    <string name="data_init_importing_bus_data">Importing bus data</string>
+    <string name="data_init_fetching_fare_data">Fetching fare data from network</string>
+    <string name="data_init_done">Done!</string>
+
+    <!-- Status messages -->
+    <string name="error_getdata">Failed to get data</string>
+    <string name="update_success">Update success</string>
     <string name="update_app_already">You\'re already up to date</string>
-    <string name="stop_menu_arrival">Arrival Remind</string>
-    <string name="dialog_permission_notification_message">This app requires notification permissions to send reminders such as boarding the car.</string>
+
+    <!-- Notifications -->
     <string name="notification_channel_site_reminder">Site Remind</string>
-    <string name="dialog_permission_failed_message">Authorization failed, please grant it manually.</string>
+
 </resources>
+

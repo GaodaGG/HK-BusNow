@@ -4,6 +4,7 @@ import android.content.Context;
 
 import androidx.annotation.NonNull;
 
+import com.gg.busStation.R;
 import com.gg.busStation.data.bus.CloudFeature;
 import com.gg.busStation.data.bus.Feature;
 import com.gg.busStation.data.bus.Route;
@@ -57,16 +58,16 @@ public class BusDataManager {
             try {
                 companyManager.saveCompanys();
 
-                listener.progress(0, max, "正在从网络获取巴士数据");
+                listener.progress(0, max, context.getString(R.string.data_init_fetching_bus_data));
                 List<CloudFeature> features = featureManager.fetchAllFeatures();
 
-                listener.progress(1, max, "正在导入巴士数据");
+                listener.progress(1, max, context.getString(R.string.data_init_importing_bus_data));
                 featureManager.saveFeatures(features);
 
-                listener.progress(2, max, "正在从网络获取车费数据");
+                listener.progress(2, max, context.getString(R.string.data_init_fetching_fare_data));
                 fareManager.saveFares();
 
-                listener.progress(max, max, "Done!");
+                listener.progress(max, max, context.getString(R.string.data_init_done));
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }

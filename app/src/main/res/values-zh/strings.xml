@@ -1,58 +1,87 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- App basic info -->
     <string name="app_name">我巴士呢</string>
-    <string name="home_title">首页</string>
-    <string name="search_title">搜索</string>
-    <string name="about_title">关于</string>
-    <string name="dialog_loading">正在更新数据</string>
     <string name="author_name">码农</string>
     <string name="about_developers">开发者</string>
+    <string name="about_title">关于</string>
+    <string name="about_use_title">引用</string>
+
+    <!-- Navigation -->
+    <string name="home_title">首页</string>
+    <string name="search_title">搜索</string>
+    <string name="settings_title">设置</string>
+
+    <!-- Search functionality -->
     <string name="searchbar_hint">搜索路线</string>
     <string name="main_history_hint">搜索路线并点击，此处将存放历史记录</string>
+    <string name="search_keyboard_delete">清除</string>
+    <string name="search_keyboard_backspace">退格</string>
+    <string name="search_hint">点击键盘以搜索</string>
+
+    <!-- Bus related -->
+    <string name="time_min">分钟</string>
+    <string name="bus_menu_pin">置顶</string>
+    <string name="bus_menu_unpin">取消置顶</string>
+    <string name="bus_menu_delete">删除</string>
+    <string name="stop_menu_arrival">上车提醒</string>
+
+    <!-- Dialog messages -->
+    <string name="dialog_loading">正在更新数据</string>
     <string name="dialog_permission_title">权限申请</string>
     <string name="dialog_permission_location_message">该软件需要定位权限以便快速跳转最近的巴士站</string>
     <string name="dialog_permission_notification_message">该软件需要通知权限以便发送上车等提醒</string>
     <string name="dialog_permission_decline">拒绝</string>
     <string name="dialog_permission_accept">同意</string>
-    <string name="about_use_title">引用</string>
+    <string name="dialog_permission_failed_message">权限授权失败，请手动给予</string>
     <string name="dialog_update_title">发现新版本</string>
     <string name="dialog_update_message">新版本已发布，是否要更新？</string>
     <string name="dialog_update_never">永不更新</string>
     <string name="dialog_update_yes">是</string>
     <string name="dialog_update_no">否</string>
-    <string name="search_keyboard_delete">清除</string>
-    <string name="search_keyboard_backspace">退格</string>
-    <string name="search_hint">点击键盘以搜索</string>
-    <string name="error_getdata">获取数据失败</string>
-    <string name="time_min">分钟</string>
-    <string name="bus_menu_pin">置顶</string>
-    <string name="bus_menu_unpin">取消置顶</string>
-    <string name="bus_menu_delete">删除</string>
+
+    <!-- Settings groups -->
+    <string name="settings_group_general">一般</string>
+    <string name="settings_group_theme">主题</string>
+    <string name="settings_group_data">数据</string>
+
+    <!-- Theme settings -->
+    <string name="settings_title_dark_theme">深色模式</string>
+    <string name="settings_title_system_theme_color">系统主题色</string>
     <string name="settings_dark_allways_on">总是开启</string>
     <string name="settings_dark_allways_off">总是关闭</string>
     <string name="settings_dark_follow">跟随系统</string>
-    <string name="settings_title_dark_theme">深色模式</string>
-    <string name="settings_title_system_theme_color">系统主题色</string>
+
+    <!-- Data update settings -->
     <string name="settings_title_update_cycle">更新周期</string>
     <string name="settings_summary_update_cycle">巴士数据更新间隔时间</string>
-    <string name="settings_group_general">一般</string>
-    <string name="settings_group_theme">主题</string>
     <string name="settings_update_cycle_3days">3 天</string>
     <string name="settings_update_cycle_1week">1 周</string>
     <string name="settings_update_cycle_15days">15 天</string>
     <string name="settings_update_cycle_30days">30 天</string>
     <string name="settings_update_cycle_never">永不更新</string>
-    <string name="settings_title">设置</string>
     <string name="settings_update_data_now">立即更新</string>
     <string name="settings_update_data_now_summary">立即更新巴士数据</string>
-    <string name="update_success">更新完成</string>
-    <string name="settings_group_data">数据</string>
-    <string name="settings_update_app_cycle_summary">启用或禁用应用自动检测新版本的功能</string>
+
+    <!-- App update settings -->
     <string name="settings_update_app_cycle">自动更新应用检查</string>
+    <string name="settings_update_app_cycle_summary">启用或禁用应用自动检测新版本的功能</string>
     <string name="settings_update_app_now">检查应用更新</string>
     <string name="settings_update_app_now_summary">立即检查是否有新版本</string>
+
+    <!-- Data initialization strings -->
+    <string name="data_init_fetching_bus_data">正在从网络获取巴士数据</string>
+    <string name="data_init_importing_bus_data">正在导入巴士数据</string>
+    <string name="data_init_fetching_fare_data">正在从网络获取车费数据</string>
+    <string name="data_init_done">完成！</string>
+
+    <!-- Status messages -->
+    <string name="error_getdata">获取数据失败</string>
+    <string name="update_success">更新完成</string>
     <string name="update_app_already">当前已是最新版本</string>
-    <string name="stop_menu_arrival">上车提醒</string>
+
+    <!-- Notifications -->
     <string name="notification_channel_site_reminder">上车提醒</string>
-    <string name="dialog_permission_failed_message">权限授权失败，请手动给予</string>
+
 </resources>
+
