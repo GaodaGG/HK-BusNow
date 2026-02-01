@@ -8,7 +8,7 @@ public record CompanyData(String code, String nameC, String nameS, String nameE)
             return nameE;
         }
 
-        if (new Locale("zh_HK").getLanguage().equals(language)) {
+        if (new Locale("zh_rHK").getLanguage().equals(language)) {
             return nameC;
         }
 

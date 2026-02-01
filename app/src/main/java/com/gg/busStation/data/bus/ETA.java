@@ -34,7 +34,7 @@ public class ETA {
             return dest_en;
         }
 
-        if ("zh_HK".equals(language)) {
+        if ("zh_rHK".equals(language)) {
             return dest_tc;
         }
 
@@ -46,7 +46,7 @@ public class ETA {
             return rmk_en;
         }
 
-        if ("zh_HK".equals(language)) {
+        if ("zh_rHK".equals(language)) {
             return rmk_tc;
         }
 

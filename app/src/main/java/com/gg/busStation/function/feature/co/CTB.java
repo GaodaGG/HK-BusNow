@@ -32,7 +32,7 @@ public class CTB implements Company {
         String data = HttpClientHelper.getData(url);
 
         for (JsonElement jsonElement : JsonToBean.extractJsonArray(data)) {
-            String bound = routeSeq == FeatureManager.outbound ? "I" : "O";
+            String bound = routeSeq == FeatureManager.outbound ? "O" : "I";
             JsonObject jsonObject = jsonElement.getAsJsonObject();
             if (!"".equals(jsonObject.get("eta").getAsString()) && bound.equals(jsonObject.get("dir").getAsString())) {
                 ETA eta = JsonToBean.jsonToETA(jsonObject);

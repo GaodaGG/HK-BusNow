@@ -8,7 +8,7 @@ public record Stop(int id, String nameE, String nameC, String nameS, double lat,
             return nameE;
         }
 
-        if (new Locale("zh_HK").getLanguage().equals(language)) {
+        if (new Locale("zh_rHK").getLanguage().equals(language)) {
             return nameC;
         }
 

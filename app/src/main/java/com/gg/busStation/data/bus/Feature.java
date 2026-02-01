@@ -49,7 +49,7 @@ public class Feature {
             return getRouteNameE();
         }
 
-        if (new Locale("zh_HK").getLanguage().equals(language)) {
+        if (new Locale("zh_rHK").getLanguage().equals(language)) {
             return getRouteNameC();
         }
 
@@ -61,7 +61,7 @@ public class Feature {
             return getLocStartNameE();
         }
 
-        if (new Locale("zh_HK").getLanguage().equals(language)) {
+        if (new Locale("zh_rHK").getLanguage().equals(language)) {
             return getLocStartNameC();
         }
 
@@ -73,7 +73,7 @@ public class Feature {
             return getLocEndNameE();
         }
 
-        if (new Locale("zh_HK").getLanguage().equals(language)) {
+        if (new Locale("zh_rHK").getLanguage().equals(language)) {
             return getLocEndNameC();
         }
 
