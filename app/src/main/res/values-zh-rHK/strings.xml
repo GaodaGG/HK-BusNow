@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App basic info -->
+    <string name="app_name">我巴士呢</string>
+    <string name="author_name">程式員</string>
+    <string name="about_developers">開發者</string>
+    <string name="about_title">關於</string>
+    <string name="about_use_title">引用</string>
+
+    <!-- Navigation -->
+    <string name="home_title">主頁</string>
+    <string name="search_title">搵嘢</string>
+    <string name="settings_title">設定</string>
+
+    <!-- Search functionality -->
+    <string name="searchbar_hint">搵路線</string>
+    <string name="main_history_hint">搵路線然後撳一下，呢度會儲存搜尋記錄</string>
+    <string name="search_keyboard_delete">清除</string>
+    <string name="search_keyboard_backspace">退格</string>
+    <string name="search_hint">撳鍵盤嚟搵嘢</string>
+
+    <!-- Bus related -->
+    <string name="time_min">分鐘</string>
+    <string name="bus_menu_pin">置頂</string>
+    <string name="bus_menu_unpin">取消置頂</string>
+    <string name="bus_menu_delete">刪除</string>
+    <string name="stop_menu_arrival">上車提醒</string>
+
+    <!-- Dialog messages -->
+    <string name="dialog_loading">更新緊資料</string>
+    <string name="dialog_permission_title">權限申請</string>
+    <string name="dialog_permission_location_message">呢個App需要定位權限嚟快速跳轉到最近嘅巴士站</string>
+    <string name="dialog_permission_notification_message">呢個App需要通知權限嚟發送上車等提醒</string>
+    <string name="dialog_permission_decline">拒絕</string>
+    <string name="dialog_permission_accept">同意</string>
+    <string name="dialog_permission_failed_message">權限授權失敗，請手動俾權限</string>
+    <string name="dialog_update_title">發現新版本</string>
+    <string name="dialog_update_message">有新版本啦，要唔要更新？</string>
+    <string name="dialog_update_never">永遠唔更新</string>
+    <string name="dialog_update_yes">要</string>
+    <string name="dialog_update_no">唔要</string>
+
+    <!-- Settings groups -->
+    <string name="settings_group_general">一般</string>
+    <string name="settings_group_theme">主題</string>
+    <string name="settings_group_data">資料</string>
+
+    <!-- Theme settings -->
+    <string name="settings_title_dark_theme">夜間模式</string>
+    <string name="settings_title_system_theme_color">系統主題色</string>
+    <string name="settings_dark_allways_on">長開</string>
+    <string name="settings_dark_allways_off">長關</string>
+    <string name="settings_dark_follow">跟系統</string>
+
+    <!-- Data update settings -->
+    <string name="settings_title_update_cycle">更新週期</string>
+    <string name="settings_summary_update_cycle">巴士資料更新間隔時間</string>
+    <string name="settings_update_cycle_3days">3 日</string>
+    <string name="settings_update_cycle_1week">1 個星期</string>
+    <string name="settings_update_cycle_15days">15 日</string>
+    <string name="settings_update_cycle_30days">30 日</string>
+    <string name="settings_update_cycle_never">永遠唔更新</string>
+    <string name="settings_update_data_now">即刻更新</string>
+    <string name="settings_update_data_now_summary">即刻更新巴士資料</string>
+
+    <!-- App update settings -->
+    <string name="settings_update_app_cycle">自動檢查App更新</string>
+    <string name="settings_update_app_cycle_summary">啟用或者停用App自動檢測新版本功能</string>
+    <string name="settings_update_app_now">檢查App更新</string>
+    <string name="settings_update_app_now_summary">即刻檢查有冇新版本</string>
+
+    <!-- Data initialization strings -->
+    <string name="data_init_fetching_bus_data">從網絡攞緊巴士資料</string>
+    <string name="data_init_importing_bus_data">導入緊巴士資料</string>
+    <string name="data_init_fetching_fare_data">從網絡攞緊車費資料</string>
+    <string name="data_init_done">搞掂！</string>
+
+    <!-- Status messages -->
+    <string name="error_getdata">攞資料失敗</string>
+    <string name="update_success">更新完成</string>
+    <string name="update_app_already">而家已經係最新版本</string>
+
+    <!-- Notifications -->
+    <string name="notification_channel_site_reminder">上車提醒</string>
+
+</resources>
