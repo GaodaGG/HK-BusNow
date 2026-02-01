@@ -100,6 +100,7 @@ public class StopBottomSheetDialog extends BottomSheetDialogFragment {
             }
 
             StopListAdapter stopListAdapter = new StopListAdapter(requireActivity());
+            stopListAdapter.setRouteName(mData.getStopNumber());
             stopListAdapter.submitList(data);
             LinearLayoutManager manager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
             MaterialDividerItemDecoration divider = new MaterialDividerItemDecoration(requireContext(), LinearLayoutManager.VERTICAL);

@@ -25,7 +25,7 @@
     <string name="bus_menu_pin">Pin</string>
     <string name="bus_menu_unpin">Unpin</string>
     <string name="bus_menu_delete">Delete</string>
-    <string name="stop_menu_arrival">Arrival Remind</string>
+    <string name="stop_menu_boarding">Boarding Remind</string>
 
     <!-- Dialog messages -->
     <string name="dialog_loading">Updating data</string>
@@ -83,6 +83,21 @@
 
     <!-- Notifications -->
     <string name="notification_channel_site_reminder">Site Remind</string>
+    <string name="notification_channel_boarding_reminder">Boarding Reminder</string>
+    <string name="notification_channel_boarding_reminder_desc">Reminder for boarding the bus</string>
+
+    <!-- Reminder dialog -->
+    <string name="dialog_reminder_title">Set Reminder</string>
+    <string name="dialog_reminder_minutes_before">Remind me %d minutes before</string>
+    <string name="dialog_reminder_set_success">Reminder set successfully</string>
+    <string name="dialog_reminder_set_failed">Failed to set reminder, ETA time may have passed</string>
+    <string name="dialog_reminder_no_eta">No ETA data available</string>
+    <string name="dialog_reminder_cancel">Cancel</string>
+    <string name="dialog_reminder_confirm">Confirm</string>
+    <string name="reminder_option_1_min">1 minute</string>
+    <string name="reminder_option_2_min">2 minutes</string>
+    <string name="reminder_option_3_min">3 minutes</string>
+    <string name="reminder_option_5_min">5 minutes</string>
 
 </resources>
 

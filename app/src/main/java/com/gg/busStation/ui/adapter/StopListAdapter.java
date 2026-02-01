@@ -13,10 +13,14 @@ import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.gg.busStation.R;
+import com.gg.busStation.data.bus.ETA;
 import com.gg.busStation.data.layout.StopItemData;
+import com.gg.busStation.data.reminder.ReminderData;
 import com.gg.busStation.function.NotificationHelper;
+import com.gg.busStation.ui.dialog.ReminderDialog;
 import com.gg.busStation.ui.layout.StopItemView;
 
+import java.util.List;
 import java.util.Objects;
 
 public class StopListAdapter extends ListAdapter<StopItemData, StopListAdapter.ViewHolder> {
@@ -35,10 +39,15 @@ public class StopListAdapter extends ListAdapter<StopItemData, StopListAdapter.V
     };
 
     private final FragmentActivity mActivity;
+    private String mRouteName = "";
 
     public StopListAdapter(FragmentActivity activity) {
         super(DIFF_CALLBACK);
         this.mActivity = activity;
+    }
+
+    public void setRouteName(String routeName) {
+        this.mRouteName = routeName;
     }
 
     @NonNull
@@ -54,23 +63,47 @@ public class StopListAdapter extends ListAdapter<StopItemData, StopListAdapter.V
         StopItemData stopItemData = getItem(position);
         ((StopItemView) holder.itemView).setData(stopItemData);
 
-        holder.stopItemView.findViewById(R.id.more_button).setOnClickListener(this::showMenu);
+        holder.stopItemView.findViewById(R.id.more_button).setOnClickListener(v ->
+                showMenu(v, holder.stopItemView));
 //        TypedArray typedArray = mActivity.getTheme().obtainStyledAttributes(R.style.Theme_BusStation, new int[]{com.google.android.material.R.attr.selectableItemBackgroundBorderless});
         TypedArray typedArray = mActivity.getTheme().obtainStyledAttributes(R.style.Theme_BusStation, new int[]{android.R.attr.selectableItemBackgroundBorderless});
         holder.stopItemView.findViewById(R.id.more_button).setForeground(AppCompatResources.getDrawable(mActivity, typedArray.getResourceId(0, 0)));
         typedArray.recycle();
     }
 
-    private void showMenu(View moreButtion) {
-        PopupMenu popupMenu = new PopupMenu(mActivity, moreButtion);
+    private void showMenu(View moreButton, StopItemView stopItemView) {
+        PopupMenu popupMenu = new PopupMenu(mActivity, moreButton);
         popupMenu.inflate(R.menu.stop_item_menu);
 
         popupMenu.setOnMenuItemClickListener(item -> {
             int itemId = item.getItemId();
-            if (itemId == R.id.stop_menu_arrival) {
-                NotificationHelper.postNotification(mActivity, 0, NotificationHelper.getChannelIDs()[0], "Just test", "just test", R.drawable.ic_launcher_foreground);
+
+            // 获取站点数据和ETA数据
+            StopItemData stopData = stopItemView.getStopData();
+            List<ETA> etaList = stopItemView.getLastEtaList();
+            String routeName = mRouteName;           // 路线号
+            String stopName = stopData.getHeadline(); // 站点名称
+
+            if (itemId == R.id.stop_menu_boarding) {
+                // 检查通知权限
+                if (!NotificationHelper.checkPermission(mActivity)) {
+                    NotificationHelper.registerPermission(mActivity);
+                    return true;
+                }
+
+                // 显示上车提醒对话框
+                ReminderDialog dialog = new ReminderDialog(
+                        mActivity,
+                        ReminderData.TYPE_BOARDING,
+                        routeName,
+                        stopName,
+                        stopData,
+                        etaList
+                );
+                dialog.show();
                 return true;
             }
+
 
             return false;
         });

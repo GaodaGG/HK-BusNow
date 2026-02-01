@@ -38,8 +38,11 @@ import com.google.android.material.motion.MotionUtils;
 import java.util.ArrayList;
 import java.util.List;
 
+import lombok.Getter;
+
 public class StopItemView extends LinearLayout {
     private ItemBusExpendBinding binding;
+    @Getter
     private boolean isOpen = false;
     private int openHeight;
     private int closeHeight;
@@ -47,6 +50,16 @@ public class StopItemView extends LinearLayout {
     private int updateCounter = 0;
     //记录上次更新时间 防止多次更新 比如从后台切回前台
     private int lastUpdateTime = Calendar.getInstance().get(java.util.Calendar.MINUTE);
+
+    /**
+     * -- GETTER --
+     *  获取最近一次获取的ETA数据
+     *
+     * @return ETA列表
+     */
+    // 保存最近一次获取的ETA数据
+    @Getter
+    private List<ETA> lastEtaList = new ArrayList<>();
 
     private final BroadcastReceiver updateTimeReciver = new BroadcastReceiver() {
         @Override
@@ -173,6 +186,9 @@ public class StopItemView extends LinearLayout {
             Log.d("StopItemView", company.getClass().getName());
             Log.d("StopItemView", "getETA: " + etas.toString());
 
+            // 保存ETA数据供外部使用
+            lastEtaList = new ArrayList<>(etas);
+
             mainHandler.post(timeList::removeAllViews);
 
             if (etas.isEmpty()) {
@@ -243,10 +259,6 @@ public class StopItemView extends LinearLayout {
         valueAnimator.start();
     }
 
-    public boolean isOpen() {
-        return isOpen;
-    }
-
 
     public void setContext(String context) {
         binding.getData().setContext(context);
@@ -258,5 +270,13 @@ public class StopItemView extends LinearLayout {
 
     public void setHeadline(String headline) {
         binding.getData().setHeadline(headline);
+    }
+
+    /**
+     * 获取绑定的站点数据
+     * @return StopItemData
+     */
+    public StopItemData getStopData() {
+        return binding.getData();
     }
 }

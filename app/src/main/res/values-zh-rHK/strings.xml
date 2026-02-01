@@ -24,7 +24,7 @@
     <string name="bus_menu_pin">置頂</string>
     <string name="bus_menu_unpin">取消置頂</string>
     <string name="bus_menu_delete">刪除</string>
-    <string name="stop_menu_arrival">上車提醒</string>
+    <string name="stop_menu_boarding">上車提醒</string>
 
     <!-- Dialog messages -->
     <string name="dialog_loading">更新緊資料</string>
@@ -81,6 +81,21 @@
     <string name="update_app_already">而家已經係最新版本</string>
 
     <!-- Notifications -->
-    <string name="notification_channel_site_reminder">上車提醒</string>
+    <string name="notification_channel_site_reminder">站點提醒</string>
+    <string name="notification_channel_boarding_reminder">上車提醒</string>
+    <string name="notification_channel_boarding_reminder_desc">巴士就嚟到站時提醒上車</string>
+
+    <!-- Reminder dialog -->
+    <string name="dialog_reminder_title">設定提醒時間</string>
+    <string name="dialog_reminder_minutes_before">提前 %d 分鐘提醒</string>
+    <string name="dialog_reminder_set_success">提醒設定成功</string>
+    <string name="dialog_reminder_set_failed">設定失敗，到站時間可能已過</string>
+    <string name="dialog_reminder_no_eta">暫時冇到站時間資料</string>
+    <string name="dialog_reminder_cancel">取消</string>
+    <string name="dialog_reminder_confirm">確定</string>
+    <string name="reminder_option_1_min">1 分鐘</string>
+    <string name="reminder_option_2_min">2 分鐘</string>
+    <string name="reminder_option_3_min">3 分鐘</string>
+    <string name="reminder_option_5_min">5 分鐘</string>
 
 </resources>
