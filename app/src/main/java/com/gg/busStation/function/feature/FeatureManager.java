@@ -89,9 +89,7 @@ public class FeatureManager {
     }
 
     private void saveRouteToDB(CloudFeature feature) {
-        if (!routeDAO.exists(feature.getProperties().getRouteId(), feature.getProperties().getRouteSeq())) {
-            routeDAO.insert(convertToRoute(feature));
-        }
+        routeDAO.insert(convertToRoute(feature));
     }
 
     private void saveFeatureToDB(CloudFeature feature) {

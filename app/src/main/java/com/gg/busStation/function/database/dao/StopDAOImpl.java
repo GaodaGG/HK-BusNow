@@ -4,12 +4,8 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
-import com.gg.busStation.data.bus.Route;
 import com.gg.busStation.data.bus.Stop;
 import com.gg.busStation.data.database.SQLConstants;
-
-import java.util.Collections;
-import java.util.List;
 
 public class StopDAOImpl implements StopDAO {
     private final SQLiteDatabase db;
