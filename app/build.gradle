@@ -9,12 +9,12 @@ keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
 
 android {
     namespace 'com.gg.busStation'
-    compileSdk 35
+    compileSdk 36
 
     defaultConfig {
         applicationId "com.gg.busStation"
         minSdk 28
-        targetSdk 35
+        targetSdk 36
         versionCode Integer.parseInt(new Date().format('yyyyMMdd'))
         versionName "1.3.0"
 
