@@ -70,6 +70,7 @@ public class JsonToBean {
                 CloudFeature feature = gson.fromJson(reader, CloudFeature.class);
                 features.add(feature);
             }
+            reader.endArray();
         } else {
             reader.skipValue();
         }
