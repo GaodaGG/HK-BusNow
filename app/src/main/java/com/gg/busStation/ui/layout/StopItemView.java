@@ -48,15 +48,10 @@ public class StopItemView extends LinearLayout {
     private int closeHeight;
 
     private int updateCounter = 0;
+    private boolean isReceiverRegistered = false;
     //记录上次更新时间 防止多次更新 比如从后台切回前台
     private int lastUpdateTime = Calendar.getInstance().get(java.util.Calendar.MINUTE);
 
-    /**
-     * -- GETTER --
-     *  获取最近一次获取的ETA数据
-     *
-     * @return ETA列表
-     */
     // 保存最近一次获取的ETA数据
     @Getter
     private List<ETA> lastEtaList = new ArrayList<>();
@@ -105,7 +100,44 @@ public class StopItemView extends LinearLayout {
         });
     }
 
+    @Override
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        registerTimeReceiver();
+    }
+
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+        unregisterTimeReceiver();
+    }
+
+    private void registerTimeReceiver() {
+        if (!isReceiverRegistered && isOpen) { // 只有展开状态才需要监听时间更新
+            try {
+                IntentFilter filter = new IntentFilter();
+                filter.addAction(Intent.ACTION_TIME_TICK);
+                getContext().registerReceiver(updateTimeReciver, filter);
+                isReceiverRegistered = true;
+            } catch (Exception e) {
+
+            }
+        }
+    }
+
+    private void unregisterTimeReceiver() {
+        if (isReceiverRegistered) {
+            try {
+                getContext().unregisterReceiver(updateTimeReciver);
+                isReceiverRegistered = false;
+            } catch (Exception e) {
+            }
+        }
+    }
+
     public void setData(StopItemData data) {
+        setTag(data.getRouteId() + "_" + data.getStopSeq());
+
         binding.setData(data);
         binding.listItemLayout.setData(new ListItemData(0, data.getCo(), data.getStopNumber(), data.getHeadline(), data.getContext(), 1, "1", ""));
         binding.executePendingBindings();
@@ -126,6 +158,8 @@ public class StopItemView extends LinearLayout {
         });
 
         if (isOpen) {
+            registerTimeReceiver();
+
             ETAView[] etas = data.getEtas();
             if (etas == null) {
                 TextView textView = new TextView(binding.getRoot().getContext());
@@ -138,14 +172,11 @@ public class StopItemView extends LinearLayout {
             for (ETAView eta : etas) {
                 if (eta.getParent() != null) ((ViewGroup) eta.getParent()).removeView(eta);
                 binding.dialogTimeList.addView(eta);
-
-                //注册广播更新时间
-                IntentFilter filter = new IntentFilter();
-                filter.addAction(Intent.ACTION_TIME_TICK);
-                getContext().registerReceiver(updateTimeReciver, filter);
             }
 
             getLayoutParams().height = openHeight;
+        } else {
+            unregisterTimeReceiver();
         }
     }
 
@@ -161,17 +192,18 @@ public class StopItemView extends LinearLayout {
 
         LinearLayout timeList = findViewById(R.id.dialog_time_list);
         for (int i = 0; i < timeList.getChildCount(); i++) {
-            ETAView etaView = (ETAView) timeList.getChildAt(i);
-            etaView.updateTime();
+            View child = timeList.getChildAt(i);
+            if (child instanceof ETAView etaView) {
+                etaView.updateTime();
+            }
         }
     }
 
     public void getETA(Context context, View view) {
         Handler mainHandler = new Handler(Looper.getMainLooper());
-
         StopItemData data = binding.getData();
-
         LinearLayout timeList = view.findViewById(R.id.dialog_time_list);
+        String currentTag = data.getRouteId() + "_" + data.getStopSeq();
 
         new Thread(() -> {
             Company company = CompanyManager.getCompanyInstance(data.getCo());
@@ -186,9 +218,13 @@ public class StopItemView extends LinearLayout {
             Log.d("StopItemView", company.getClass().getName());
             Log.d("StopItemView", "getETA: " + etas.toString());
 
+            // 校验 View 是否已经被复用给其他数据了
+            if (!currentTag.equals(getTag())) {
+                return;
+            }
+
             // 保存ETA数据供外部使用
             lastEtaList = new ArrayList<>(etas);
-
             mainHandler.post(timeList::removeAllViews);
 
             if (etas.isEmpty()) {
@@ -214,17 +250,19 @@ public class StopItemView extends LinearLayout {
             }
 
             data.setEtas(etaViews.toArray(new ETAView[0]));
-
-            //注册广播更新时间
-            IntentFilter filter = new IntentFilter();
-            filter.addAction(Intent.ACTION_TIME_TICK);
-            getContext().registerReceiver(updateTimeReciver, filter);
         }).start();
     }
 
     public void toggle() {
         isOpen = !isOpen;
         binding.getData().isOpen.set(isOpen);
+
+        if (isOpen) {
+            registerTimeReceiver();
+        } else {
+            unregisterTimeReceiver();
+        }
+
         adjustViewHeight(isOpen, getLayoutParams());
     }
 

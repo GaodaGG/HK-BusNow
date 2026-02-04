@@ -14,7 +14,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class JsonToBean {
@@ -64,9 +63,13 @@ public class JsonToBean {
     private static List<CloudFeature> processStream(JsonReader reader) throws IOException {
         List<CloudFeature> features = new ArrayList<>();
         String key = reader.nextName();
+
         if (key.equals("features")) {
-            CloudFeature[] feature = gson.fromJson(reader, CloudFeature[].class);
-            features.addAll(Arrays.asList(feature));
+            reader.beginArray();
+            while (reader.hasNext()) {
+                CloudFeature feature = gson.fromJson(reader, CloudFeature.class);
+                features.add(feature);
+            }
         } else {
             reader.skipValue();
         }
