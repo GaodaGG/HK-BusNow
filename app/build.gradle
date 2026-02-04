@@ -84,7 +84,8 @@ android {
 }
 
 dependencies {
-
+    // Markwon: https://github.com/noties/Markwon
+    implementation libs.markwon
     // lombok: https://projectlombok.org/
     compileOnly libs.lombok
     annotationProcessor libs.lombok

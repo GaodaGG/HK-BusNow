@@ -6,6 +6,7 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.Spanned;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -36,6 +37,8 @@ import com.google.gson.JsonParser;
 import java.io.IOException;
 import java.util.Objects;
 
+import io.noties.markwon.Markwon;
+
 public class MainActivity extends BaseActivity {
     private static final String releaseUrl = "https://api.github.com/repos/GaodaGG/HK-BusNow/releases/latest";
     private ActivityMainBinding binding;
@@ -59,7 +62,7 @@ public class MainActivity extends BaseActivity {
         }
 
         @Override
-        public void progress(int now, int max, String tip){
+        public void progress(int now, int max, String tip) {
             runOnUiThread(() -> {
                 dialogBinding.updateIndicator.setMax(max);
                 dialogBinding.updateIndicator.setMin(0);
@@ -220,10 +223,13 @@ public class MainActivity extends BaseActivity {
         Log.d("AppUpdate", "App ABI: " + abi);
 
         String updateContent = jsonObject.get("body").getAsString();
+        Markwon markwon = Markwon.create(this);
+        Spanned markdown = markwon.toMarkdown("## " + getString(R.string.dialog_update_message) + "\n" + updateContent);
+
         String downloadUrl = jsonObject.getAsJsonArray("assets").get(index).getAsJsonObject().get("browser_download_url").getAsString();
         MaterialAlertDialogBuilder dialog = new MaterialAlertDialogBuilder(this)
                 .setTitle(getString(R.string.dialog_update_title) + " " + version)
-                .setMessage(getString(R.string.dialog_update_message) + "\n" + updateContent)
+                .setMessage(markdown)
                 .setNeutralButton(R.string.dialog_update_never, (dialogInterface, i) -> settingsManager.setUpdateApp(false))
                 .setNegativeButton(R.string.dialog_update_no, null)
                 .setPositiveButton(R.string.dialog_update_yes, (dialogInterface, i) -> {

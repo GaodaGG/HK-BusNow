@@ -3,6 +3,7 @@ agp = "8.9.2"
 baidumapsdk_location = "9.6.5.1"
 baidumapsdk_util = "7.6.5.1"
 baidumapsdk_base = "7.6.5.1"
+markwon = "4.6.2"
 gson = "2.11.0"
 junit = "4.13.2"
 junitVersion = "1.2.1"
@@ -19,6 +20,7 @@ preferenceKtx = "1.2.1"
 baidumapsdk_location = { module = "com.baidu.lbsyun:BaiduMapSDK_Location", version.ref = "baidumapsdk_location" }
 baidumapsdk_util = { module = "com.baidu.lbsyun:BaiduMapSDK_Util", version.ref = "baidumapsdk_util" }
 baidumapsdk_base = { module = "com.baidu.lbsyun:base", version.ref = "baidumapsdk_base" }
+markwon = { module = "io.noties.markwon:core", version.ref = "markwon" }
 gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 lombok = { module = "org.projectlombok:lombok", version.ref = "lombok" }

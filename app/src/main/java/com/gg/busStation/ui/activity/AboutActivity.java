@@ -14,8 +14,8 @@ import com.gg.busStation.databinding.ItemAboutReferencesBinding;
 public class AboutActivity extends BaseActivity {
     ActivityAboutBinding binding;
 
-    private static final String[] referencesName = new String[]{"Google/Gson", "square/OKHttp3", "Google/Material Design", "Baidu/Baidu Location"};
-    private static final String[] referencesLink = new String[]{"https://github.com/google/gson/", "https://github.com/square/okhttp/", "https://material.io/", "https://lbsyun.baidu.com/location/"};
+    private static final String[] referencesName = new String[]{"Google/Gson", "square/OKHttp3", "Google/Material Design", "Baidu/Baidu Location", "noties/Markwon"};
+    private static final String[] referencesLink = new String[]{"https://github.com/google/gson/", "https://github.com/square/okhttp/", "https://material.io/", "https://lbsyun.baidu.com/location/", "https://github.com/noties/Markwon"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
