@@ -38,7 +38,7 @@ public class FeatureDAOImpl implements FeatureDAO {
     @Override
     public void insert(Feature feature) {
         ContentValues values = featureToConvert(feature);
-        db.insert(SQLConstants.featureDBName, null, values);
+        db.insertWithOnConflict(SQLConstants.featureDBName, null, values, SQLiteDatabase.CONFLICT_IGNORE);
     }
 
     @Override

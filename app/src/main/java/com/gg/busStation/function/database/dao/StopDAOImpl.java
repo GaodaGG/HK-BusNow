@@ -31,7 +31,7 @@ public class StopDAOImpl implements StopDAO {
     @Override
     public void insert(Stop stop) {
         ContentValues values = stopToConvert(stop);
-        db.insert(SQLConstants.stopDBName, null, values);
+        db.insertWithOnConflict(SQLConstants.stopDBName, null, values, SQLiteDatabase.CONFLICT_IGNORE);
     }
 
     @Override

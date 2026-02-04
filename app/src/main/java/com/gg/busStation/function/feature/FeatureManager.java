@@ -93,16 +93,11 @@ public class FeatureManager {
     }
 
     private void saveFeatureToDB(CloudFeature feature) {
-        if (!featureDAO.exists(feature.getProperties().getRouteId())) {
-            featureDAO.insert(cloudFeatureToDBFeature(feature));
-        }
+        featureDAO.insert(cloudFeatureToDBFeature(feature));
     }
 
     private void saveStopToDB(CloudFeature feature) {
-        if (!stopDAO.exists(feature.getProperties().getStopId())) {
-            Stop stop = convertToStop(feature);
-            stopDAO.insert(stop);
-        }
+        stopDAO.insert(convertToStop(feature));
     }
 
     private Feature cloudFeatureToDBFeature(CloudFeature feature) {

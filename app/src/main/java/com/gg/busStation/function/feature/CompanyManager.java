@@ -7,11 +7,15 @@ import com.gg.busStation.function.database.dao.CompanyDAO;
 import com.gg.busStation.function.database.dao.CompanyDAOImpl;
 import com.gg.busStation.function.feature.co.Company;
 
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 import lombok.SneakyThrows;
 
 public class CompanyManager {
     private final CompanyDAO companyDAO;
     private static final String PACKAGE = "com.gg.busStation.function.feature.co.";
+    private static final Map<String, Company> companyCache = new ConcurrentHashMap<>();
 
     public CompanyManager(SQLiteDatabase db) {
         this.companyDAO = new CompanyDAOImpl(db);
@@ -28,9 +32,14 @@ public class CompanyManager {
         }
 
         String className = PACKAGE + company;
+        if (companyCache.containsKey(className)) {
+            return companyCache.get(className);
+        }
 
         try {
-            return (Company) Class.forName(className).newInstance();
+            Company companyInstance = (Company) Class.forName(className).newInstance();
+            companyCache.put(className, companyInstance);
+            return companyInstance;
         } catch (ClassNotFoundException e) {
             return null;
         }
