@@ -37,8 +37,10 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.google.android.material.divider.MaterialDividerItemDecoration;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 public class StopBottomSheetDialog extends BottomSheetDialogFragment {
     public static final String TAG = "BusBottomSheetDialog";
@@ -143,10 +145,25 @@ public class StopBottomSheetDialog extends BottomSheetDialogFragment {
         List<StopItemData> data = new ArrayList<>();
         StopDAO stopDAO = new StopDAOImpl(db);
 
-        routes.forEach(route -> {
-            Stop stop = stopDAO.getStop(route.stopId());
-            mStops.add(stop);
-        });
+        List<Integer> stopIds = new ArrayList<>();
+        for (Route route : routes) {
+            stopIds.add(route.stopId());
+        }
+
+        List<Stop> fetchedStops = stopDAO.getStops(stopIds);
+
+        Map<Integer, Stop> stopMap = new HashMap<>();
+        for (Stop stop : fetchedStops) {
+            stopMap.put(stop.id(), stop);
+        }
+
+        mStops.clear();
+        for (Route route : routes) {
+            Stop stop = stopMap.get(route.stopId());
+            if (stop != null) {
+                mStops.add(stop);
+            }
+        }
 
         String language = Locale.getDefault().getLanguage();
         Route route = routes.get(0);

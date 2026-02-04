@@ -2,6 +2,7 @@ package com.gg.busStation.data.database;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
@@ -41,9 +42,22 @@ public class DBOpenHelper extends SQLiteOpenHelper {
                 db.execSQL(tableInfo.getCreateCommand());
             }
         });
+
+        try {
+            db.execSQL(SQLConstants.createFeatureCompanyIndexCommand);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        if (newVersion > 20260201 && newVersion < 20260206) {
+            try {
+                db.execSQL(SQLConstants.createFeatureCompanyIndexCommand);
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        }
     }
 }

@@ -151,7 +151,7 @@ public class BusDataManager {
         for (Route route : routes) {
             routeIds.add(route.id());
         }
-        List<Feature> features = featureDAO.getFeaturesByIds(routeIds);
+        List<Feature> features = featureDAO.getFeatures(routeIds);
 
         Map<Integer, Feature> featureMap = new HashMap<>();
         for (Feature feature : features) {

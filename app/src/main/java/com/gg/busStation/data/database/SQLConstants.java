@@ -81,6 +81,8 @@ public class SQLConstants {
             "value TEXT" +
             ");";
 
+    public static final String createFeatureCompanyIndexCommand =
+            "CREATE INDEX IF NOT EXISTS index_features_companyCode ON " + featureDBName + " (companyCode);";
 
     @lombok.Getter
     @lombok.Setter

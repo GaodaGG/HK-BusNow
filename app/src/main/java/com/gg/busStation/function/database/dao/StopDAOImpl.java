@@ -7,6 +7,10 @@ import android.database.sqlite.SQLiteDatabase;
 import com.gg.busStation.data.bus.Stop;
 import com.gg.busStation.data.database.SQLConstants;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 public class StopDAOImpl implements StopDAO {
     private final SQLiteDatabase db;
 
@@ -49,6 +53,34 @@ public class StopDAOImpl implements StopDAO {
         return stop;
     }
 
+    @Override
+    public List<Stop> getStops(List<Integer> stopIds) {
+        if (stopIds == null || stopIds.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        // 动态构建 IN 语句
+        StringBuilder selection = new StringBuilder("id IN (");
+        String[] args = new String[stopIds.size()];
+        for (int i = 0; i < stopIds.size(); i++) {
+            selection.append("?");
+            if (i < stopIds.size() - 1) selection.append(",");
+            args[i] = String.valueOf(stopIds.get(i));
+        }
+        selection.append(")");
+
+        List<Stop> stops = new ArrayList<>();
+        Cursor cursor = db.query(SQLConstants.stopDBName, null, selection.toString(), args, null, null, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                stops.add(convertToStop(cursor));
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        return stops;
+    }
+
     private Stop convertToStop(Cursor cursor) {
         return new Stop(
                 cursor.getInt(cursor.getColumnIndexOrThrow("id")),
@@ -62,8 +94,11 @@ public class StopDAOImpl implements StopDAO {
 
     private static String splitAndGetFirstLine(String input) {
         if (input == null) return "";
-        String[] parts = input.split("/<br>", 2);
-        return parts[0].trim(); // 去除首尾空格
+        int index = input.indexOf("/<br>");
+        if (index != -1) {
+            return input.substring(0, index).trim();
+        }
+        return input.trim();// 去除首尾空格
     }
 
     private static ContentValues stopToConvert(Stop stop) {

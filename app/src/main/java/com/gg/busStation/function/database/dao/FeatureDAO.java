@@ -16,9 +16,9 @@ public interface FeatureDAO {
 
     List<Feature> getFeatures(CompanyManager.CompanyEnum company);
 
-    List<Feature> fuzzySearchFeature(String routeName);
+    List<Feature> getFeatures(List<Integer> featureIds);
 
-    List<Feature> getFeaturesByIds(List<Integer> ids);
+    List<Feature> fuzzySearchFeature(String routeName);
 
     List<String> getFeatureNthCharacters(String routeName, int index);
 }

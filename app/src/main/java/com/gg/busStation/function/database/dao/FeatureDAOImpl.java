@@ -92,16 +92,25 @@ public class FeatureDAOImpl implements FeatureDAO {
     }
 
     @Override
-    public List<Feature> fuzzySearchFeature(String routeName) {
-        if (routeName.isEmpty()) {
+    public List<Feature> getFeatures(List<Integer> featureIds) {
+        if (featureIds.isEmpty()) {
             return Collections.emptyList();
         }
 
-        String args = routeName + "%";
+        List<String> args = new ArrayList<>(featureIds.size());
+        StringBuilder placeholders = new StringBuilder();
+        for (int i = 0; i < featureIds.size(); i++) {
+            args.add(String.valueOf(featureIds.get(i)));
+            if (i > 0) {
+                placeholders.append(",");
+            }
+            placeholders.append("?");
+        }
+
         Cursor cursor = db.query(SQLConstants.featureDBName, null,
-                "routeNameC LIKE ? OR routeNameS LIKE ? OR routeNameE LIKE ?",
-                new String[]{args, args, args},
-                null, null, "routeNameE");
+                "routeId IN (" + placeholders + ")",
+                args.toArray(new String[0]),
+                null, null, null);
 
         List<Feature> features = new ArrayList<>();
         if (!cursor.moveToFirst()) {
@@ -119,25 +128,16 @@ public class FeatureDAOImpl implements FeatureDAO {
     }
 
     @Override
-    public List<Feature> getFeaturesByIds(List<Integer> ids) {
-        if (ids.isEmpty()) {
+    public List<Feature> fuzzySearchFeature(String routeName) {
+        if (routeName.isEmpty()) {
             return Collections.emptyList();
         }
 
-        List<String> args = new ArrayList<>(ids.size());
-        StringBuilder placeholders = new StringBuilder();
-        for (int i = 0; i < ids.size(); i++) {
-            args.add(String.valueOf(ids.get(i)));
-            if (i > 0) {
-                placeholders.append(",");
-            }
-            placeholders.append("?");
-        }
-
+        String args = routeName + "%";
         Cursor cursor = db.query(SQLConstants.featureDBName, null,
-                "routeId IN (" + placeholders + ")",
-                args.toArray(new String[0]),
-                null, null, null);
+                "routeNameC LIKE ? OR routeNameS LIKE ? OR routeNameE LIKE ?",
+                new String[]{args, args, args},
+                null, null, "routeNameE");
 
         List<Feature> features = new ArrayList<>();
         if (!cursor.moveToFirst()) {
