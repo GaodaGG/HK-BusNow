@@ -19,8 +19,10 @@ import com.gg.busStation.function.feature.FeatureManager;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 public class BusDataManager {
@@ -139,12 +141,29 @@ public class BusDataManager {
 
     public static List<ListItemData> routesToListItemData(List<Route> routes, FeatureDAO featureDAO) {
         String language = Locale.getDefault().getLanguage();
-
         List<ListItemData> data = new ArrayList<>();
+
+        if (routes == null || routes.isEmpty()) {
+            return data;
+        }
+
+        List<Integer> routeIds = new ArrayList<>();
         for (Route route : routes) {
-            Feature feature = featureDAO.getFeature(route.id());
-            ListItemData listItemData = createListItemData(feature, route.routeSeq(), language);
-            data.add(listItemData);
+            routeIds.add(route.id());
+        }
+        List<Feature> features = featureDAO.getFeaturesByIds(routeIds);
+
+        Map<Integer, Feature> featureMap = new HashMap<>();
+        for (Feature feature : features) {
+            featureMap.put(feature.getRouteId(), feature);
+        }
+
+        for (Route route : routes) {
+            Feature feature = featureMap.get(route.id());
+            if (feature != null) {
+                ListItemData listItemData = createListItemData(feature, route.routeSeq(), language);
+                data.add(listItemData);
+            }
         }
 
         return data;

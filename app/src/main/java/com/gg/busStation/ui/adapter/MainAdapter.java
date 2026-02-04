@@ -45,11 +45,15 @@ public class MainAdapter extends ListAdapter<ListItemData, MainAdapter.ViewHolde
     };
     private final FragmentActivity mActivity;
     private final boolean isSearch;
+    private final HistoryDAO historyDAO;
 
     public MainAdapter(FragmentActivity context, boolean isSearch) {
         super(DIFF_CALLBACK);
         this.mActivity = context;
         this.isSearch = isSearch;
+
+        DataBaseHelper dbHelper = DataBaseHelper.getInstance(mActivity);
+        historyDAO = new HistoryDAOImpl(dbHelper.getDatabase());
     }
 
     @NonNull
@@ -72,8 +76,6 @@ public class MainAdapter extends ListAdapter<ListItemData, MainAdapter.ViewHolde
         holder.itemView.setOnClickListener(view -> {
             new StopBottomSheetDialog(listItemData).show(mActivity.getSupportFragmentManager(), StopBottomSheetDialog.TAG);
 //            DataBaseManager.addRoutesHistory(listItemData.getCo(), listItemData.getStopNumber(), listItemData.getBound(), listItemData.getService_type());
-            DataBaseHelper dbHelper = DataBaseHelper.getInstance(mActivity);
-            HistoryDAO historyDAO = new HistoryDAOImpl(dbHelper.getDatabase());
             historyDAO.insert(listItemData.getRouteId(), listItemData.getRouteSeq(), false);
         });
 
@@ -100,9 +102,6 @@ public class MainAdapter extends ListAdapter<ListItemData, MainAdapter.ViewHolde
 
         int routeId = listItemData.getRouteId();
         int routeSeq = listItemData.getRouteSeq();
-
-        SQLiteDatabase database = DataBaseHelper.getInstance(mActivity).getDatabase();
-        HistoryDAO historyDAO = new HistoryDAOImpl(database);
 
         if (historyDAO.getPinnedIndex(routeId, routeSeq) != 0) {
             popupMenu.getMenu().findItem(R.id.bus_menu_pin).setVisible(false);
@@ -136,7 +135,6 @@ public class MainAdapter extends ListAdapter<ListItemData, MainAdapter.ViewHolde
 
     public void refreshList() {
         SQLiteDatabase database = DataBaseHelper.getInstance(mActivity).getDatabase();
-        HistoryDAO historyDAO = new HistoryDAOImpl(database);
         FeatureDAO featureDAO = new FeatureDAOImpl(database);
         List<Route> allHistory = historyDAO.getAllHistory();
         List<ListItemData> data = BusDataManager.routesToListItemData(allHistory, featureDAO);

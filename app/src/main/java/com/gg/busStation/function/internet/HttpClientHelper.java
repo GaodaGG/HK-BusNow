@@ -11,12 +11,13 @@ import okhttp3.Response;
 import okhttp3.ResponseBody;
 
 public class HttpClientHelper {
+    private static final OkHttpClient client = new OkHttpClient().newBuilder()
+            .build();
+
     private HttpClientHelper() {
     }
 
     public static void getDataAsync(String url, Callback callback) {
-        OkHttpClient client = new OkHttpClient();
-
         Request request = new Request.Builder()
                 .url(url)
                 .build();
@@ -26,8 +27,6 @@ public class HttpClientHelper {
     }
 
     public static ResponseBody getBody(String url) throws IOException {
-        OkHttpClient client = new OkHttpClient();
-
         Request request = new Request.Builder()
                 .url(url)
                 .build();

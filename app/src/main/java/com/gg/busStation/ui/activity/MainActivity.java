@@ -1,6 +1,7 @@
 package com.gg.busStation.ui.activity;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -61,6 +62,7 @@ public class MainActivity extends BaseActivity {
             runOnUiThread(loadingDialog::show);
         }
 
+        @SuppressLint("SetTextI18n")
         @Override
         public void progress(int now, int max, String tip) {
             runOnUiThread(() -> {

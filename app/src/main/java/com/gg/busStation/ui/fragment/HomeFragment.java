@@ -43,12 +43,17 @@ public class HomeFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        SQLiteDatabase database = DataBaseHelper.getInstance(requireContext()).getDatabase();
-        HistoryDAO historyDAO = new HistoryDAOImpl(database);
-        FeatureDAO featureDAO = new FeatureDAOImpl(database);
-        List<Route> allHistory = historyDAO.getAllHistory();
-        List<ListItemData> data = BusDataManager.routesToListItemData(allHistory, featureDAO);
-        initView(data);
+        new Thread(() -> {
+            SQLiteDatabase database = DataBaseHelper.getInstance(requireContext()).getDatabase();
+            HistoryDAO historyDAO = new HistoryDAOImpl(database);
+            FeatureDAO featureDAO = new FeatureDAOImpl(database);
+            List<Route> allHistory = historyDAO.getAllHistory();
+            List<ListItemData> data = BusDataManager.routesToListItemData(allHistory, featureDAO);
+            FragmentActivity activity = getActivity();
+            if (activity != null) {
+                activity.runOnUiThread(() -> initView(data));
+            }
+        }).start();
     }
 
     @Override

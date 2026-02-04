@@ -18,6 +18,8 @@ public interface FeatureDAO {
 
     List<Feature> fuzzySearchFeature(String routeName);
 
+    List<Feature> getFeaturesByIds(List<Integer> ids);
+
     List<String> getFeatureNthCharacters(String routeName, int index);
 }
 
