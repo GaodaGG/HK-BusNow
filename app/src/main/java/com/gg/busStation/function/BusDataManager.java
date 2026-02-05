@@ -5,7 +5,6 @@ import android.content.Context;
 import androidx.annotation.NonNull;
 
 import com.gg.busStation.R;
-import com.gg.busStation.data.bus.CloudFeature;
 import com.gg.busStation.data.bus.Feature;
 import com.gg.busStation.data.bus.Route;
 import com.gg.busStation.data.layout.ListItemData;
@@ -16,7 +15,6 @@ import com.gg.busStation.function.feature.CompanyManager;
 import com.gg.busStation.function.feature.FareManager;
 import com.gg.busStation.function.feature.FeatureManager;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -24,6 +22,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+
+import lombok.SneakyThrows;
 
 public class BusDataManager {
     private BusDataManager() {
@@ -48,6 +48,7 @@ public class BusDataManager {
         onDataInitListener.finish(true);
     }
 
+    @SneakyThrows
     private static void initData(Context context, OnDataInitListener listener) {
         DataBaseHelper dataBaseHelper = DataBaseHelper.getInstance(context);
 
@@ -55,25 +56,17 @@ public class BusDataManager {
         FeatureManager featureManager = new FeatureManager(dataBaseHelper.getDatabase());
         FareManager fareManager = new FareManager(dataBaseHelper.getDatabase());
 
-        dataBaseHelper.executeTransaction(db -> {
-            int max = 3;
-            try {
-                companyManager.saveCompanys();
+        int max = 2;
+        dataBaseHelper.executeTransaction(db -> companyManager.saveCompanys());
 
-                listener.progress(0, max, context.getString(R.string.data_init_fetching_bus_data));
-                List<CloudFeature> features = featureManager.fetchAllFeatures();
+        listener.progress(0, max, context.getString(R.string.data_init_fetching_bus_data));
+        featureManager.syncFeatures(dataBaseHelper);
 
-                listener.progress(1, max, context.getString(R.string.data_init_importing_bus_data));
-                featureManager.saveFeatures(features);
+        listener.progress(1, max, context.getString(R.string.data_init_fetching_fare_data));
+        dataBaseHelper.executeTransaction(db -> fareManager.saveFares());
 
-                listener.progress(2, max, context.getString(R.string.data_init_fetching_fare_data));
-                fareManager.saveFares();
+        listener.progress(max, max, context.getString(R.string.data_init_done));
 
-                listener.progress(max, max, context.getString(R.string.data_init_done));
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        });
     }
 
     public static long getMinutesRemaining(Date targetDate) {

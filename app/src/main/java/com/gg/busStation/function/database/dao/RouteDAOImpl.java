@@ -22,7 +22,7 @@ public class RouteDAOImpl implements RouteDAO {
     @Override
     public void insert(Route route) {
         ContentValues contentValues = routeToConvert(route);
-        db.insert(SQLConstants.routeDBName, null, contentValues);
+        db.insertWithOnConflict(SQLConstants.routeDBName, null, contentValues, SQLiteDatabase.CONFLICT_REPLACE);
     }
 
     @Override

@@ -7,6 +7,7 @@ import com.gg.busStation.data.bus.CloudFeature;
 import com.gg.busStation.data.bus.Feature;
 import com.gg.busStation.data.bus.Route;
 import com.gg.busStation.data.bus.Stop;
+import com.gg.busStation.function.database.DataBaseHelper;
 import com.gg.busStation.function.database.dao.FeatureDAO;
 import com.gg.busStation.function.database.dao.FeatureDAOImpl;
 import com.gg.busStation.function.database.dao.RouteDAO;
@@ -16,9 +17,13 @@ import com.gg.busStation.function.database.dao.StopDAOImpl;
 import com.gg.busStation.function.internet.HttpClientHelper;
 import com.gg.busStation.function.internet.JsonToBean;
 import com.gg.busStation.function.location.LocationHelper;
+import com.google.gson.Gson;
+import com.google.gson.stream.JsonReader;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 public class FeatureManager {
@@ -68,23 +73,54 @@ public class FeatureManager {
         return bound == outbound ? Out : In;
     }
 
-    public List<CloudFeature> fetchAllFeatures() throws IOException {
-        InputStream busData = HttpClientHelper.getDataStream(busDataUrl);
-        InputStream gmbData = HttpClientHelper.getDataStream(gmbDataUrl);
-        List<CloudFeature> busFeatures = JsonToBean.parseFeaturesFromStream(busData);
-        List<CloudFeature> gmbFeatures = JsonToBean.parseFeaturesFromStream(gmbData);
-        busData.close();
-        gmbData.close();
+    public void syncFeatures(DataBaseHelper dataBaseHelper) {
+        Gson gson = new Gson();
+        String[] DATA_URLS = {busDataUrl, gmbDataUrl};
+        final int BATCH_SIZE = 1000;
+        SQLiteDatabase db = dataBaseHelper.getDatabase();
 
-        busFeatures.addAll(gmbFeatures);
-        return busFeatures;
-    }
+        db.beginTransaction();
+        try {
+            for (String url : DATA_URLS) {
+                InputStream inputStream = HttpClientHelper.getDataStream(url);
+                JsonReader reader = new JsonReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
 
-    public void saveFeatures(List<CloudFeature> features) {
-        for (CloudFeature feature : features) {
-            saveStopToDB(feature);
-            saveFeatureToDB(feature);
-            saveRouteToDB(feature);
+                reader.beginObject();
+                while (reader.hasNext()) {
+                    String name = reader.nextName();
+                    if (name.equals("features")) {
+                        reader.beginArray();
+                        int count = 0;
+                        while (reader.hasNext()) {
+                            CloudFeature feature = gson.fromJson(reader, CloudFeature.class);
+
+                            saveStopToDB(feature);
+                            saveFeatureToDB(feature);
+                            saveRouteToDB(feature);
+                            count++;
+
+                            // 分批提交事务
+                            if (count % BATCH_SIZE == 0) {
+                                db.setTransactionSuccessful();
+                                db.endTransaction();
+                                db.beginTransaction();
+                            }
+                        }
+                        reader.endArray();
+                    } else {
+                        reader.skipValue();
+                    }
+                }
+                reader.endObject();
+                reader.close();
+                inputStream.close();
+            }
+            db.setTransactionSuccessful();
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } finally {
+            db.endTransaction();
         }
     }
 
