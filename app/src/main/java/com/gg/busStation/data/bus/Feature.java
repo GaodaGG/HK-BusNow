@@ -3,24 +3,26 @@ package com.gg.busStation.data.bus;
 import java.util.Locale;
 
 @lombok.Getter
-@lombok.Setter
-public class Feature {
-    private int routeId;
-    private String routeNameC;
-    private String routeNameS;
-    private String routeNameE;
-    private int routeType;
-    private String serviceMode;
-    private int specialType;
-    private String companyCode;
-    private int journeyTime;
-    private String locStartNameC;
-    private String locStartNameS;
-    private String locStartNameE;
-    private String locEndNameC;
-    private String locEndNameS;
-    private String locEndNameE;
-    private double fullFare;
+public final class Feature {
+    private final int routeId;
+    private final String routeNameC;
+    private final String routeNameS;
+    private final String routeNameE;
+    private final int routeType;
+    private final String serviceMode;
+    private final int specialType;
+    private final String companyCode;
+    private final int journeyTime;
+    private final String locStartNameC;
+    private final String locStartNameS;
+    private final String locStartNameE;
+    private final String locEndNameC;
+    private final String locEndNameS;
+    private final String locEndNameE;
+    private final double fullFare;
+
+    private static final Locale LOCALE_EN = new Locale("en");
+    private static final Locale LOCALE_ZH_HK = new Locale("zh", "HK");
 
     public Feature(int routeId, String routeNameC, String routeNameS, String routeNameE,
                    int routeType, String serviceMode, int specialType, String companyCode,
@@ -45,11 +47,11 @@ public class Feature {
     }
 
     public String getRouteName(String language) {
-        if (new Locale("en").getLanguage().equals(language)) {
+        if (LOCALE_EN.getLanguage().equals(language)) {
             return getRouteNameE();
         }
 
-        if (new Locale("zh_rHK").getLanguage().equals(language)) {
+        if (LOCALE_ZH_HK.getLanguage().equals(language)) {
             return getRouteNameC();
         }
 
@@ -57,11 +59,11 @@ public class Feature {
     }
 
     public String getStartName(String language) {
-        if (new Locale("en").getLanguage().equals(language)) {
+        if (LOCALE_EN.getLanguage().equals(language)) {
             return getLocStartNameE();
         }
 
-        if (new Locale("zh_rHK").getLanguage().equals(language)) {
+        if (LOCALE_ZH_HK.getLanguage().equals(language)) {
             return getLocStartNameC();
         }
 
@@ -69,11 +71,11 @@ public class Feature {
     }
 
     public String getEndName(String language) {
-        if (new Locale("en").getLanguage().equals(language)) {
+        if (LOCALE_EN.getLanguage().equals(language)) {
             return getLocEndNameE();
         }
 
-        if (new Locale("zh_rHK").getLanguage().equals(language)) {
+        if (LOCALE_ZH_HK.getLanguage().equals(language)) {
             return getLocEndNameC();
         }
 
