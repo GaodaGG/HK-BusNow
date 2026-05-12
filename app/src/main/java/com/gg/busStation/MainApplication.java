@@ -54,4 +54,10 @@ public class MainApplication extends Application {
 //        DataBaseManager.initDB(this);
         LocationHelper.init(this);
     }
+
+    @Override
+    public void onTerminate() {
+        super.onTerminate();
+        LocationHelper.destroy();
+    }
 }

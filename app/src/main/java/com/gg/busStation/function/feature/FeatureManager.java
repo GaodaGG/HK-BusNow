@@ -76,7 +76,7 @@ public class FeatureManager {
     public void syncFeatures(DataBaseHelper dataBaseHelper) {
         Gson gson = new Gson();
         String[] DATA_URLS = {busDataUrl, gmbDataUrl};
-        final int BATCH_SIZE = 1000;
+        final int BATCH_SIZE = 10000;
         SQLiteDatabase db = dataBaseHelper.getDatabase();
 
         db.beginTransaction();

@@ -45,6 +45,11 @@ public class JsonToBean {
         return data;
     }
 
+    /**
+     * @deprecated This method loads the entire JSON file into memory, causing high memory usage.
+     *             Use streaming parsing ({@link com.google.gson.stream.JsonReader}) instead.
+     */
+    @Deprecated
     public static List<CloudFeature> parseFeaturesFromStream(InputStream stream) {
         List<CloudFeature> features = new ArrayList<>();
         try (JsonReader reader = new JsonReader(new InputStreamReader(stream))) {

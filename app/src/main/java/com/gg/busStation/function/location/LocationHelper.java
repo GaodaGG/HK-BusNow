@@ -1,6 +1,7 @@
 package com.gg.busStation.function.location;
 
 import android.annotation.SuppressLint;
+import android.app.Application;
 import android.content.Context;
 import android.location.Location;
 import android.location.LocationManager;
@@ -16,23 +17,22 @@ public class LocationHelper {
     private static LocationClient mLocationClient;
     private static final String apiKey = "D4GLNJOTDV8d2JooN0EMm3qdHLLr7pao";
 
-    private static Context mContext;
+    private static Application mApplication;
 
     private LocationHelper() {
     }
 
     public static void init(Context context) {
-        mContext = context;
+        mApplication = (Application) context.getApplicationContext();
 
         LocationClient.setKey(apiKey);
         SDKInitializer.setApiKey(apiKey);
         LocationClient.setAgreePrivacy(true);
-        Context applicationContext = context.getApplicationContext();
-        SDKInitializer.setAgreePrivacy(applicationContext, true);
+        SDKInitializer.setAgreePrivacy(mApplication, true);
 
-        SDKInitializer.initialize(applicationContext);
+        SDKInitializer.initialize(mApplication);
         try {
-            mLocationClient = new LocationClient(applicationContext);
+            mLocationClient = new LocationClient(mApplication);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -45,6 +45,13 @@ public class LocationHelper {
         mLocationClient.setLocOption(mLocationClientOption);
         mLocationClient.registerLocationListener(new LocationListener());
         mLocationClient.start();
+    }
+
+    public static void destroy() {
+        if (mLocationClient != null) {
+            mLocationClient.stop();
+            mLocationClient = null;
+        }
     }
 
     public static LatLng coordinateConvert(LatLng latLng) {
@@ -85,7 +92,7 @@ public class LocationHelper {
     @SuppressLint("MissingPermission")
     private static LatLng getLastLocation() {
         try {
-            LocationManager locationManager = (LocationManager) mContext.getSystemService(Context.LOCATION_SERVICE);
+            LocationManager locationManager = (LocationManager) mApplication.getSystemService(Context.LOCATION_SERVICE);
             Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
             if (lastKnownLocation != null) {
                 return new LatLng(lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude());
