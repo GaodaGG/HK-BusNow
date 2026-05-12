@@ -33,7 +33,7 @@ public class HistoryDAOImpl implements HistoryDAO {
 
     @Override
     public List<Route> getAllHistory() {
-        Cursor cursor = db.query(SQLConstants.historyDBName, null, null, null, null, null, "pinnedIndex DESC, timestamp DESC");
+        Cursor cursor = db.query(SQLConstants.historyDBName, null, null, null, null, null, "pinnedIndex DESC, timestamp DESC", "100");
         List<Route> historyList = new ArrayList<>();
 
         if (!cursor.moveToFirst()) {
@@ -41,9 +41,11 @@ public class HistoryDAOImpl implements HistoryDAO {
             return historyList;
         }
 
+        int idxRouteId = cursor.getColumnIndexOrThrow("routeId");
+        int idxRouteSeq = cursor.getColumnIndexOrThrow("routeSeq");
         do {
-            int routeId = cursor.getInt(cursor.getColumnIndexOrThrow("routeId"));
-            int routeSeq = cursor.getInt(cursor.getColumnIndexOrThrow("routeSeq"));
+            int routeId = cursor.getInt(idxRouteId);
+            int routeSeq = cursor.getInt(idxRouteSeq);
             historyList.add(new Route(routeId, routeSeq, 0, 0, 0));
 
         } while (cursor.moveToNext());

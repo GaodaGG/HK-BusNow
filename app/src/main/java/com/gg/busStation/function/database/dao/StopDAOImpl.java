@@ -82,13 +82,20 @@ public class StopDAOImpl implements StopDAO {
     }
 
     private Stop convertToStop(Cursor cursor) {
+        int idxId = cursor.getColumnIndexOrThrow("id");
+        int idxNameE = cursor.getColumnIndexOrThrow("nameE");
+        int idxNameC = cursor.getColumnIndexOrThrow("nameC");
+        int idxNameS = cursor.getColumnIndexOrThrow("nameS");
+        int idxLat = cursor.getColumnIndexOrThrow("lat");
+        int idxLong = cursor.getColumnIndexOrThrow("long");
+
         return new Stop(
-                cursor.getInt(cursor.getColumnIndexOrThrow("id")),
-                cursor.getString(cursor.getColumnIndexOrThrow("nameE")),
-                cursor.getString(cursor.getColumnIndexOrThrow("nameC")),
-                cursor.getString(cursor.getColumnIndexOrThrow("nameS")),
-                cursor.getDouble(cursor.getColumnIndexOrThrow("lat")),
-                cursor.getDouble(cursor.getColumnIndexOrThrow("long"))
+                cursor.getInt(idxId),
+                cursor.getString(idxNameE),
+                cursor.getString(idxNameC),
+                cursor.getString(idxNameS),
+                cursor.getDouble(idxLat),
+                cursor.getDouble(idxLong)
         );
     }
 

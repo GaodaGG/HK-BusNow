@@ -45,6 +45,9 @@ public class DBOpenHelper extends SQLiteOpenHelper {
 
         try {
             db.execSQL(SQLConstants.createFeatureCompanyIndexCommand);
+            db.execSQL(SQLConstants.createFeatureRouteNameIndexCommand);
+            db.execSQL(SQLConstants.createHistoryTimestampIndexCommand);
+            db.execSQL(SQLConstants.createRouteStopIdIndexCommand);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -52,12 +55,13 @@ public class DBOpenHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        if (newVersion > 20260201 && newVersion < 20260206) {
-            try {
-                db.execSQL(SQLConstants.createFeatureCompanyIndexCommand);
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            }
+        try {
+            db.execSQL(SQLConstants.createFeatureCompanyIndexCommand);
+            db.execSQL(SQLConstants.createFeatureRouteNameIndexCommand);
+            db.execSQL(SQLConstants.createHistoryTimestampIndexCommand);
+            db.execSQL(SQLConstants.createRouteStopIdIndexCommand);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
     }
 }

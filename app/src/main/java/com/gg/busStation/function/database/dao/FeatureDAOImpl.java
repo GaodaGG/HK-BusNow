@@ -97,33 +97,34 @@ public class FeatureDAOImpl implements FeatureDAO {
             return Collections.emptyList();
         }
 
-        List<String> args = new ArrayList<>(featureIds.size());
-        StringBuilder placeholders = new StringBuilder();
-        for (int i = 0; i < featureIds.size(); i++) {
-            args.add(String.valueOf(featureIds.get(i)));
-            if (i > 0) {
-                placeholders.append(",");
-            }
-            placeholders.append("?");
-        }
-
-        Cursor cursor = db.query(SQLConstants.featureDBName, null,
-                "routeId IN (" + placeholders + ")",
-                args.toArray(new String[0]),
-                null, null, null);
-
         List<Feature> features = new ArrayList<>();
-        if (!cursor.moveToFirst()) {
+        final int chunkSize = 999;
+        for (int i = 0; i < featureIds.size(); i += chunkSize) {
+            List<Integer> chunk = featureIds.subList(i, Math.min(i + chunkSize, featureIds.size()));
+            List<String> args = new ArrayList<>(chunk.size());
+            StringBuilder placeholders = new StringBuilder();
+            for (int j = 0; j < chunk.size(); j++) {
+                args.add(String.valueOf(chunk.get(j)));
+                if (j > 0) {
+                    placeholders.append(",");
+                }
+                placeholders.append("?");
+            }
+
+            Cursor cursor = db.query(SQLConstants.featureDBName, null,
+                    "routeId IN (" + placeholders + ")",
+                    args.toArray(new String[0]),
+                    null, null, null);
+
+            if (cursor.moveToFirst()) {
+                do {
+                    Feature feature = convertToFeature(cursor);
+                    features.add(feature);
+                } while (cursor.moveToNext());
+            }
             cursor.close();
-            return features;
         }
 
-        do {
-            Feature feature = convertToFeature(cursor);
-            features.add(feature);
-        } while (cursor.moveToNext());
-
-        cursor.close();
         return features;
     }
 
@@ -137,7 +138,7 @@ public class FeatureDAOImpl implements FeatureDAO {
         Cursor cursor = db.query(SQLConstants.featureDBName, null,
                 "routeNameC LIKE ? OR routeNameS LIKE ? OR routeNameE LIKE ?",
                 new String[]{args, args, args},
-                null, null, "routeNameE");
+                null, null, "routeNameE", "100");
 
         List<Feature> features = new ArrayList<>();
         if (!cursor.moveToFirst()) {
@@ -179,23 +180,40 @@ public class FeatureDAOImpl implements FeatureDAO {
 
     @NonNull
     private static Feature convertToFeature(Cursor cursor) {
+        int idxRouteId = cursor.getColumnIndexOrThrow("routeId");
+        int idxRouteNameC = cursor.getColumnIndexOrThrow("routeNameC");
+        int idxRouteNameS = cursor.getColumnIndexOrThrow("routeNameS");
+        int idxRouteNameE = cursor.getColumnIndexOrThrow("routeNameE");
+        int idxRouteType = cursor.getColumnIndexOrThrow("routeType");
+        int idxServiceMode = cursor.getColumnIndexOrThrow("serviceMode");
+        int idxSpecialType = cursor.getColumnIndexOrThrow("specialType");
+        int idxCompanyCode = cursor.getColumnIndexOrThrow("companyCode");
+        int idxJourneyTime = cursor.getColumnIndexOrThrow("journeyTime");
+        int idxLocStartNameC = cursor.getColumnIndexOrThrow("locStartNameC");
+        int idxLocStartNameS = cursor.getColumnIndexOrThrow("locStartNameS");
+        int idxLocStartNameE = cursor.getColumnIndexOrThrow("locStartNameE");
+        int idxLocEndNameC = cursor.getColumnIndexOrThrow("locEndNameC");
+        int idxLocEndNameS = cursor.getColumnIndexOrThrow("locEndNameS");
+        int idxLocEndNameE = cursor.getColumnIndexOrThrow("locEndNameE");
+        int idxFullFare = cursor.getColumnIndexOrThrow("fullFare");
+
         return new Feature(
-                cursor.getInt(cursor.getColumnIndexOrThrow("routeId")),
-                cursor.getString(cursor.getColumnIndexOrThrow("routeNameC")),
-                cursor.getString(cursor.getColumnIndexOrThrow("routeNameS")),
-                cursor.getString(cursor.getColumnIndexOrThrow("routeNameE")),
-                cursor.getInt(cursor.getColumnIndexOrThrow("routeType")),
-                cursor.getString(cursor.getColumnIndexOrThrow("serviceMode")),
-                cursor.getInt(cursor.getColumnIndexOrThrow("specialType")),
-                cursor.getString(cursor.getColumnIndexOrThrow("companyCode")),
-                cursor.getInt(cursor.getColumnIndexOrThrow("journeyTime")),
-                cursor.getString(cursor.getColumnIndexOrThrow("locStartNameC")),
-                cursor.getString(cursor.getColumnIndexOrThrow("locStartNameS")),
-                cursor.getString(cursor.getColumnIndexOrThrow("locStartNameE")),
-                cursor.getString(cursor.getColumnIndexOrThrow("locEndNameC")),
-                cursor.getString(cursor.getColumnIndexOrThrow("locEndNameS")),
-                cursor.getString(cursor.getColumnIndexOrThrow("locEndNameE")),
-                cursor.getDouble(cursor.getColumnIndexOrThrow("fullFare"))
+                cursor.getInt(idxRouteId),
+                cursor.getString(idxRouteNameC),
+                cursor.getString(idxRouteNameS),
+                cursor.getString(idxRouteNameE),
+                cursor.getInt(idxRouteType),
+                cursor.getString(idxServiceMode),
+                cursor.getInt(idxSpecialType),
+                cursor.getString(idxCompanyCode).intern(),
+                cursor.getInt(idxJourneyTime),
+                cursor.getString(idxLocStartNameC),
+                cursor.getString(idxLocStartNameS),
+                cursor.getString(idxLocStartNameE),
+                cursor.getString(idxLocEndNameC),
+                cursor.getString(idxLocEndNameS),
+                cursor.getString(idxLocEndNameE),
+                cursor.getDouble(idxFullFare)
         );
     }
 

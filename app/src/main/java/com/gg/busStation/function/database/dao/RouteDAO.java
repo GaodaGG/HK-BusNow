@@ -12,4 +12,6 @@ public interface RouteDAO {
     List<Route> getRoutes(int routeId, int routeSeq);
 
     List<Integer> getRouteSeq(int routeId);
+
+    java.util.Map<Integer, List<Integer>> getRouteSeqs(List<Integer> routeIds);
 }

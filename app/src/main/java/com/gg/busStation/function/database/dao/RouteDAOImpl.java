@@ -68,8 +68,9 @@ public class RouteDAOImpl implements RouteDAO {
             return routeSeqList;
         }
 
+        int idxRouteSeq = cursor.getColumnIndexOrThrow("routeSeq");
         do {
-            int routeSeq = cursor.getInt(cursor.getColumnIndexOrThrow("routeSeq"));
+            int routeSeq = cursor.getInt(idxRouteSeq);
             routeSeqList.add(routeSeq);
         } while (cursor.moveToNext());
 
@@ -77,14 +78,56 @@ public class RouteDAOImpl implements RouteDAO {
         return routeSeqList;
     }
 
+    @Override
+    public java.util.Map<Integer, List<Integer>> getRouteSeqs(List<Integer> routeIds) {
+        java.util.Map<Integer, List<Integer>> result = new java.util.HashMap<>();
+        if (routeIds.isEmpty()) {
+            return result;
+        }
+
+        final int chunkSize = 999;
+        for (int i = 0; i < routeIds.size(); i += chunkSize) {
+            List<Integer> chunk = routeIds.subList(i, Math.min(i + chunkSize, routeIds.size()));
+            StringBuilder placeholders = new StringBuilder();
+            String[] args = new String[chunk.size()];
+            for (int j = 0; j < chunk.size(); j++) {
+                args[j] = String.valueOf(chunk.get(j));
+                if (j > 0) placeholders.append(",");
+                placeholders.append("?");
+            }
+
+            Cursor cursor = db.query(SQLConstants.routeDBName, new String[]{"routeId", "routeSeq"},
+                    "routeId IN (" + placeholders + ")",
+                    args, null, null, null);
+
+            if (cursor.moveToFirst()) {
+                int idxRouteId = cursor.getColumnIndexOrThrow("routeId");
+                int idxRouteSeq = cursor.getColumnIndexOrThrow("routeSeq");
+                do {
+                    int routeId = cursor.getInt(idxRouteId);
+                    int routeSeq = cursor.getInt(idxRouteSeq);
+                    result.computeIfAbsent(routeId, k -> new ArrayList<>()).add(routeSeq);
+                } while (cursor.moveToNext());
+            }
+            cursor.close();
+        }
+        return result;
+    }
+
     @NonNull
     private static Route convertToRoute(Cursor cursor) {
+        int idxRouteId = cursor.getColumnIndexOrThrow("routeId");
+        int idxRouteSeq = cursor.getColumnIndexOrThrow("routeSeq");
+        int idxStopSeq = cursor.getColumnIndexOrThrow("stopSeq");
+        int idxStopPickDrop = cursor.getColumnIndexOrThrow("stopPickDrop");
+        int idxStopId = cursor.getColumnIndexOrThrow("stopId");
+
         return new Route(
-                cursor.getInt(cursor.getColumnIndexOrThrow("routeId")),
-                cursor.getInt(cursor.getColumnIndexOrThrow("routeSeq")),
-                cursor.getInt(cursor.getColumnIndexOrThrow("stopSeq")),
-                cursor.getInt(cursor.getColumnIndexOrThrow("stopPickDrop")),
-                cursor.getInt(cursor.getColumnIndexOrThrow("stopId"))
+                cursor.getInt(idxRouteId),
+                cursor.getInt(idxRouteSeq),
+                cursor.getInt(idxStopSeq),
+                cursor.getInt(idxStopPickDrop),
+                cursor.getInt(idxStopId)
         );
     }
 

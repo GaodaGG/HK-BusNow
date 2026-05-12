@@ -89,12 +89,20 @@ public class BusDataManager {
     public static List<ListItemData> featuresToListItemData(List<Feature> features, RouteDAO routeDAO) {
         String language = Locale.getDefault().getLanguage();
 
+        List<Integer> routeIds = new ArrayList<>();
+        for (Feature feature : features) {
+            routeIds.add(feature.getRouteId());
+        }
+        Map<Integer, List<Integer>> routeSeqMap = routeDAO.getRouteSeqs(routeIds);
+
         List<ListItemData> data = new ArrayList<>();
         for (Feature feature : features) {
-            routeDAO.getRouteSeq(feature.getRouteId()).stream().forEach(integer -> {
-                ListItemData listItemData = createListItemData(feature, integer, language);
-                data.add(listItemData);
-            });
+            List<Integer> seqs = routeSeqMap.get(feature.getRouteId());
+            if (seqs != null) {
+                for (int seq : seqs) {
+                    data.add(createListItemData(feature, seq, language));
+                }
+            }
         }
 
         return data;

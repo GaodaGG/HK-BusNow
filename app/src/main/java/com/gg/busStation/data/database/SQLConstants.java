@@ -84,6 +84,15 @@ public class SQLConstants {
     public static final String createFeatureCompanyIndexCommand =
             "CREATE INDEX IF NOT EXISTS index_features_companyCode ON " + featureDBName + " (companyCode);";
 
+    public static final String createFeatureRouteNameIndexCommand =
+            "CREATE INDEX IF NOT EXISTS index_features_routeName ON " + featureDBName + " (routeNameC, routeNameS, routeNameE);";
+
+    public static final String createHistoryTimestampIndexCommand =
+            "CREATE INDEX IF NOT EXISTS index_history_timestamp ON " + historyDBName + " (timestamp);";
+
+    public static final String createRouteStopIdIndexCommand =
+            "CREATE INDEX IF NOT EXISTS index_routes_stopId ON " + routeDBName + " (stopId);";
+
     @lombok.Getter
     @lombok.Setter
     public static class TableInfo {
