@@ -17,6 +17,7 @@ import com.gg.busStation.R;
 import com.gg.busStation.data.bus.Route;
 import com.gg.busStation.data.layout.ListItemData;
 import com.gg.busStation.databinding.FragmentHomeBinding;
+import com.gg.busStation.function.AppExecutors;
 import com.gg.busStation.function.BusDataManager;
 import com.gg.busStation.function.Tools;
 import com.gg.busStation.function.database.DataBaseHelper;
@@ -31,6 +32,7 @@ import java.util.List;
 
 public class HomeFragment extends Fragment {
     private FragmentHomeBinding binding;
+    private MainAdapter mainAdapter;
 
     @Nullable
     @Override
@@ -43,7 +45,7 @@ public class HomeFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        new Thread(() -> {
+        AppExecutors.diskIO().execute(() -> {
             SQLiteDatabase database = DataBaseHelper.getInstance(requireContext()).getDatabase();
             HistoryDAO historyDAO = new HistoryDAOImpl(database);
             FeatureDAO featureDAO = new FeatureDAOImpl(database);
@@ -51,9 +53,9 @@ public class HomeFragment extends Fragment {
             List<ListItemData> data = BusDataManager.routesToListItemData(allHistory, featureDAO);
             FragmentActivity activity = getActivity();
             if (activity != null) {
-                activity.runOnUiThread(() -> initView(data));
+                AppExecutors.mainThread().execute(() -> initView(data));
             }
-        }).start();
+        });
     }
 
     @Override
@@ -63,30 +65,39 @@ public class HomeFragment extends Fragment {
         binding.getRoot().setPadding(0, 0, 0, bottomHeight);
     }
 
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        mainAdapter = null;
+        binding = null;
+    }
+
     private void initView(List<ListItemData> data) {
         FragmentActivity activity = requireActivity();
 
         if (data.isEmpty()) {
             binding.mainErrorLayout.setVisibility(View.VISIBLE);
+        } else {
+            binding.mainErrorLayout.setVisibility(View.GONE);
         }
 
-        MainAdapter mainAdapter = new MainAdapter(activity, false);
-        mainAdapter.submitList(data);
-        LinearLayoutManager manager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
-        MaterialDividerItemDecoration divider = new MaterialDividerItemDecoration(requireContext(), LinearLayoutManager.VERTICAL);
+        if (mainAdapter == null) {
+            mainAdapter = new MainAdapter(activity, false);
+            LinearLayoutManager manager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
+            MaterialDividerItemDecoration divider = new MaterialDividerItemDecoration(requireContext(), LinearLayoutManager.VERTICAL);
 
-        int inset = Tools.dp2px(requireContext(), 16);
-        manager.setInitialPrefetchItemCount(10);
-        divider.setLastItemDecorated(false);
-        divider.setDividerInsetStart(inset);
-        divider.setDividerInsetEnd(inset);
+            int inset = Tools.dp2px(requireContext(), 16);
+            manager.setInitialPrefetchItemCount(10);
+            divider.setLastItemDecorated(false);
+            divider.setDividerInsetStart(inset);
+            divider.setDividerInsetEnd(inset);
 
-        activity.runOnUiThread(() -> {
             RecyclerView busListView = binding.busListView;
             busListView.setLayoutManager(manager);
             busListView.addItemDecoration(divider);
             busListView.setHasFixedSize(true);
             busListView.setAdapter(mainAdapter);
-        });
+        }
+        mainAdapter.submitList(data);
     }
 }

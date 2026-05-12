@@ -28,6 +28,7 @@ import com.gg.busStation.data.bus.ETA;
 import com.gg.busStation.data.layout.ListItemData;
 import com.gg.busStation.data.layout.StopItemData;
 import com.gg.busStation.databinding.ItemBusExpendBinding;
+import com.gg.busStation.function.AppExecutors;
 import com.gg.busStation.function.BusDataManager;
 import com.gg.busStation.function.Tools;
 import com.gg.busStation.function.database.DataBaseHelper;
@@ -205,7 +206,7 @@ public class StopItemView extends LinearLayout {
         LinearLayout timeList = view.findViewById(R.id.dialog_time_list);
         String currentTag = data.getRouteId() + "_" + data.getStopSeq();
 
-        new Thread(() -> {
+        AppExecutors.diskIO().execute(() -> {
             Company company = CompanyManager.getCompanyInstance(data.getCo());
             if (company == null) {
                 TextView textView = new TextView(context);
@@ -225,12 +226,14 @@ public class StopItemView extends LinearLayout {
 
             // 保存ETA数据供外部使用
             lastEtaList = new ArrayList<>(etas);
-            mainHandler.post(timeList::removeAllViews);
 
             if (etas.isEmpty()) {
-                TextView textView = new TextView(context);
-                textView.setText("已无预定班次");
-                mainHandler.post(() -> timeList.addView(textView));
+                mainHandler.post(() -> {
+                    timeList.removeAllViews();
+                    TextView textView = new TextView(context);
+                    textView.setText("已无预定班次");
+                    timeList.addView(textView);
+                });
                 return;
             }
 
@@ -239,18 +242,22 @@ public class StopItemView extends LinearLayout {
             for (int i = 0; i < size; i++) {
                 ETA eta = etas.get(i);
                 long time = BusDataManager.getMinutesRemaining(eta.getTime());
-//                ETAView etaView = new ETAView(context, (int) time, eta.getRmk("zh_CN"), RouteA.coKMB.equals(eta.getCo()) ? "九巴" : "城巴");
                 ETAView etaView = new ETAView(context, (int) time, eta.getRmk("zh_CN"), CompanyManager.getCompanyByCode(eta.getCo()).getName("zh_CN"));
                 etaViews.add(etaView);
 
                 LayoutParams layoutParams = (LayoutParams) etaView.getLayoutParams();
                 layoutParams.bottomMargin = Tools.dp2px(context, 4);
                 etaView.setLayoutParams(layoutParams);
-                mainHandler.post(() -> timeList.addView(etaView));
             }
-
             data.setEtas(etaViews.toArray(new ETAView[0]));
-        }).start();
+
+            mainHandler.post(() -> {
+                timeList.removeAllViews();
+                for (ETAView etaView : etaViews) {
+                    timeList.addView(etaView);
+                }
+            });
+        });
     }
 
     public void toggle() {

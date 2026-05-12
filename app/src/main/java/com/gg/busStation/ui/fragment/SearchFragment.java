@@ -19,6 +19,7 @@ import com.gg.busStation.data.bus.Feature;
 import com.gg.busStation.data.layout.ListItemData;
 import com.gg.busStation.data.layout.SearchViewModel;
 import com.gg.busStation.databinding.FragmentSearchBinding;
+import com.gg.busStation.function.AppExecutors;
 import com.gg.busStation.function.BusDataManager;
 import com.gg.busStation.function.Tools;
 import com.gg.busStation.function.database.DataBaseHelper;
@@ -35,6 +36,7 @@ public class SearchFragment extends Fragment {
     private FragmentSearchBinding binding;
     private SearchViewModel mViewModel;
     private SearchBar mSearchBar;
+    private MainAdapter mainAdapter;
 
     @Nullable
     @Override
@@ -100,38 +102,37 @@ public class SearchFragment extends Fragment {
     private void initView(List<ListItemData> data) {
         FragmentActivity activity = requireActivity();
 
-//        Drawable background = ((ActionBar) ((AppCompatActivity) activity).getSupportActionBar())..getBackground();
-        MainAdapter mainAdapter = new MainAdapter(activity, true);
-        mainAdapter.submitList(data);
-        LinearLayoutManager manager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
-        MaterialDividerItemDecoration divider = new MaterialDividerItemDecoration(requireContext(), LinearLayoutManager.VERTICAL);
+        if (mainAdapter == null) {
+            mainAdapter = new MainAdapter(activity, true);
+            LinearLayoutManager manager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
+            MaterialDividerItemDecoration divider = new MaterialDividerItemDecoration(requireContext(), LinearLayoutManager.VERTICAL);
 
-        int inset = Tools.dp2px(requireContext(), 16);
-        manager.setInitialPrefetchItemCount(10);
-        divider.setLastItemDecorated(false);
-        divider.setDividerInsetStart(inset);
-        divider.setDividerInsetEnd(inset);
+            int inset = Tools.dp2px(requireContext(), 16);
+            manager.setInitialPrefetchItemCount(10);
+            divider.setLastItemDecorated(false);
+            divider.setDividerInsetStart(inset);
+            divider.setDividerInsetEnd(inset);
 
-        activity.runOnUiThread(() -> {
             RecyclerView busListView = binding.busListView;
             busListView.setLayoutManager(manager);
             busListView.addItemDecoration(divider);
             busListView.setHasFixedSize(true);
             busListView.setAdapter(mainAdapter);
-        });
+        }
+        mainAdapter.submitList(data);
     }
 
     private void setRouteList(String newText) {
-        new Thread(() -> {
+        AppExecutors.diskIO().execute(() -> {
             SQLiteDatabase database = DataBaseHelper.getInstance(requireContext()).getDatabase();
             List<Feature> features = new FeatureDAOImpl(database).fuzzySearchFeature(newText);
-            requireActivity().runOnUiThread(() -> binding.searchErrorLayout.setVisibility(newText.isEmpty() ? View.VISIBLE : View.GONE));
+            AppExecutors.mainThread().execute(() -> binding.searchErrorLayout.setVisibility(newText.isEmpty() ? View.VISIBLE : View.GONE));
 
             MainAdapter adapter = (MainAdapter) binding.busListView.getAdapter();
             if (adapter != null) {
                 // TODO 直接在数据库进行操作
-                adapter.submitList(BusDataManager.featuresToListItemData(features, new RouteDAOImpl(database)));
+                AppExecutors.mainThread().execute(() -> adapter.submitList(BusDataManager.featuresToListItemData(features, new RouteDAOImpl(database))));
             }
-        }).start();
+        });
     }
 }

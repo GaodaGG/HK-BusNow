@@ -1,6 +1,7 @@
 package com.gg.busStation.ui.adapter;
 
 import android.content.res.TypedArray;
+import android.graphics.drawable.Drawable;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -40,10 +41,15 @@ public class StopListAdapter extends ListAdapter<StopItemData, StopListAdapter.V
 
     private final FragmentActivity mActivity;
     private String mRouteName = "";
+    private final Drawable moreButtonForeground;
 
     public StopListAdapter(FragmentActivity activity) {
         super(DIFF_CALLBACK);
         this.mActivity = activity;
+
+        TypedArray typedArray = mActivity.getTheme().obtainStyledAttributes(R.style.Theme_BusStation, new int[]{android.R.attr.selectableItemBackgroundBorderless});
+        moreButtonForeground = AppCompatResources.getDrawable(mActivity, typedArray.getResourceId(0, 0));
+        typedArray.recycle();
     }
 
     public void setRouteName(String routeName) {
@@ -65,10 +71,7 @@ public class StopListAdapter extends ListAdapter<StopItemData, StopListAdapter.V
 
         holder.stopItemView.findViewById(R.id.more_button).setOnClickListener(v ->
                 showMenu(v, holder.stopItemView));
-//        TypedArray typedArray = mActivity.getTheme().obtainStyledAttributes(R.style.Theme_BusStation, new int[]{com.google.android.material.R.attr.selectableItemBackgroundBorderless});
-        TypedArray typedArray = mActivity.getTheme().obtainStyledAttributes(R.style.Theme_BusStation, new int[]{android.R.attr.selectableItemBackgroundBorderless});
-        holder.stopItemView.findViewById(R.id.more_button).setForeground(AppCompatResources.getDrawable(mActivity, typedArray.getResourceId(0, 0)));
-        typedArray.recycle();
+        holder.stopItemView.findViewById(R.id.more_button).setForeground(moreButtonForeground);
     }
 
     private void showMenu(View moreButton, StopItemView stopItemView) {

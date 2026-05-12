@@ -26,6 +26,7 @@ import androidx.viewbinding.ViewBinding;
 import com.gg.busStation.R;
 import com.gg.busStation.databinding.ActivityMainBinding;
 import com.gg.busStation.databinding.DialogLoadingBinding;
+import com.gg.busStation.function.AppExecutors;
 import com.gg.busStation.function.BusDataManager;
 import com.gg.busStation.function.SettingsManager;
 import com.gg.busStation.function.internet.HttpClientHelper;
@@ -104,7 +105,7 @@ public class MainActivity extends BaseActivity {
         if (savedInstanceState != null) {
             binding.bottomNavigation.setSelectedItemId(savedInstanceState.getInt("bottomNavigation"));
         } else {
-            new Thread(() -> checkAppUpdate(false)).start();
+            AppExecutors.diskIO().execute(() -> checkAppUpdate(false));
         }
     }
 
@@ -161,7 +162,7 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        new Thread(() -> BusDataManager.initData(this, onDataInitListener, false)).start();
+        AppExecutors.diskIO().execute(() -> BusDataManager.initData(this, onDataInitListener, false));
     }
 
     @Override

@@ -21,6 +21,7 @@ import com.gg.busStation.data.bus.Stop;
 import com.gg.busStation.data.layout.ListItemData;
 import com.gg.busStation.data.layout.StopItemData;
 import com.gg.busStation.databinding.DialogBusBinding;
+import com.gg.busStation.function.AppExecutors;
 import com.gg.busStation.function.Tools;
 import com.gg.busStation.function.database.DataBaseHelper;
 import com.gg.busStation.function.database.dao.FareDAOImpl;
@@ -86,7 +87,7 @@ public class StopBottomSheetDialog extends BottomSheetDialogFragment {
     }
 
     public void initView() {
-        new Thread(() -> {
+        AppExecutors.diskIO().execute(() -> {
             SQLiteDatabase database = DataBaseHelper.getInstance(requireContext()).getDatabase();
             RouteDAO routeDAO = new RouteDAOImpl(database);
             List<Route> routes = routeDAO.getRoutes(mData.getRouteId(), mData.getRouteSeq());
@@ -111,7 +112,7 @@ public class StopBottomSheetDialog extends BottomSheetDialogFragment {
             divider.setLastItemDecorated(false);
 
             int finalNearestStopIndex = nearestStopIndex;
-            requireActivity().runOnUiThread(() -> {
+            AppExecutors.mainThread().execute(() -> {
                 RecyclerView dialogList = binding.dialogList;
                 dialogList.setLayoutManager(manager);
                 dialogList.addItemDecoration(divider);
@@ -138,7 +139,7 @@ public class StopBottomSheetDialog extends BottomSheetDialogFragment {
                     view.post(view::performClick);
                 });
             });
-        }).start();
+        });
     }
 
     private List<StopItemData> initData(List<Route> routes, String companyCode, SQLiteDatabase db) {

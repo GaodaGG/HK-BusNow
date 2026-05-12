@@ -46,6 +46,8 @@ public class MainAdapter extends ListAdapter<ListItemData, MainAdapter.ViewHolde
     private final FragmentActivity mActivity;
     private final boolean isSearch;
     private final HistoryDAO historyDAO;
+    private final Drawable itemForeground;
+    private final Drawable moreButtonForeground;
 
     public MainAdapter(FragmentActivity context, boolean isSearch) {
         super(DIFF_CALLBACK);
@@ -54,15 +56,19 @@ public class MainAdapter extends ListAdapter<ListItemData, MainAdapter.ViewHolde
 
         DataBaseHelper dbHelper = DataBaseHelper.getInstance(mActivity);
         historyDAO = new HistoryDAOImpl(dbHelper.getDatabase());
+
+        TypedArray typedArray = mActivity.getTheme().obtainStyledAttributes(new int[]{android.R.attr.selectableItemBackgroundBorderless});
+        itemForeground = typedArray.getDrawable(0);
+        typedArray.recycle();
+
+        TypedArray typedArray2 = mActivity.getTheme().obtainStyledAttributes(R.style.Theme_BusStation, new int[]{android.R.attr.selectableItemBackgroundBorderless});
+        moreButtonForeground = AppCompatResources.getDrawable(mActivity, typedArray2.getResourceId(0, 0));
+        typedArray2.recycle();
     }
 
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        TypedArray typedArray = mActivity.getTheme().obtainStyledAttributes(new int[]{android.R.attr.selectableItemBackgroundBorderless});
-        Drawable itemForeground = typedArray.getDrawable(0);
-        typedArray.recycle();
-
         ListItemView listItemView = new ListItemView(mActivity);
         listItemView.setForeground(itemForeground);
         return new ViewHolder(listItemView);
@@ -81,10 +87,7 @@ public class MainAdapter extends ListAdapter<ListItemData, MainAdapter.ViewHolde
 
         if (!isSearch) {
             holder.itemView.findViewById(R.id.more_button).setOnClickListener(view -> showMenu(view, listItemData));
-            //android:foreground="?attr/selectableItemBackgroundBorderless"
-            TypedArray typedArray = mActivity.getTheme().obtainStyledAttributes(R.style.Theme_BusStation, new int[]{android.R.attr.selectableItemBackgroundBorderless});
-            holder.itemView.findViewById(R.id.more_button).setForeground(AppCompatResources.getDrawable(mActivity, typedArray.getResourceId(0, 0)));
-            typedArray.recycle();
+            holder.itemView.findViewById(R.id.more_button).setForeground(moreButtonForeground);
         }
     }
 
@@ -92,8 +95,6 @@ public class MainAdapter extends ListAdapter<ListItemData, MainAdapter.ViewHolde
     @Override
     public void onCurrentListChanged(@NonNull List<ListItemData> previousList, @NonNull List<ListItemData> currentList) {
         super.onCurrentListChanged(previousList, currentList);
-        if (previousList.isEmpty() || previousList.equals(currentList)) return;
-        ((RecyclerView) mActivity.findViewById(R.id.bus_list_view)).scrollToPosition(0);
     }
 
     private void showMenu(View moreButtion, ListItemData listItemData) {

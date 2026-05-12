@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 
 import com.gg.busStation.databinding.SearchKeyboardBinding;
+import com.gg.busStation.function.AppExecutors;
 import com.gg.busStation.function.database.DataBaseHelper;
 import com.gg.busStation.function.database.dao.FeatureDAO;
 import com.gg.busStation.function.database.dao.FeatureDAOImpl;
@@ -14,6 +15,7 @@ import com.google.android.material.button.MaterialButton;
 import com.google.android.material.card.MaterialCardView;
 
 import java.util.List;
+import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
 import lombok.Setter;
@@ -23,6 +25,7 @@ public class SearchKeyboardView extends MaterialCardView {
     @Setter
     private OnKeyClickListener onKeyClickListener;
     private String outputText = "";
+    private Future<?> pendingQuery;
 
     public SearchKeyboardView(Context context) {
         super(context, null, com.google.android.material.R.attr.materialCardViewElevatedStyle);
@@ -75,10 +78,15 @@ public class SearchKeyboardView extends MaterialCardView {
     }
 
     private void setButtonStatus(String outputText, int index) {
-        DataBaseHelper dataBaseHelper = DataBaseHelper.getInstance(getContext());
-        FeatureDAO featureDAO = new FeatureDAOImpl(dataBaseHelper.getDatabase());
-        List<String> featureNthCharacters = featureDAO.getFeatureNthCharacters(outputText, index);
-        setButtonStatus(featureNthCharacters);
+        if (pendingQuery != null && !pendingQuery.isDone()) {
+            pendingQuery.cancel(true);
+        }
+        pendingQuery = AppExecutors.diskIO().submit(() -> {
+            DataBaseHelper dataBaseHelper = DataBaseHelper.getInstance(getContext());
+            FeatureDAO featureDAO = new FeatureDAOImpl(dataBaseHelper.getDatabase());
+            List<String> featureNthCharacters = featureDAO.getFeatureNthCharacters(outputText, index);
+            AppExecutors.mainThread().execute(() -> setButtonStatus(featureNthCharacters));
+        });
     }
 
     private void setButtonStatus(List<String> routeNthCharacters) {

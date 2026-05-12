@@ -17,6 +17,7 @@ import androidx.preference.PreferenceFragmentCompat;
 
 import com.gg.busStation.R;
 import com.gg.busStation.databinding.DialogLoadingBinding;
+import com.gg.busStation.function.AppExecutors;
 import com.gg.busStation.function.BusDataManager;
 import com.gg.busStation.ui.activity.AboutActivity;
 import com.gg.busStation.ui.activity.MainActivity;
@@ -84,11 +85,11 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         }
 
         settingsUpdateAppNow.setOnPreferenceClickListener(preference -> {
-            new Thread(() -> {
+            AppExecutors.diskIO().execute(() -> {
                 boolean checked = ((MainActivity) requireActivity()).checkAppUpdate(true);
                 if (!checked)
-                    requireActivity().runOnUiThread(() -> Toast.makeText(requireActivity(), R.string.update_app_already, Toast.LENGTH_SHORT).show());
-            }).start();
+                    AppExecutors.mainThread().execute(() -> Toast.makeText(requireActivity(), R.string.update_app_already, Toast.LENGTH_SHORT).show());
+            });
             return true;
         });
     }
@@ -199,7 +200,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                     .setCancelable(false)
                     .create();
 
-            new Thread(() -> BusDataManager.initData(requireContext(), onDataInitListener, true)).start();
+            AppExecutors.diskIO().execute(() -> BusDataManager.initData(requireContext(), onDataInitListener, true));
             return true;
         });
     }
